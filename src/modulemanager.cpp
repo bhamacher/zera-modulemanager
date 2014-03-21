@@ -60,17 +60,17 @@ namespace ZeraModules
 
     foreach (QString fileName, moduleDir.entryList(QDir::Files))
     {
+      qDebug() << "File is a library?" << QLibrary::isLibrary(moduleDir.absoluteFilePath(fileName));
       QPluginLoader loader(moduleDir.absoluteFilePath(fileName));
       MeasurementModuleFactory *module = qobject_cast<MeasurementModuleFactory *>(loader.instance());
-      qDebug() << "Analyzing:" << fileName << "loaded:" << loader.isLoaded();
+      qDebug() << "Analyzing:" << loader.fileName() << "loaded:" << loader.isLoaded();
       if (module)
       {
-        retVal = (retVal && true);
         factoryTable.insert(module->getFactoryName(), module);
       }
       else
       {
-        retVal = false;
+        retVal=false;
         qDebug() << "Error string:\n" << loader.errorString();
       }
     }
@@ -91,9 +91,8 @@ namespace ZeraModules
       {
         moduleCount=0;
       }
-      tmpPeer=localHub->peerAdd(QString("%1").arg(moduleCount));
-      //qDebug()<<"Creating:"<<tmpPeer->getName();
-      /** @todo Add real values insted of 0 pointers */
+      tmpPeer=localHub->peerAdd(QString("%1%2").arg(uniqueModuleName).arg(moduleCount));
+      qDebug()<<"Creating:"<<tmpPeer->getName();
       VirtualModule *tmpModule = factoryTable.value(uniqueModuleName)->createModule(proxyInstance,tmpPeer,this);
       if(tmpModule)
       {
