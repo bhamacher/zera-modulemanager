@@ -3,6 +3,9 @@
 #include <QCoreApplication>
 #include <veintcpcontroller.h>
 #include <veinhub.h>
+#include <QFile>
+#include <QByteArray>
+
 
 #include <QDebug>
 #include <QFile>
@@ -31,14 +34,31 @@ int main(int argc, char *argv[])
     qDebug() << "[Zera-Module-Manager] No modules found";
   }
 
-  xmlFile.setFileName("/work/git-local/zera-classes/zera-modules/rangemodule/src/rangemodule.xml");
-  xmlFile.open(QFile::ReadOnly);
-  baXmlFile = xmlFile.readAll();
+
+  //xmlFile.setFileName("/work/git-local/zera-classes/zera-modules/rangemodule/src/rangemodule.xml");
+  //xmlFile.open(QFile::ReadOnly);
+  //baXmlFile = xmlFile.readAll();
 
 
 
-  modMan->startModule("DummyModule","");
-  modMan->startModule("RangeModule", baXmlFile);
+  // modMan->startModule("DummyModule","");
+  // modMan->startModule("RangeModule", baXmlFile);
+
+//  for(int i=0; i<1000000; i++)
+//  {
+    //QString filename = "/home/peter/C++/rangemodule/src/rangemodule.xml";
+    // QString filename = "/home/peter/C++/zera-classes/zera-modules/rangemodule/src/rangemodule.xml";
+    QString filename = "/etc/zera/modules/rangemodule.xml";
+
+    QByteArray xmlConfigdata;
+    QFile xmlConfigfile(filename);
+
+    xmlConfigfile.open(QIODevice::Unbuffered | QIODevice::ReadOnly);
+    xmlConfigdata = xmlConfigfile.readAll();
+    xmlConfigfile.close();
+
+    modMan->startModule("RangeModule",xmlConfigdata);
+//  }
 
   //Q_ASSERT(modulesFound);
 

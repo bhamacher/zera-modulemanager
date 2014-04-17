@@ -56,7 +56,8 @@ namespace ZeraModules
     /**
      * @todo remove hardcoded path
      */
-    moduleDir = "./zera-modules";
+    //moduleDir = "./zera-modules";
+    moduleDir = "/home/peter/modules";
 
     foreach (QString fileName, moduleDir.entryList(QDir::Files))
     {
