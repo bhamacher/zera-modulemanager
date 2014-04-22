@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
     xmlConfigdata = xmlConfigfile.readAll();
     xmlConfigfile.close();
 
-    modMan->startModule("RangeModule",xmlConfigdata);
+    modMan->startModule("rangemodule",xmlConfigdata);
 //  }
 
   //Q_ASSERT(modulesFound);
