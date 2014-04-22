@@ -25,19 +25,21 @@ QMAKE_CXXFLAGS += -Wall -Wshadow
 
 
 INCLUDEPATH += $$VEIN_INCLUDEDIR
-LIBS += $$VEIN_LIBDIR -lvein-qt
+LIBS += $$VEIN_LIBDIR
 INCLUDEPATH += $$PROTONET_INCLUDEDIR
-LIBS += $$PROTONET_LIBDIR -lproto-net-qt
+LIBS += $$PROTONET_LIBDIR
 INCLUDEPATH += $$VEIN_PROTOBUF_INLCUDEDIR
-LIBS += $$VEIN_PROTOBUF_LIBDIR -lvein-qt-protobuf
+LIBS += $$VEIN_PROTOBUF_LIBDIR
 INCLUDEPATH += $$VEIN_TCP_INCLUDEDIR
-LIBS += $$VEIN_TCP_LIBDIR -lvein-tcp-overlay
+LIBS += $$VEIN_TCP_LIBDIR
 INCLUDEPATH += $$VIRTUALMODULE_INCLUDEDIR
-LIBS += $$VIRTUALMODULE_LIBDIR -lMeasurementModuleInterface
+LIBS += $$VIRTUALMODULE_LIBDIR
 INCLUDEPATH += $$PROXY_INCLUDEDIR
-LIBS+= $$PROXY_LIBDIR -lzera-proxy
+LIBS+= $$PROXY_LIBDIR
 
-LIBS += $$RESOURCE_PROTOBUF_LIBDIR -lzera-resourcemanager-protobuf
+LIBS += $$RESOURCE_PROTOBUF_LIBDIR
+
+LIBS += -lzera-proxy -lzera-resourcemanager-protobuf -lvein-qt -lprotobuf -lproto-net-qt -lvein-qt-protobuf -lvein-tcp-overlay -lMeasurementModuleInterface
 
 HEADERS += src/modulemanager.h
 
