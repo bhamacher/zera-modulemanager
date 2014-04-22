@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 # see user defined paths
-include(modulemanager.user.pri)
+include(../../include/project-paths.pri)
 
 QT       += core network
 
@@ -37,7 +37,7 @@ LIBS += $$VIRTUALMODULE_LIBDIR -lMeasurementModuleInterface
 INCLUDEPATH += $$PROXY_INCLUDEDIR
 LIBS+= $$PROXY_LIBDIR -lzera-proxy
 
-LIBS += -lzera-resourcemanager-protobuf
+LIBS += $$RESOURCE_PROTOBUF_LIBDIR -lzera-resourcemanager-protobuf
 
 HEADERS += src/modulemanager.h
 
