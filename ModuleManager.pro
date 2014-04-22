@@ -23,6 +23,7 @@ SOURCES += src/main.cpp \
 
 QMAKE_CXXFLAGS += -Wall -Wshadow
 
+
 INCLUDEPATH += $$VEIN_INCLUDEDIR
 LIBS += $$VEIN_LIBDIR -lvein-qt
 INCLUDEPATH += $$PROTONET_INCLUDEDIR
@@ -36,7 +37,6 @@ LIBS += $$VIRTUALMODULE_LIBDIR -lMeasurementModuleInterface
 INCLUDEPATH += $$PROXY_INCLUDEDIR
 LIBS+= $$PROXY_LIBDIR -lzera-proxy
 
-LIBS += -lprotobuf
 LIBS += -lzera-resourcemanager-protobuf
 
 HEADERS += src/modulemanager.h
