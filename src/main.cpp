@@ -46,18 +46,47 @@ int main(int argc, char *argv[])
 
 //  for(int i=0; i<1000000; i++)
 //  {
-    //QString filename = "/home/peter/C++/rangemodule/src/rangemodule.xml";
-    // QString filename = "/home/peter/C++/zera-classes/zera-modules/rangemodule/src/rangemodule.xml";
-    QString filename = "/etc/zera/modules/rangemodule.xml";
 
-    QByteArray xmlConfigdata;
-    QFile xmlConfigfile(filename);
+    if (true)
+    {
+        //QString filename = "/etc/zera/modules/rangemodule.xml";
+        QString filename = "/home/peter/C++/zera-classes/zera-modules/rangemodule/src/rangemodule.xml";
+        QByteArray xmlConfigdata;
+        QFile xmlConfigfile(filename);
 
-    xmlConfigfile.open(QIODevice::Unbuffered | QIODevice::ReadOnly);
-    xmlConfigdata = xmlConfigfile.readAll();
-    xmlConfigfile.close();
+        xmlConfigfile.open(QIODevice::Unbuffered | QIODevice::ReadOnly);
+        xmlConfigdata = xmlConfigfile.readAll();
+        xmlConfigfile.close();
+        modMan->startModule("rangemodule",xmlConfigdata);
+    }
 
-    modMan->startModule("rangemodule",xmlConfigdata);
+    if (true)
+    {
+        //QString filename = "/etc/zera/modules/rmsmodule.xml";
+        QString filename2 = "/home/peter/C++/zera-classes/zera-modules/rmsmodule/src/rmsmodule.xml";
+        QByteArray xmlConfigdata2;
+        QFile xmlConfigfile2(filename2);
+
+        xmlConfigfile2.open(QIODevice::Unbuffered | QIODevice::ReadOnly);
+        xmlConfigdata2 = xmlConfigfile2.readAll();
+        xmlConfigfile2.close();
+        modMan->startModule("rmsmodule",xmlConfigdata2);
+    }
+
+    if (true)
+    {
+        //QString filename = "/etc/zera/modules/dftmodule.xml";
+        QString filename3 = "/home/peter/C++/zera-classes/zera-modules/dftmodule/src/dftmodule.xml";
+        QByteArray xmlConfigdata3;
+        QFile xmlConfigfile3(filename3);
+
+        xmlConfigfile3.open(QIODevice::Unbuffered | QIODevice::ReadOnly);
+        xmlConfigdata3 = xmlConfigfile3.readAll();
+        xmlConfigfile3.close();
+        modMan->startModule("dftmodule",xmlConfigdata3);
+    }
+
+
 //  }
 
   //Q_ASSERT(modulesFound);

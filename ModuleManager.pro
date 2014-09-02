@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 # see user defined paths
-include(../../include/project-paths.pri)
+include(modulemanager.user.pri)
 
 QT       += core network
 
