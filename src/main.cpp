@@ -86,6 +86,71 @@ int main(int argc, char *argv[])
         modMan->startModule("dftmodule",xmlConfigdata3);
     }
 
+    if (true)
+    {
+        //QString filename = "/etc/zera/modules/power1module.xml";
+        QString filename4 = "/home/peter/C++/zera-classes/zera-modules/power1module/src/power1module.xml";
+        QByteArray xmlConfigdata4;
+        QFile xmlConfigfile4(filename4);
+
+        xmlConfigfile4.open(QIODevice::Unbuffered | QIODevice::ReadOnly);
+        xmlConfigdata4 = xmlConfigfile4.readAll();
+        xmlConfigfile4.close();
+        modMan->startModule("power1module",xmlConfigdata4);
+    }
+
+    if (true)
+    {
+        //QString filename = "/etc/zera/modules/power1module.xml";
+        QString filename5 = "/home/peter/C++/zera-classes/zera-modules/power1module/src/power1module2.xml";
+        QByteArray xmlConfigdata5;
+        QFile xmlConfigfile5(filename5);
+
+        xmlConfigfile5.open(QIODevice::Unbuffered | QIODevice::ReadOnly);
+        xmlConfigdata5 = xmlConfigfile5.readAll();
+        xmlConfigfile5.close();
+        modMan->startModule("power1module",xmlConfigdata5);
+    }
+
+    if (true)
+    {
+        //QString filename = "/etc/zera/modules/power1module.xml";
+        QString filename6 = "/home/peter/C++/zera-classes/zera-modules/power1module/src/power1module3.xml";
+        QByteArray xmlConfigdata6;
+        QFile xmlConfigfile6(filename6);
+
+        xmlConfigfile6.open(QIODevice::Unbuffered | QIODevice::ReadOnly);
+        xmlConfigdata6 = xmlConfigfile6.readAll();
+        xmlConfigfile6.close();
+        modMan->startModule("power1module",xmlConfigdata6);
+    }
+
+    if (true)
+    {
+        //QString filename = "/etc/zera/modules/thdnmodule.xml";
+        QString filename7 = "/home/peter/C++/zera-classes/zera-modules/thdnmodule/src/thdnmodule.xml";
+        QByteArray xmlConfigdata7;
+        QFile xmlConfigfile7(filename7);
+
+        xmlConfigfile7.open(QIODevice::Unbuffered | QIODevice::ReadOnly);
+        xmlConfigdata7 = xmlConfigfile7.readAll();
+        xmlConfigfile7.close();
+        modMan->startModule("thdnmodule",xmlConfigdata7);
+    }
+
+    if (true)
+    {
+        //QString filename = "/etc/zera/modules/oscimodule.xml";
+        QString filename8 = "/home/peter/C++/zera-classes/zera-modules/oscimodule/src/oscimodule.xml";
+        QByteArray xmlConfigdata8;
+        QFile xmlConfigfile8(filename8);
+
+        xmlConfigfile8.open(QIODevice::Unbuffered | QIODevice::ReadOnly);
+        xmlConfigdata8 = xmlConfigfile8.readAll();
+        xmlConfigfile8.close();
+        modMan->startModule("oscimodule",xmlConfigdata8);
+    }
+
 
 //  }
 
