@@ -23,6 +23,8 @@ int main(int argc, char *argv[])
   VeinHub *localHub=vTC->getLocalHub();
   bool modulesFound;
 
+  qRegisterMetaTypeStreamOperators<QList<qreal> >("QList<qreal>");
+
   localHub->setUuid(QUuid::createUuid());
   modMan->setHub(localHub);
 
