@@ -51,8 +51,8 @@ int main(int argc, char *argv[])
 
     if (true)
     {
-        //QString filename = "/etc/zera/modules/rangemodule.xml";
-        QString filename = "/home/peter/C++/zera-classes/zera-modules/rangemodule/src/rangemodule.xml";
+        QString filename = "/etc/zera/modules/rangemodule.xml";
+        //QString filename = "/home/peter/C++/zera-classes/zera-modules/rangemodule/src/rangemodule.xml";
         QByteArray xmlConfigdata;
         QFile xmlConfigfile(filename);
 
@@ -64,8 +64,8 @@ int main(int argc, char *argv[])
 
     if (true)
     {
-        //QString filename = "/etc/zera/modules/rmsmodule.xml";
-        QString filename2 = "/home/peter/C++/zera-classes/zera-modules/rmsmodule/src/rmsmodule.xml";
+        QString filename2 = "/etc/zera/modules/rmsmodule.xml";
+        //QString filename2 = "/home/peter/C++/zera-classes/zera-modules/rmsmodule/src/rmsmodule.xml";
         QByteArray xmlConfigdata2;
         QFile xmlConfigfile2(filename2);
 
@@ -77,8 +77,8 @@ int main(int argc, char *argv[])
 
     if (true)
     {
-        //QString filename = "/etc/zera/modules/dftmodule.xml";
-        QString filename3 = "/home/peter/C++/zera-classes/zera-modules/dftmodule/src/dftmodule.xml";
+        QString filename3 = "/etc/zera/modules/dftmodule.xml";
+        //QString filename3 = "/home/peter/C++/zera-classes/zera-modules/dftmodule/src/dftmodule.xml";
         QByteArray xmlConfigdata3;
         QFile xmlConfigfile3(filename3);
 
@@ -90,8 +90,8 @@ int main(int argc, char *argv[])
 
     if (true)
     {
-        //QString filename = "/etc/zera/modules/power1module.xml";
-        QString filename4 = "/home/peter/C++/zera-classes/zera-modules/power1module/src/power1module.xml";
+        QString filename4 = "/etc/zera/modules/power1module.xml";
+        //QString filename4 = "/home/peter/C++/zera-classes/zera-modules/power1module/src/power1module.xml";
         QByteArray xmlConfigdata4;
         QFile xmlConfigfile4(filename4);
 
@@ -103,8 +103,8 @@ int main(int argc, char *argv[])
 
     if (true)
     {
-        //QString filename = "/etc/zera/modules/power1module.xml";
-        QString filename5 = "/home/peter/C++/zera-classes/zera-modules/power1module/src/power1module2.xml";
+        QString filename5 = "/etc/zera/modules/power1module.xml";
+        //QString filename5 = "/home/peter/C++/zera-classes/zera-modules/power1module/src/power1module2.xml";
         QByteArray xmlConfigdata5;
         QFile xmlConfigfile5(filename5);
 
@@ -116,8 +116,8 @@ int main(int argc, char *argv[])
 
     if (true)
     {
-        //QString filename = "/etc/zera/modules/power1module.xml";
-        QString filename6 = "/home/peter/C++/zera-classes/zera-modules/power1module/src/power1module3.xml";
+        QString filename6 = "/etc/zera/modules/power1module.xml";
+        //QString filename6 = "/home/peter/C++/zera-classes/zera-modules/power1module/src/power1module3.xml";
         QByteArray xmlConfigdata6;
         QFile xmlConfigfile6(filename6);
 
@@ -129,8 +129,8 @@ int main(int argc, char *argv[])
 
     if (true)
     {
-        //QString filename = "/etc/zera/modules/thdnmodule.xml";
-        QString filename7 = "/home/peter/C++/zera-classes/zera-modules/thdnmodule/src/thdnmodule.xml";
+        QString filename7 = "/etc/zera/modules/thdnmodule.xml";
+        //QString filename7 = "/home/peter/C++/zera-classes/zera-modules/thdnmodule/src/thdnmodule.xml";
         QByteArray xmlConfigdata7;
         QFile xmlConfigfile7(filename7);
 
@@ -142,8 +142,8 @@ int main(int argc, char *argv[])
 
     if (true)
     {
-        //QString filename = "/etc/zera/modules/oscimodule.xml";
-        QString filename8 = "/home/peter/C++/zera-classes/zera-modules/oscimodule/src/oscimodule.xml";
+        QString filename8 = "/etc/zera/modules/oscimodule.xml";
+        //QString filename8 = "/home/peter/C++/zera-classes/zera-modules/oscimodule/src/oscimodule.xml";
         QByteArray xmlConfigdata8;
         QFile xmlConfigfile8(filename8);
 
