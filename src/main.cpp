@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
 
     if (true)
     {
-        QString filename5 = "/etc/zera/modules/power1module.xml";
+        QString filename5 = "/etc/zera/modules/power1module2.xml";
         //QString filename5 = "/home/peter/C++/zera-classes/zera-modules/power1module/src/power1module2.xml";
         QByteArray xmlConfigdata5;
         QFile xmlConfigfile5(filename5);
@@ -116,7 +116,7 @@ int main(int argc, char *argv[])
 
     if (true)
     {
-        QString filename6 = "/etc/zera/modules/power1module.xml";
+        QString filename6 = "/etc/zera/modules/power1module3.xml";
         //QString filename6 = "/home/peter/C++/zera-classes/zera-modules/power1module/src/power1module3.xml";
         QByteArray xmlConfigdata6;
         QFile xmlConfigfile6(filename6);
