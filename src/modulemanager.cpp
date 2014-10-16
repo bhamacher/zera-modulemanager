@@ -20,18 +20,18 @@ namespace ZeraModules
   {
   }
 
+  ModuleManager::~ModuleManager()
+  {
+    foreach(VirtualModule *toDelete, moduleList)
+    {
+      delete toDelete;
+    }
+    proxyInstance->deleteLater();
+  }
+
   void ModuleManager::configureModules()
   {
 
-  }
-
-  ModuleManager *ModuleManager::getInstance()
-  {
-    if(singletonInstance==0)
-    {
-      singletonInstance=new ModuleManager();
-    }
-    return singletonInstance;
   }
 
   bool ModuleManager::isModuleLicensed(VirtualModule *module)
@@ -119,6 +119,4 @@ namespace ZeraModules
   {
     return localHub;
   }
-
-  ModuleManager *ModuleManager::singletonInstance = 0;
 }

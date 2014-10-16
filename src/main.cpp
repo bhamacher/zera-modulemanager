@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
   QCoreApplication a(argc, argv);
 
   VeinTcpController *vTC = new VeinTcpController(&a);
-  ZeraModules::ModuleManager *modMan = ZeraModules::ModuleManager::getInstance();
+  ZeraModules::ModuleManager *modMan = new ZeraModules::ModuleManager(&a);
 
   VeinHub *localHub=vTC->getLocalHub();
   bool modulesFound;

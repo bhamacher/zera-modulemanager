@@ -25,8 +25,9 @@ namespace ZeraModules
   {
     Q_OBJECT
   public:
+    explicit ModuleManager(QObject *qobjParent = 0);
+    ~ModuleManager();
     void configureModules();
-    static ModuleManager *getInstance();
     bool isModuleLicensed(VirtualModule *module);
     bool loadModules();
     //???void reconfigureModule(VirtualModule *module, QByteArray xmlConfigData);
@@ -41,12 +42,11 @@ namespace ZeraModules
   public slots:
 
   protected:
-    explicit ModuleManager(QObject *qobjParent = 0);
+
 
   private:
     QHash<QString, MeasurementModuleFactory*> factoryTable;
     QList<VirtualModule *> moduleList;
-    static ModuleManager *singletonInstance;
     Zera::Proxy::cProxy *proxyInstance;
 
     VeinHub *localHub;
