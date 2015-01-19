@@ -40,6 +40,7 @@ namespace ZeraModules
 
   public slots:
     void startModule(QString uniqueModuleName, QByteArray xmlConfigData);
+    void stopModules();
   protected:
 
 

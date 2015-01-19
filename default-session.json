@@ -2,35 +2,35 @@
   "modules" : [
     {
       "name" : "rangemodule",
-      "configPath" : "%1/rangemodule.xml"
+      "configPath" : "/work/git-local/zera-classes/zera-modules/rangemodule/src/rangemodule.xml"
     },
     {
       "name" : "rmsmodule",
-      "configPath" : "%1/rmsmodule.xml"
+      "configPath" : "/work/git-local/zera-classes/zera-modules/rmsmodule/src/rmsmodule.xml"
     },
     {
       "name" : "dftmodule",
-      "configPath" : "%1/dftmodule.xml"
+      "configPath" : "/work/git-local/zera-classes/zera-modules/dftmodule/src/dftmodule.xml"
     },
     {
       "name" : "power1module",
-      "configPath" : "%1/power1module.xml"
+      "configPath" : "/work/git-local/zera-classes/zera-modules/power1module/src/power1module.xml"
     },
     {
       "name" : "power1module",
-      "configPath" : "%1/power1module2.xml"
+      "configPath" : "/work/git-local/zera-classes/zera-modules/power1module/src/power1module2.xml"
     },
     {
       "name" : "power1module",
-      "configPath" : "%1/power1module3.xml"
+      "configPath" : "/work/git-local/zera-classes/zera-modules/power1module/src/power1module3.xml"
     },
     {
       "name" : "thdnmodule",
-      "configPath" : "%1/thdnmodule.xml"
+      "configPath" : "/work/git-local/zera-classes/zera-modules/thdnmodule/src/thdnmodule.xml"
     },
     {
       "name" : "oscimodule",
-      "configPath" : "%1/oscimodule.xml"
+      "configPath" : "/work/git-local/zera-classes/zera-modules/oscimodule/src/oscimodule.xml"
     }
   ]
 }

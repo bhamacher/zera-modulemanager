@@ -118,7 +118,18 @@ namespace ZeraModules
           tmpModule->setConfiguration(xmlConfigData);
         }
         tmpModule->startModule();
+        moduleList.append(tmpModule);
       }
     }
+  }
+
+  void ModuleManager::stopModules()
+  {
+    foreach(VirtualModule *toStop, moduleList)
+    {
+      toStop->stopModule();
+      toStop->deleteLater();
+    }
+    moduleList.clear();
   }
 }
