@@ -51,7 +51,7 @@ namespace ZeraModules
 
   private:
     QHash<QString, MeasurementModuleFactory*> factoryTable;
-    QList<VirtualModule *> moduleList;
+    QHash<VirtualModule *, QString> moduleList;
     Zera::Proxy::cProxy *proxyInstance;
 
     VeinHub *localHub;

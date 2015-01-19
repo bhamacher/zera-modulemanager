@@ -23,7 +23,7 @@ namespace ZeraModules
 
   ModuleManager::~ModuleManager()
   {
-    foreach(VirtualModule *toDelete, moduleList)
+    foreach(VirtualModule *toDelete, moduleList.keys())
     {
       delete toDelete;
     }
@@ -57,7 +57,7 @@ namespace ZeraModules
     /**
      * @todo remove hardcoded path
      */
-    moduleDir = "/work/qt_projects/Zera/build-zera-classes-Desktop_Qt_5_2_1_GCC_64bit-Debug/modules/";
+    moduleDir = "/work/qt_projects/Zera/build-zera-classes-Desktop_Qt_5_3_GCC_64bit-Debug/modules/";
     //moduleDir = "/usr/lib/zera-modules";
     //moduleDir = "/home/peter/modules";
 
@@ -123,17 +123,21 @@ namespace ZeraModules
           tmpModule->setConfiguration(xmlConfigData);
         }
         tmpModule->startModule();
-        moduleList.append(tmpModule);
+        moduleList.insert(tmpModule, uniqueModuleName);
       }
     }
   }
 
   void ModuleManager::stopModules()
   {
-    foreach(VirtualModule *toStop, moduleList)
+    foreach(VirtualModule *toStop, moduleList.keys())
     {
+      QString tmpModuleName = moduleList.value(toStop);
       toStop->stopModule();
-      toStop->deleteLater();
+      if(factoryTable.contains(tmpModuleName))
+      {
+        factoryTable.value(tmpModuleName)->destroyModule(toStop);
+      }
     }
     foreach (VeinPeer *tmpPeer, localHub->listPeers()) {
       if(tmpPeer->getName() != "ModuleManager") /// @todo remove hardcoded name
