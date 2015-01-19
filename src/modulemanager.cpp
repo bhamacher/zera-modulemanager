@@ -135,6 +135,12 @@ namespace ZeraModules
       toStop->stopModule();
       toStop->deleteLater();
     }
+    foreach (VeinPeer *tmpPeer, localHub->listPeers()) {
+      if(tmpPeer->getName() != "ModuleManager") /// @todo remove hardcoded name
+      {
+        localHub->peerRemove(tmpPeer); //will be deleted by the hub
+      }
+    }
     moduleList.clear();
   }
 
