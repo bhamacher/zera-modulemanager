@@ -1,0 +1,36 @@
+{
+  "modules" : [
+    {
+      "name" : "rangemodule",
+      "configPath" : "%1/rangemodule.xml"
+    },
+    {
+      "name" : "rmsmodule",
+      "configPath" : "%1/rmsmodule.xml"
+    },
+    {
+      "name" : "dftmodule",
+      "configPath" : "%1/dftmodule.xml"
+    },
+    {
+      "name" : "power1module",
+      "configPath" : "%1/power1module.xml"
+    },
+    {
+      "name" : "power1module",
+      "configPath" : "%1/power1module2.xml"
+    },
+    {
+      "name" : "power1module",
+      "configPath" : "%1/power1module3.xml"
+    },
+    {
+      "name" : "thdnmodule",
+      "configPath" : "%1/thdnmodule.xml"
+    },
+    {
+      "name" : "oscimodule",
+      "configPath" : "%1/oscimodule.xml"
+    }
+  ]
+}

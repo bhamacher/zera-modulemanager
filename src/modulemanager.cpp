@@ -56,8 +56,8 @@ namespace ZeraModules
     /**
      * @todo remove hardcoded path
      */
-    //moduleDir = "./zera-modules";
-    moduleDir = "/usr/lib/zera-modules";
+    moduleDir = "/work/qt_projects/Zera/build-zera-classes-Desktop_Qt_5_2_1_GCC_64bit-Debug/modules/";
+    //moduleDir = "/usr/lib/zera-modules";
     //moduleDir = "/home/peter/modules";
 
     foreach (QString fileName, moduleDir.entryList(QDir::Files))
@@ -79,6 +79,21 @@ namespace ZeraModules
     return retVal;
   }
 
+
+
+  void ModuleManager::setHub(VeinHub *vHub)
+  {
+    if(vHub)
+    {
+      localHub = vHub;
+    }
+  }
+
+  VeinHub *ModuleManager::getHub()
+  {
+    return localHub;
+  }
+
   void ModuleManager::startModule(QString uniqueModuleName, QByteArray xmlConfigData)
   {
     VeinPeer *tmpPeer=0;
@@ -94,7 +109,7 @@ namespace ZeraModules
         moduleCount=0;
       }
       tmpPeer=localHub->peerAdd(QString("%1%2").arg(uniqueModuleName).arg(moduleCount));
-      qDebug()<<"Creating:"<<tmpPeer->getName();
+      qDebug()<<"Creating:"<<tmpPeer->getName(); //<< "with config" << xmlConfigData;
       VirtualModule *tmpModule = factoryTable.value(uniqueModuleName)->createModule(proxyInstance,tmpPeer,this);
       if(tmpModule)
       {
@@ -105,18 +120,5 @@ namespace ZeraModules
         tmpModule->startModule();
       }
     }
-  }
-
-  void ModuleManager::setHub(VeinHub *vHub)
-  {
-    if(vHub)
-    {
-      localHub = vHub;
-    }
-  }
-
-  VeinHub *ModuleManager::getHub()
-  {
-    return localHub;
   }
 }

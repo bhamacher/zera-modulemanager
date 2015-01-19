@@ -5,7 +5,12 @@
 #-------------------------------------------------
 
 # see user defined paths
-include(modulemanager.user.pri)
+exists(modulemanager.user.pri) {
+  include(modulemanager.user.pri)
+}
+exists(../../include/project-paths.pri) {
+  include(../../include/project-paths.pri)
+}
 
 QT       += core network
 
@@ -19,7 +24,8 @@ TEMPLATE = app
 
 INCLUDEPATH += src/
 SOURCES += src/main.cpp \
-    src/modulemanager.cpp
+    src/modulemanager.cpp \
+    src/jsonsessionloader.cpp
 
 QMAKE_CXXFLAGS += -Wall -Wshadow
 
@@ -41,7 +47,11 @@ LIBS += $$RESOURCE_PROTOBUF_LIBDIR
 
 LIBS += -lzera-proxy -lzera-resourcemanager-protobuf -lvein-qt -lprotobuf -lproto-net-qt -lvein-qt-protobuf -lvein-tcp-overlay -lMeasurementModuleInterface
 
-HEADERS += src/modulemanager.h
+HEADERS += src/modulemanager.h \
+    src/jsonsessionloader.h
 
 target.path = /usr/bin
 INSTALLS += target
+
+RESOURCES += \
+    data1.qrc

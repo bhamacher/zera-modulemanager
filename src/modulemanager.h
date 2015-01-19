@@ -31,8 +31,7 @@ namespace ZeraModules
     bool isModuleLicensed(VirtualModule *module);
     bool loadModules();
     //???void reconfigureModule(VirtualModule *module, QByteArray xmlConfigData);
-    //???void restartModule(VirtualModule *module, QByteArray xmlConfigData=QByteArray());
-    void startModule(QString uniqueModuleName, QByteArray xmlConfigData);
+    //???void restartModule(VirtualModule *module, QByteArray xmlConfigData=QByteArray())
     //???void stopModule(VirtualModule *module);
     void setHub(VeinHub *vHub);
     VeinHub *getHub();
@@ -40,7 +39,7 @@ namespace ZeraModules
   signals:
 
   public slots:
-
+    void startModule(QString uniqueModuleName, QByteArray xmlConfigData);
   protected:
 
 
