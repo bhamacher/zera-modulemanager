@@ -11,6 +11,11 @@
 #include <QDebug>
 #include <QFile>
 
+
+//debug
+#include <veinpeer.h>
+#include <veinentity.h>
+
 int main(int argc, char *argv[])
 {
   QFile xmlFile;
@@ -40,6 +45,7 @@ int main(int argc, char *argv[])
   }
 
   QObject::connect(sessionLoader, &JsonSessionLoader::sigLoadModule, modMan, &ZeraModules::ModuleManager::startModule);
+  QObject::connect(modMan, &ZeraModules::ModuleManager::sigSessionSwitched, sessionLoader, &JsonSessionLoader::loadSession);
 
   sessionLoader->loadSession("://default-session.json");
 

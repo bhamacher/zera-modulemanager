@@ -2,6 +2,7 @@
 
 #include <veinhub.h>
 #include <veinpeer.h>
+#include <veinentity.h>
 
 #include <proxy.h>
 
@@ -86,6 +87,10 @@ namespace ZeraModules
     if(vHub)
     {
       localHub = vHub;
+      modManPeer = localHub->peerAdd("ModuleManager");
+      sessionSwitchEntity = modManPeer->dataAdd("SessionFile");
+      //sessionSwitchEntity->setValue("default-session.json");
+      connect(sessionSwitchEntity, SIGNAL(sigValueChanged(QVariant)), this, SLOT(onChangeSession(QVariant)));
     }
   }
 
@@ -109,7 +114,7 @@ namespace ZeraModules
         moduleCount=0;
       }
       tmpPeer=localHub->peerAdd(QString("%1%2").arg(uniqueModuleName).arg(moduleCount));
-      qDebug()<<"Creating:"<<tmpPeer->getName(); //<< "with config" << xmlConfigData;
+      qDebug()<<"Creating module instance:"<<tmpPeer->getName(); //<< "with config" << xmlConfigData;
       VirtualModule *tmpModule = factoryTable.value(uniqueModuleName)->createModule(proxyInstance,tmpPeer,this);
       if(tmpModule)
       {
@@ -131,5 +136,11 @@ namespace ZeraModules
       toStop->deleteLater();
     }
     moduleList.clear();
+  }
+
+  void ModuleManager::onChangeSession(QVariant newSessionPath)
+  {
+    stopModules();
+    emit sigSessionSwitched(newSessionPath.toString());
   }
 }

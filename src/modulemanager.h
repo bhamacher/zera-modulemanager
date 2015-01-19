@@ -3,12 +3,14 @@
 
 #include <QObject>
 #include <virtualmodule.h>
-
+#include <QVariant>
 #include <QHash>
 
 
 class MeasurementModuleFactory;
 class VeinHub;
+class VeinPeer;
+class VeinEntity;
 
 namespace Zera
 {
@@ -37,11 +39,14 @@ namespace ZeraModules
     VeinHub *getHub();
 
   signals:
+    void sigSessionSwitched(QString newSessionPath);
 
   public slots:
     void startModule(QString uniqueModuleName, QByteArray xmlConfigData);
     void stopModules();
-  protected:
+
+  private slots:
+    void onChangeSession(QVariant newSessionPath);
 
 
   private:
@@ -50,6 +55,8 @@ namespace ZeraModules
     Zera::Proxy::cProxy *proxyInstance;
 
     VeinHub *localHub;
+    VeinPeer *modManPeer;
+    VeinEntity *sessionSwitchEntity;
   };
 }
 
