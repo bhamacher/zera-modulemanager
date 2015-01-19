@@ -137,6 +137,7 @@ namespace ZeraModules
       if(factoryTable.contains(tmpModuleName))
       {
         factoryTable.value(tmpModuleName)->destroyModule(toStop);
+        qDebug() << "Deleted module:" << tmpModuleName;
       }
     }
     foreach (VeinPeer *tmpPeer, localHub->listPeers()) {

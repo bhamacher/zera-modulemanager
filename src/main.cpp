@@ -18,9 +18,6 @@
 
 int main(int argc, char *argv[])
 {
-  QFile xmlFile;
-  QByteArray baXmlFile;
-
   QCoreApplication a(argc, argv);
 
   VeinTcpController *vTC = new VeinTcpController(&a);
