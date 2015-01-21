@@ -5,6 +5,7 @@
 #include <virtualmodule.h>
 #include <QVariant>
 #include <QHash>
+#include <QQueue>
 
 
 class MeasurementModuleFactory;
@@ -22,6 +23,7 @@ namespace Zera
 
 namespace ZeraModules
 {
+  class ModuleData;
 
   class ModuleManager : public QObject
   {
@@ -47,16 +49,23 @@ namespace ZeraModules
 
   private slots:
     void onChangeSession(QVariant newSessionPath);
-
+    void onModuleDelete();
+    void onModuleStartNext();
+    void onModuleError(const QString &error);
 
   private:
+    void onDeletionFinished();
+
     QHash<QString, MeasurementModuleFactory*> factoryTable;
-    QHash<VirtualModule *, QString> moduleList;
+    QList<ModuleData *> moduleList;
+    QQueue<ModuleData *> deferedStartList;
     Zera::Proxy::cProxy *proxyInstance;
 
     VeinHub *localHub;
     VeinPeer *modManPeer;
     VeinEntity *sessionSwitchEntity;
+
+    bool moduleStartLock;
   };
 }
 

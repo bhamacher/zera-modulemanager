@@ -15,17 +15,42 @@
 
 namespace ZeraModules
 {
+  class ModuleData {
+  public:
+    ModuleData(VirtualModule *pRef, QString pName, QByteArray pConfData) : reference(pRef), uniqueName(pName), configData(pConfData) {}
+
+    static ModuleData *findByReference(QList<ModuleData*> list, VirtualModule *ref)
+    {
+      ModuleData *retVal = 0;
+      for(int i = 0; i < list.length(); i++)
+      {
+        if(list.at(i)->reference == ref)
+        {
+          retVal = list.at(i);
+          break;
+        }
+      }
+      return retVal;
+    }
+
+    VirtualModule *reference;
+    const QString uniqueName;
+    QByteArray configData;
+  };
+
+
   ModuleManager::ModuleManager(QObject *qobjParent) :
     QObject(qobjParent),
-    proxyInstance(Zera::Proxy::cProxy::getInstance())
+    proxyInstance(Zera::Proxy::cProxy::getInstance()),
+    moduleStartLock(false)
   {
   }
 
   ModuleManager::~ModuleManager()
   {
-    foreach(VirtualModule *toDelete, moduleList.keys())
+    foreach(ModuleData *toDelete, moduleList)
     {
-      delete toDelete;
+      delete toDelete->reference;
     }
     proxyInstance->deleteLater();
   }
@@ -57,7 +82,7 @@ namespace ZeraModules
     /**
      * @todo remove hardcoded path
      */
-    moduleDir = "/work/qt_projects/Zera/build-zera-classes-Desktop_Qt_5_3_GCC_64bit-Debug/modules/";
+    moduleDir = "/work/qt_projects/Zera/zera-classes/modules";
     //moduleDir = "/usr/lib/zera-modules";
     //moduleDir = "/home/peter/modules";
 
@@ -87,8 +112,8 @@ namespace ZeraModules
     if(vHub)
     {
       localHub = vHub;
-      modManPeer = localHub->peerAdd("ModuleManager");
-      sessionSwitchEntity = modManPeer->dataAdd("SessionFile");
+      modManPeer = localHub->peerAdd("ModuleManager"); ///@todo remove hardcoded
+      sessionSwitchEntity = modManPeer->dataAdd("SessionFile"); ///@todo remove hardcoded
       //sessionSwitchEntity->setValue("default-session.json");
       connect(sessionSwitchEntity, SIGNAL(sigValueChanged(QVariant)), this, SLOT(onChangeSession(QVariant)));
     }
@@ -101,38 +126,45 @@ namespace ZeraModules
 
   void ModuleManager::startModule(QString uniqueModuleName, QByteArray xmlConfigData)
   {
-    VeinPeer *tmpPeer=0;
-    int moduleCount = 0;
-    MeasurementModuleFactory *tmpFactory=0;
-
-    tmpFactory=factoryTable.value(uniqueModuleName);
-    if(tmpFactory)
+    if(moduleStartLock == false)
     {
-      moduleCount = tmpFactory->listModules().count();
-      if(moduleCount<0) //in case of an empty list
+      VeinPeer *tmpPeer=0;
+      int moduleCount = 0;
+      MeasurementModuleFactory *tmpFactory=0;
+
+      tmpFactory=factoryTable.value(uniqueModuleName);
+      if(tmpFactory)
       {
-        moduleCount=0;
-      }
-      tmpPeer=localHub->peerAdd(QString("%1%2").arg(uniqueModuleName).arg(moduleCount));
-      qDebug()<<"Creating module instance:"<<tmpPeer->getName(); //<< "with config" << xmlConfigData;
-      VirtualModule *tmpModule = factoryTable.value(uniqueModuleName)->createModule(proxyInstance,tmpPeer,this);
-      if(tmpModule)
-      {
-        if(!xmlConfigData.isNull())
+        moduleCount = tmpFactory->listModules().size();
+        tmpPeer=localHub->peerAdd(QString("%1%2").arg(uniqueModuleName).arg(moduleCount));
+        qDebug()<<"Creating module instance:"<<tmpPeer->getName(); //<< "with config" << xmlConfigData;
+        VirtualModule *tmpModule = factoryTable.value(uniqueModuleName)->createModule(proxyInstance,tmpPeer,this);
+        if(tmpModule)
         {
-          tmpModule->setConfiguration(xmlConfigData);
+          if(!xmlConfigData.isNull())
+          {
+            tmpModule->setConfiguration(xmlConfigData);
+          }
+          connect(tmpModule, &VirtualModule::moduleDeactivated, this, &ModuleManager::onModuleDelete);
+          connect(tmpModule, &VirtualModule::moduleActivated, this, &ModuleManager::onModuleStartNext);
+          connect(tmpModule, &VirtualModule::moduleError, this, &ModuleManager::onModuleError);
+          moduleStartLock = true;
+          tmpModule->startModule();
         }
-        tmpModule->startModule();
-        moduleList.insert(tmpModule, uniqueModuleName);
       }
+    }
+    else
+    {
+      deferedStartList.enqueue(new ModuleData(0, uniqueModuleName, xmlConfigData));
     }
   }
 
   void ModuleManager::stopModules()
   {
-    foreach(VirtualModule *toStop, moduleList.keys())
+    for(int i = moduleList.length(); --i>=0;)
     {
-      QString tmpModuleName = moduleList.value(toStop);
+      VirtualModule *toStop = moduleList.at(i)->reference;
+      QString tmpModuleName = moduleList.at(i)->uniqueName;
       toStop->stopModule();
       if(factoryTable.contains(tmpModuleName))
       {
@@ -140,18 +172,54 @@ namespace ZeraModules
         qDebug() << "Deleted module:" << tmpModuleName;
       }
     }
-    foreach (VeinPeer *tmpPeer, localHub->listPeers()) {
-      if(tmpPeer->getName() != "ModuleManager") /// @todo remove hardcoded name
-      {
-        localHub->peerRemove(tmpPeer); //will be deleted by the hub
-      }
-    }
-    moduleList.clear();
   }
 
   void ModuleManager::onChangeSession(QVariant newSessionPath)
   {
     stopModules();
     emit sigSessionSwitched(newSessionPath.toString());
+  }
+
+  void ModuleManager::onModuleDelete()
+  {
+    VirtualModule *toDelete = qobject_cast<VirtualModule*>(QObject::sender());
+    if(toDelete)
+    {
+      ModuleData *tmpData = ModuleData::findByReference(moduleList, toDelete);
+      moduleList.removeAll(tmpData);
+      delete toDelete;
+      delete tmpData;
+    }
+    if(moduleList.isEmpty())
+    {
+      onDeletionFinished();
+    }
+  }
+
+  void ModuleManager::onModuleStartNext()
+  {
+    moduleStartLock = false;
+    if(deferedStartList.length()>0)
+    {
+      ModuleData *tmpData = deferedStartList.dequeue();
+      qDebug() << "###Defered module start for"<< tmpData->uniqueName;
+      startModule(tmpData->uniqueName, tmpData->configData);
+      delete tmpData;
+    }
+  }
+
+  void ModuleManager::onModuleError(const QString &error)
+  {
+    qWarning() << "Module error:" << error;
+  }
+
+  void ModuleManager::onDeletionFinished()
+  {
+    foreach (VeinPeer *tmpPeer, localHub->listPeers()) {
+      if(tmpPeer != modManPeer)
+      {
+        localHub->peerRemove(tmpPeer); //will be deleted by the hub
+      }
+    }
   }
 }
