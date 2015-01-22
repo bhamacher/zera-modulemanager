@@ -55,11 +55,6 @@ namespace ZeraModules
     proxyInstance->deleteLater();
   }
 
-  void ModuleManager::configureModules()
-  {
-
-  }
-
   bool ModuleManager::isModuleLicensed(VirtualModule *module)
   {
     Q_UNUSED(module)
@@ -138,7 +133,7 @@ namespace ZeraModules
         moduleCount = tmpFactory->listModules().size();
         tmpPeer=localHub->peerAdd(QString("%1%2").arg(uniqueModuleName).arg(moduleCount));
         qDebug()<<"Creating module instance:"<<tmpPeer->getName(); //<< "with config" << xmlConfigData;
-        VirtualModule *tmpModule = factoryTable.value(uniqueModuleName)->createModule(proxyInstance,tmpPeer,this);
+        VirtualModule *tmpModule = tmpFactory->createModule(proxyInstance,tmpPeer,this);
         if(tmpModule)
         {
           if(!xmlConfigData.isNull())
@@ -161,15 +156,17 @@ namespace ZeraModules
 
   void ModuleManager::stopModules()
   {
-    for(int i = moduleList.length(); --i>=0;)
+    // do not allow starting until all modules are shut down
+    moduleStartLock = true;
+    for(int i = moduleList.length()-1; i>=0; i--)
     {
       VirtualModule *toStop = moduleList.at(i)->reference;
       QString tmpModuleName = moduleList.at(i)->uniqueName;
       toStop->stopModule();
       if(factoryTable.contains(tmpModuleName))
       {
+        qDebug() << "Destroying module:" << tmpModuleName;
         factoryTable.value(tmpModuleName)->destroyModule(toStop);
-        qDebug() << "Deleted module:" << tmpModuleName;
       }
     }
   }
@@ -187,12 +184,16 @@ namespace ZeraModules
     {
       ModuleData *tmpData = ModuleData::findByReference(moduleList, toDelete);
       moduleList.removeAll(tmpData);
+      qDebug() << "Deleted module:" << tmpData->uniqueName;
       delete toDelete;
       delete tmpData;
     }
     if(moduleList.isEmpty())
     {
       onDeletionFinished();
+
+      //start modules that were unable to start while shutting down
+      onModuleStartNext();
     }
   }
 

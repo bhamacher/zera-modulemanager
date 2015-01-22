@@ -31,7 +31,6 @@ namespace ZeraModules
   public:
     explicit ModuleManager(QObject *qobjParent = 0);
     ~ModuleManager();
-    void configureModules();
     bool isModuleLicensed(VirtualModule *module);
     bool loadModules();
     //???void reconfigureModule(VirtualModule *module, QByteArray xmlConfigData);

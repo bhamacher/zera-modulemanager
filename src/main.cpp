@@ -11,11 +11,6 @@
 #include <QDebug>
 #include <QFile>
 
-
-//debug
-#include <veinpeer.h>
-#include <veinentity.h>
-
 int main(int argc, char *argv[])
 {
   QCoreApplication a(argc, argv);
@@ -44,7 +39,7 @@ int main(int argc, char *argv[])
   QObject::connect(sessionLoader, &JsonSessionLoader::sigLoadModule, modMan, &ZeraModules::ModuleManager::startModule);
   QObject::connect(modMan, &ZeraModules::ModuleManager::sigSessionSwitched, sessionLoader, &JsonSessionLoader::loadSession);
 
-  sessionLoader->loadSession("://default-session.json");
+  sessionLoader->loadSession("://default-session.json"); /// @todo add code for "last-session"
 
   vTC->startService(12000);
   return a.exec();
