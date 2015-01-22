@@ -185,6 +185,8 @@ namespace ZeraModules
     {
       ModuleData *tmpData = ModuleData::findByReference(moduleList, toDelete);
       moduleList.removeAll(tmpData);
+      qDebug() << "Deleted module:" << tmpData->uniqueName;
+      delete toDelete;
       delete tmpData;
     }
     if(moduleList.isEmpty())
