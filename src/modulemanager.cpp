@@ -186,15 +186,9 @@ namespace ZeraModules
       ModuleData *tmpData = ModuleData::findByReference(moduleList, toDelete);
       moduleList.removeAll(tmpData);
       qDebug() << "Deleted module:" << tmpData->uniqueName;
-      delete toDelete;
+      connect(toDelete, &VirtualModule::destroyed, this, &ModuleManager::checkModuleList);
+      toDelete->deleteLater();
       delete tmpData;
-    }
-    if(moduleList.isEmpty())
-    {
-      onDeletionFinished();
-
-      //start modules that were unable to start while shutting down
-      onModuleStartNext();
     }
   }
 
@@ -213,6 +207,17 @@ namespace ZeraModules
   void ModuleManager::onModuleError(const QString &error)
   {
     qWarning() << "Module error:" << error;
+  }
+
+  void ModuleManager::checkModuleList()
+  {
+    if(moduleList.isEmpty())
+    {
+      onDeletionFinished();
+
+      //start modules that were unable to start while shutting down
+      onModuleStartNext();
+    }
   }
 
   void ModuleManager::onDeletionFinished()

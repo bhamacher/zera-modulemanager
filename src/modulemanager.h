@@ -51,6 +51,7 @@ namespace ZeraModules
     void onModuleDelete();
     void onModuleStartNext();
     void onModuleError(const QString &error);
+    void checkModuleList();
 
   private:
     void onDeletionFinished();
