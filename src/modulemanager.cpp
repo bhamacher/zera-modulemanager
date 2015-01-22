@@ -145,6 +145,7 @@ namespace ZeraModules
           connect(tmpModule, &VirtualModule::moduleError, this, &ModuleManager::onModuleError);
           moduleStartLock = true;
           tmpModule->startModule();
+          moduleList.append(new ModuleData(tmpModule, uniqueModuleName, QByteArray()));
         }
       }
     }
