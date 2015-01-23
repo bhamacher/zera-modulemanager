@@ -22,11 +22,11 @@ namespace ZeraModules
     static ModuleData *findByReference(QList<ModuleData*> list, VirtualModule *ref)
     {
       ModuleData *retVal = 0;
-      for(int i = 0; i < list.length(); i++)
+      foreach(ModuleData *tmpData, list)
       {
-        if(list.at(i)->reference == ref)
+        if(tmpData->reference == ref)
         {
-          retVal = list.at(i);
+          retVal = tmpData;
           break;
         }
       }
@@ -184,11 +184,18 @@ namespace ZeraModules
     if(toDelete)
     {
       ModuleData *tmpData = ModuleData::findByReference(moduleList, toDelete);
-      moduleList.removeAll(tmpData);
-      qDebug() << "Deleted module:" << tmpData->uniqueName;
-      connect(toDelete, &VirtualModule::destroyed, this, &ModuleManager::checkModuleList);
-      toDelete->deleteLater();
-      delete tmpData;
+      if(tmpData)
+      {
+        moduleList.removeAll(tmpData);
+        qDebug() << "Deleted module:" << tmpData->uniqueName;
+        connect(toDelete, &VirtualModule::destroyed, this, &ModuleManager::checkModuleList);
+        toDelete->deleteLater();
+        delete tmpData;
+      }
+      else
+      {
+        qWarning() << "Could not find data for VirtualModule" << toDelete;
+      }
     }
   }
 
