@@ -2,35 +2,35 @@
   "modules" : [
     {
       "name" : "rangemodule",
-      "configPath" : "/work/git-local/zera-classes/zera-modules/rangemodule/src/rangemodule.xml"
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/rangemodule/src/rangemodule.xml"
     },
     {
       "name" : "rmsmodule",
-      "configPath" : "/work/git-local/zera-classes/zera-modules/rmsmodule/src/rmsmodule.xml"
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/rmsmodule/src/rmsmodule.xml"
     },
     {
       "name" : "dftmodule",
-      "configPath" : "/work/git-local/zera-classes/zera-modules/dftmodule/src/dftmodule.xml"
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/dftmodule/src/dftmodule.xml"
     },
     {
       "name" : "power1module",
-      "configPath" : "/work/git-local/zera-classes/zera-modules/power1module/src/power1module.xml"
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/power1module/src/power1module.xml"
     },
     {
       "name" : "power1module",
-      "configPath" : "/work/git-local/zera-classes/zera-modules/power1module/src/power1module2.xml"
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/power1module/src/power1module2.xml"
     },
     {
       "name" : "power1module",
-      "configPath" : "/work/git-local/zera-classes/zera-modules/power1module/src/power1module3.xml"
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/power1module/src/power1module3.xml"
     },
     {
       "name" : "thdnmodule",
-      "configPath" : "/work/git-local/zera-classes/zera-modules/thdnmodule/src/thdnmodule.xml"
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/thdnmodule/src/thdnmodule.xml"
     },
     {
       "name" : "oscimodule",
-      "configPath" : "/work/git-local/zera-classes/zera-modules/oscimodule/src/oscimodule.xml"
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/oscimodule/src/oscimodule.xml"
     }
   ]
 }

@@ -1,0 +1,16 @@
+{
+  "modules" : [
+    {
+      "name" : "referencemodule",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/referencemodule/src/referencemodule.xml"
+    },
+    {
+      "name" : "rangemodule",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/rangemodule/src/rangemoduleREF.xml"
+    },
+    {
+      "name" : "rmsmodule",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/rmsmodule/src/rmsmoduleREF.xml"
+    }
+  ]
+}

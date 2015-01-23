@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>default-session.json</file>
+        <file>ref-session.json</file>
     </qresource>
 </RCC>

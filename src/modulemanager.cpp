@@ -77,9 +77,10 @@ namespace ZeraModules
     /**
      * @todo remove hardcoded path
      */
-    moduleDir = "/work/qt_projects/Zera/zera-classes/modules";
+
+    //moduleDir = "/work/qt_projects/Zera/build-zera-classes-Desktop_Qt_5_2_1_GCC_64bit-Debug/modules/";
     //moduleDir = "/usr/lib/zera-modules";
-    //moduleDir = "/home/peter/modules";
+    moduleDir = "/home/peter/C++/zera-classes/modules";
 
     foreach (QString fileName, moduleDir.entryList(QDir::Files))
     {
@@ -140,7 +141,7 @@ namespace ZeraModules
           {
             tmpModule->setConfiguration(xmlConfigData);
           }
-          connect(tmpModule, &VirtualModule::moduleDeactivated, this, &ModuleManager::onModuleDelete);
+          connect(tmpModule, SIGNAL(moduleDeactivated()), this, SLOT(onModuleDelete()));
           connect(tmpModule, &VirtualModule::moduleActivated, this, &ModuleManager::onModuleStartNext);
           connect(tmpModule, &VirtualModule::moduleError, this, &ModuleManager::onModuleError);
           moduleStartLock = true;
@@ -196,6 +197,13 @@ namespace ZeraModules
       {
         qWarning() << "Could not find data for VirtualModule" << toDelete;
       }
+    }
+    if(moduleList.isEmpty())
+    {
+      onDeletionFinished();
+
+      //start modules that were unable to start while shutting down
+      onModuleStartNext();
     }
   }
 
