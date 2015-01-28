@@ -175,8 +175,11 @@ namespace ZeraModules
 
   void ModuleManager::onChangeSession(QVariant newSessionPath)
   {
-    stopModules();
-    emit sigSessionSwitched(newSessionPath.toString());
+    if(moduleStartLock==false) // do not mess up with state machines
+    {
+      stopModules();
+      emit sigSessionSwitched(newSessionPath.toString());
+    }
   }
 
   void ModuleManager::onModuleDelete()
