@@ -64,6 +64,7 @@ namespace ZeraModules
     VeinHub *localHub;
     VeinPeer *modManPeer;
     VeinEntity *sessionSwitchEntity;
+    VeinEntity *sessionReadyEntity;
 
     bool moduleStartLock;
   };

@@ -110,6 +110,15 @@ namespace ZeraModules
       localHub = vHub;
       modManPeer = localHub->peerAdd("ModuleManager"); ///@todo remove hardcoded
       sessionSwitchEntity = modManPeer->dataAdd("SessionFile"); ///@todo remove hardcoded
+      sessionReadyEntity = modManPeer->dataAdd("SessionReady"); ///@todo remove hardcoded
+
+      sessionSwitchEntity->setValue("://default-session.json");
+      sessionSwitchEntity->modifiersAdd(VeinEntity::MOD_NOECHO);
+
+      sessionReadyEntity->setValue(false, modManPeer);
+      sessionReadyEntity->modifiersAdd(VeinEntity::MOD_NOECHO);
+      sessionReadyEntity->modifiersAdd(VeinEntity::MOD_READONLY);
+
       //sessionSwitchEntity->setValue("default-session.json");
       connect(sessionSwitchEntity, SIGNAL(sigValueChanged(QVariant)), this, SLOT(onChangeSession(QVariant)));
     }
@@ -160,6 +169,7 @@ namespace ZeraModules
   {
     // do not allow starting until all modules are shut down
     moduleStartLock = true;
+    sessionReadyEntity->setValue(false, modManPeer);
     for(int i = moduleList.length()-1; i>=0; i--)
     {
       VirtualModule *toStop = moduleList.at(i)->reference;
@@ -219,6 +229,10 @@ namespace ZeraModules
       qDebug() << "###Defered module start for"<< tmpData->uniqueName;
       startModule(tmpData->uniqueName, tmpData->configData);
       delete tmpData;
+    }
+    else
+    {
+      sessionReadyEntity->setValue(true, modManPeer);
     }
   }
 
