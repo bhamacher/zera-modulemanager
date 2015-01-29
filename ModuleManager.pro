@@ -4,12 +4,16 @@
 #
 #-------------------------------------------------
 
-# see user defined paths
-exists(modulemanager.user.pri) {
-  include(modulemanager.user.pri)
+contains(DEFINES, OE_BUILD) {
+  message(Openembedded build)
 }
-exists(../../include/project-paths.pri) {
-  include(../../include/project-paths.pri)
+else {
+  exists(modulemanager.user.pri) {
+    include(modulemanager.user.pri)
+  }
+  exists(../../include/project-paths.pri) {
+    include(../../include/project-paths.pri)
+  }
 }
 
 QT       += core network
