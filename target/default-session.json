@@ -1,0 +1,44 @@
+{
+  "modules" : [
+    {
+      "name" : "modemodule",
+      "configPath" : "/etc/zera/modules/modemoduleAC.xml"
+    },
+    {
+      "name" : "rangemodule",
+      "configPath" : "/etc/zera/modules/rangemodule.xml"
+    },
+    {
+      "name" : "rmsmodule",
+      "configPath" : "/etc/zera/modules/rmsmodule.xml"
+    },
+    {
+      "name" : "dftmodule",
+      "configPath" : "/etc/zera/modules/dftmodule.xml"
+    },
+    {
+      "name" : "fftmodule",
+      "configPath" : "/etc/zera/modules/fftmodule.xml"
+    },
+    {
+      "name" : "power1module",
+      "configPath" : "/etc/zera/modules/power1module.xml"
+    },
+    {
+      "name" : "power1module",
+      "configPath" : "/etc/zera/modules/power1module2.xml"
+    },
+    {
+      "name" : "power1module",
+      "configPath" : "/etc/zera/modules/power1module3.xml"
+    },
+    {
+      "name" : "thdnmodule",
+      "configPath" : "/etc/zera/modules/thdnmodule.xml"
+    },
+    {
+      "name" : "oscimodule",
+      "configPath" : "/etc/zera/modules/oscimodule.xml"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "modules" : [
+    {
+      "name" : "modemodule",
+      "configPath" : "/etc/zera/modules/modemoduleREF.xml"
+    },
+    {
+      "name" : "referencemodule",
+      "configPath" : "/etc/zera/modules/referencemodule.xml"
+    },
+    {
+      "name" : "rangemodule",
+      "configPath" : "/etc/zera/modules/rangemoduleREF.xml"
+    },
+    {
+      "name" : "rmsmodule",
+      "configPath" : "/etc/zera/modules/rmsmoduleREF.xml"
+    }
+  ]
+}
