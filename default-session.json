@@ -1,6 +1,10 @@
 {
   "modules" : [
     {
+      "name" : "modemodule",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/modemodule/src/modemoduleAC.xml"
+    },
+    {
       "name" : "rangemodule",
       "configPath" : "/home/peter/C++/zera-classes/zera-modules/rangemodule/src/rangemodule.xml"
     },
@@ -11,6 +15,10 @@
     {
       "name" : "dftmodule",
       "configPath" : "/home/peter/C++/zera-classes/zera-modules/dftmodule/src/dftmodule.xml"
+    },
+    {
+      "name" : "fftmodule",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/fftmodule/src/fftmodule.xml"
     },
     {
       "name" : "power1module",
