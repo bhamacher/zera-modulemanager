@@ -79,8 +79,8 @@ namespace ZeraModules
      */
 
     //moduleDir = "/work/qt_projects/Zera/build-zera-classes-Desktop_Qt_5_2_1_GCC_64bit-Debug/modules/";
-    //moduleDir = "/usr/lib/zera-modules";
-    moduleDir = "/home/peter/C++/zera-classes/modules";
+    moduleDir = "/usr/lib/zera-modules";
+    //moduleDir = "/home/peter/C++/zera-classes/modules";
 
     foreach (QString fileName, moduleDir.entryList(QDir::Files))
     {
