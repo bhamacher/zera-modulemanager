@@ -2,5 +2,7 @@
     <qresource prefix="/">
         <file>default-session.json</file>
         <file>ref-session.json</file>
+        <file>target/ref-session.json</file>
+        <file>target/default-session.json</file>
     </qresource>
 </RCC>
