@@ -6,10 +6,8 @@
 
 contains(DEFINES, OE_BUILD) {
   message(Openembedded build)
-DEFINES += SESSION_PATH=\\\"://target/default-session.json\\\"
 }
 else {
-DEFINES += SESSION_PATH=\\\"://default-session.json\\\"
   exists(modulemanager.user.pri) {
     include(modulemanager.user.pri)
   }
