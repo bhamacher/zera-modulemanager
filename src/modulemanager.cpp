@@ -173,7 +173,7 @@ namespace ZeraModules
     {
       VirtualModule *toStop = moduleList.at(i)->reference;
       QString tmpModuleName = moduleList.at(i)->uniqueName;
-      toStop->stopModule();
+      //toStop->stopModule();
       if(factoryTable.contains(tmpModuleName))
       {
         qDebug() << "Destroying module:" << tmpModuleName;
