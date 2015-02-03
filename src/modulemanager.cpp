@@ -233,6 +233,7 @@ namespace ZeraModules
     else
     {
       sessionReadyEntity->setValue(true, modManPeer);
+      moduleStartLock = true;
     }
   }
 
