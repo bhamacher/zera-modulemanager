@@ -117,6 +117,7 @@ namespace ZeraModules
 
       sessionReadyEntity->setValue(false, modManPeer);
       sessionReadyEntity->modifiersAdd(VeinEntity::MOD_READONLY);
+      sessionReadyEntity->modifiersAdd(VeinEntity::MOD_NOECHO);
 
       //sessionSwitchEntity->setValue("default-session.json");
       connect(sessionSwitchEntity, SIGNAL(sigValueChanged(QVariant)), this, SLOT(onChangeSession(QVariant)));
