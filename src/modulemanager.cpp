@@ -74,13 +74,7 @@ namespace ZeraModules
       qDebug()<<staticModule;//doNothing();
     }
 
-    /**
-     * @todo remove hardcoded path
-     */
-
-    //moduleDir = "/work/qt_projects/Zera/build-zera-classes-Desktop_Qt_5_2_1_GCC_64bit-Debug/modules/";
-    moduleDir = "/usr/lib/zera-modules";
-    //moduleDir = "/home/peter/C++/zera-classes/modules";
+    moduleDir = MODMAN_MODULE_PATH;
 
     foreach (QString fileName, moduleDir.entryList(QDir::Files))
     {
@@ -101,6 +95,11 @@ namespace ZeraModules
     return retVal;
   }
 
+  void ModuleManager::loadDefaultSession()
+  {
+    sessionSwitchEntity->setValue("default-session.json");///< @todo add code for lastsession
+  }
+
 
 
   void ModuleManager::setHub(VeinHub *vHub)
@@ -119,7 +118,6 @@ namespace ZeraModules
       sessionReadyEntity->modifiersAdd(VeinEntity::MOD_NOECHO);
 
       connect(sessionSwitchEntity, SIGNAL(sigValueChanged(QVariant)), this, SLOT(onChangeSession(QVariant)));
-      sessionSwitchEntity->setValue("default-session.json");///< @todo add code for lastsession
     }
   }
 
@@ -167,17 +165,20 @@ namespace ZeraModules
   void ModuleManager::stopModules()
   {
     // do not allow starting until all modules are shut down
-    moduleStartLock = true;
-    sessionReadyEntity->setValue(false, modManPeer);
-    for(int i = moduleList.length()-1; i>=0; i--)
+    if(moduleList.isEmpty() == false)
     {
-      VirtualModule *toStop = moduleList.at(i)->reference;
-      QString tmpModuleName = moduleList.at(i)->uniqueName;
-      //toStop->stopModule();
-      if(factoryTable.contains(tmpModuleName))
+      moduleStartLock = true;
+      sessionReadyEntity->setValue(false, modManPeer);
+      for(int i = moduleList.length()-1; i>=0; i--)
       {
-        qDebug() << "Destroying module:" << tmpModuleName;
-        factoryTable.value(tmpModuleName)->destroyModule(toStop);
+        VirtualModule *toStop = moduleList.at(i)->reference;
+        QString tmpModuleName = moduleList.at(i)->uniqueName;
+        //toStop->stopModule();
+        if(factoryTable.contains(tmpModuleName))
+        {
+          qDebug() << "Destroying module:" << tmpModuleName;
+          factoryTable.value(tmpModuleName)->destroyModule(toStop);
+        }
       }
     }
   }

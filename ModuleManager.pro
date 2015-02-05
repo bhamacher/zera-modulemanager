@@ -7,9 +7,12 @@
 contains(DEFINES, OE_BUILD) {
   message(Openembedded build)
 DEFINES += SESSION_PATH=\\\"target/\\\"
+DEFINES += MODMAN_MODULE_PATH=\\\"/usr/lib/zera-modules\\\"
 }
 else {
 DEFINES += SESSION_PATH=\\\"\\\"
+# DEFINE your own MODMAN_MODULE_PATH in your .pri file
+
   exists(modulemanager.user.pri) {
     include(modulemanager.user.pri)
   }

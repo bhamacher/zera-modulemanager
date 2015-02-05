@@ -33,6 +33,7 @@ namespace ZeraModules
     ~ModuleManager();
     bool isModuleLicensed(VirtualModule *module);
     bool loadModules();
+    void loadDefaultSession();
     //???void reconfigureModule(VirtualModule *module, QByteArray xmlConfigData);
     //???void restartModule(VirtualModule *module, QByteArray xmlConfigData=QByteArray())
     //???void stopModule(VirtualModule *module);

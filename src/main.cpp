@@ -21,6 +21,10 @@ int main(int argc, char *argv[])
 
 
   VeinHub *localHub=vTC->getLocalHub();
+
+  QObject::connect(sessionLoader, &JsonSessionLoader::sigLoadModule, modMan, &ZeraModules::ModuleManager::startModule);
+  QObject::connect(modMan, &ZeraModules::ModuleManager::sigSessionSwitched, sessionLoader, &JsonSessionLoader::loadSession);
+
   bool modulesFound;
 
   qRegisterMetaTypeStreamOperators<QList<qreal> >("QList<qreal>");
@@ -34,11 +38,12 @@ int main(int argc, char *argv[])
   if(!modulesFound)
   {
     qDebug() << "[Zera-Module-Manager] No modules found";
+    a.quit();
   }
-
-  QObject::connect(sessionLoader, &JsonSessionLoader::sigLoadModule, modMan, &ZeraModules::ModuleManager::startModule);
-  QObject::connect(modMan, &ZeraModules::ModuleManager::sigSessionSwitched, sessionLoader, &JsonSessionLoader::loadSession);
-
-  vTC->startService(12000);
+  else
+  {
+    modMan->loadDefaultSession();
+    vTC->startService(12000);
+  }
   return a.exec();
 }
