@@ -39,8 +39,6 @@ int main(int argc, char *argv[])
   QObject::connect(sessionLoader, &JsonSessionLoader::sigLoadModule, modMan, &ZeraModules::ModuleManager::startModule);
   QObject::connect(modMan, &ZeraModules::ModuleManager::sigSessionSwitched, sessionLoader, &JsonSessionLoader::loadSession);
 
-  sessionLoader->loadSession(SESSION_PATH); /// @todo add code for "last-session"
-
   vTC->startService(12000);
   return a.exec();
 }

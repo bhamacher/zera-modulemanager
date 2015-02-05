@@ -112,15 +112,14 @@ namespace ZeraModules
       sessionSwitchEntity = modManPeer->dataAdd("SessionFile"); ///@todo remove hardcoded
       sessionReadyEntity = modManPeer->dataAdd("SessionReady"); ///@todo remove hardcoded
 
-      sessionSwitchEntity->setValue("://default-session.json");
       sessionSwitchEntity->modifiersAdd(VeinEntity::MOD_NOECHO);
 
       sessionReadyEntity->setValue(false, modManPeer);
       sessionReadyEntity->modifiersAdd(VeinEntity::MOD_READONLY);
       sessionReadyEntity->modifiersAdd(VeinEntity::MOD_NOECHO);
 
-      //sessionSwitchEntity->setValue("default-session.json");
       connect(sessionSwitchEntity, SIGNAL(sigValueChanged(QVariant)), this, SLOT(onChangeSession(QVariant)));
+      sessionSwitchEntity->setValue("default-session.json");///< @todo add code for lastsession
     }
   }
 
