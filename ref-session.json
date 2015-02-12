@@ -13,8 +13,8 @@
       "configPath" : "/home/peter/C++/zera-classes/zera-modules/rangemodule/src/rangemoduleREF.xml"
     },
     {
-      "name" : "rmsmodule",
-      "configPath" : "/home/peter/C++/zera-classes/zera-modules/rmsmodule/src/rmsmoduleREF.xml"
+      "name" : "dftmodule",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/dftmodule/src/dftmoduleREF.xml"
     }
   ]
 }
