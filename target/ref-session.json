@@ -13,8 +13,8 @@
       "configPath" : "/etc/zera/modules/rangemoduleREF.xml"
     },
     {
-      "name" : "rmsmodule",
-      "configPath" : "/etc/zera/modules/rmsmoduleREF.xml"
+      "name" : "dftmodule",
+      "configPath" : "/etc/zera/modules/dftmoduleREF.xml"
     }
   ]
 }
