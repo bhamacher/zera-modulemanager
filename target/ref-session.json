@@ -15,6 +15,10 @@
     {
       "name" : "dftmodule",
       "configPath" : "/etc/zera/modules/dftmoduleREF.xml"
+    },
+    {
+      "name" : "scpimodule",
+      "configPath" : "/etc/zera/modules/scpimodule.xml"
     }
   ]
 }

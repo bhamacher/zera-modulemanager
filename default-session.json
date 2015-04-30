@@ -9,6 +9,10 @@
       "configPath" : "/home/peter/C++/zera-classes/zera-modules/rangemodule/src/rangemodule.xml"
     },
     {
+      "name" : "samplemodule",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/samplemodule/src/samplemodule.xml"
+    },
+    {
       "name" : "rmsmodule",
       "configPath" : "/home/peter/C++/zera-classes/zera-modules/rmsmodule/src/rmsmodule.xml"
     },
@@ -39,6 +43,10 @@
     {
       "name" : "oscimodule",
       "configPath" : "/home/peter/C++/zera-classes/zera-modules/oscimodule/src/oscimodule.xml"
+    },
+    {
+      "name" : "scpimodule",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/scpimodule/src/scpimodule.xml"
     }
   ]
 }

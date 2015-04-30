@@ -9,6 +9,10 @@
       "configPath" : "/etc/zera/modules/rangemodule.xml"
     },
     {
+      "name" : "samplemodule",
+      "configPath" : "/etc/zera/modules/samplemodule.xml"
+    },
+    {
       "name" : "rmsmodule",
       "configPath" : "/etc/zera/modules/rmsmodule.xml"
     },
@@ -39,6 +43,10 @@
     {
       "name" : "oscimodule",
       "configPath" : "/etc/zera/modules/oscimodule.xml"
+    },
+    {
+      "name" : "scpimodule",
+      "configPath" : "/etc/zera/modules/scpimodule.xml"
     }
   ]
 }

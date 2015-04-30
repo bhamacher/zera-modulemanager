@@ -15,6 +15,10 @@
     {
       "name" : "dftmodule",
       "configPath" : "/home/peter/C++/zera-classes/zera-modules/dftmodule/src/dftmoduleREF.xml"
+    },
+    {
+      "name" : "scpimodule",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/scpimodule/src/scpimodule.xml"
     }
   ]
 }
