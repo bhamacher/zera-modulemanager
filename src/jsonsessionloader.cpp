@@ -49,18 +49,20 @@ void JsonSessionLoader::loadSession(QString filePath)
             {
               QJsonObject moduleObject = tmpObject.toObject();
               QString tmpNameString, tmpConfigString;
+              int moduleId;
               QFile tmpXmlConfigFile;
               QByteArray xmlConfigData;
 
               tmpNameString = moduleObject.value("name").toString();
               tmpConfigString = moduleObject.value("configPath").toString();
+              moduleId = moduleObject.value("id").toInt();
 
               tmpXmlConfigFile.setFileName(tmpConfigString);
               if(tmpXmlConfigFile.exists() && tmpXmlConfigFile.open(QIODevice::Unbuffered | QIODevice::ReadOnly))
               {
                 xmlConfigData = tmpXmlConfigFile.readAll();
                 tmpXmlConfigFile.close();
-                emit sigLoadModule(tmpNameString, xmlConfigData);
+                emit sigLoadModule(tmpNameString, xmlConfigData, moduleId);
               }
               else
               {

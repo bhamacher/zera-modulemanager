@@ -44,7 +44,7 @@ namespace ZeraModules
     void sigSessionSwitched(QString newSessionPath);
 
   public slots:
-    void startModule(QString uniqueModuleName, QByteArray xmlConfigData);
+    void startModule(QString uniqueModuleName, QByteArray xmlConfigData, int moduleId);
     void stopModules();
 
   private slots:

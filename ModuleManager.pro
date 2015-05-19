@@ -4,6 +4,19 @@
 #
 #-------------------------------------------------
 
+TEMPLATE = app
+
+#dependencies
+VEIN_DEP_EVENT = 1
+VEIN_DEP_COMP = 1
+VEIN_DEP_SCRIPT = 1
+VEIN_DEP_HASH = 1
+VEIN_DEP_PROTOBUF = 1
+VEIN_DEP_TCP = 1
+VEIN_DEP_NET = 1
+VEIN_DEP_HELPER = 1
+VEIN_DEP_CCAPI = 1
+
 contains(DEFINES, OE_BUILD) {
   message(Openembedded build)
 DEFINES += SESSION_PATH=\\\"://target/\\\"
@@ -23,12 +36,16 @@ DEFINES += SESSION_PATH=\\\"$$PWD/\\\"
   exists(modulemanager.user.pri) {
     include(modulemanager.user.pri)
   }
+  VEIN_BASEDIR=/work/qt_projects/vein-framework
+  exists( /work/qt_projects/vein-framework/project-paths.pri ) {
+    include(/work/qt_projects/vein-framework/project-paths.pri)
+  }
   exists(../../include/project-paths.pri) {
     include(../../include/project-paths.pri)
   }
 }
 
-QT       += core network
+QT       += core network qml
 
 QT       -= gui
 
@@ -45,23 +62,15 @@ SOURCES += src/main.cpp \
 
 QMAKE_CXXFLAGS += -Wall -Wshadow
 
-
-INCLUDEPATH += $$VEIN_INCLUDEDIR
-LIBS += $$VEIN_LIBDIR
 INCLUDEPATH += $$PROTONET_INCLUDEDIR
-LIBS += $$PROTONET_LIBDIR
-INCLUDEPATH += $$VEIN_PROTOBUF_INLCUDEDIR
-LIBS += $$VEIN_PROTOBUF_LIBDIR
-INCLUDEPATH += $$VEIN_TCP_INCLUDEDIR
-LIBS += $$VEIN_TCP_LIBDIR
 INCLUDEPATH += $$VIRTUALMODULE_INCLUDEDIR
-LIBS += $$VIRTUALMODULE_LIBDIR
 INCLUDEPATH += $$PROXY_INCLUDEDIR
-LIBS+= $$PROXY_LIBDIR
 
+LIBS += $$PROTONET_LIBDIR
+LIBS += $$VIRTUALMODULE_LIBDIR
+LIBS += $$PROXY_LIBDIR
 LIBS += $$RESOURCE_PROTOBUF_LIBDIR
-
-LIBS += -lzera-proxy -lzera-resourcemanager-protobuf -lvein-qt -lprotobuf -lproto-net-qt -lvein-qt-protobuf -lvein-tcp-overlay -lMeasurementModuleInterface
+LIBS += -lzera-proxy -lproto-net-qt -lzera-resourcemanager-protobuf -lMeasurementModuleInterface
 
 HEADERS += src/modulemanager.h \
     src/jsonsessionloader.h

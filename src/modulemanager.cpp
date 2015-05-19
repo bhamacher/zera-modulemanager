@@ -17,7 +17,7 @@ namespace ZeraModules
 {
   class ModuleData {
   public:
-    ModuleData(VirtualModule *pRef, QString pName, QByteArray pConfData) : reference(pRef), uniqueName(pName), configData(pConfData) {}
+    ModuleData(VirtualModule *pRef, QString pName, QByteArray pConfData, int pModuleId) : reference(pRef), uniqueName(pName), configData(pConfData), moduleId(pModuleId) {}
 
     static ModuleData *findByReference(QList<ModuleData*> list, VirtualModule *ref)
     {
@@ -36,6 +36,7 @@ namespace ZeraModules
     VirtualModule *reference;
     const QString uniqueName;
     QByteArray configData;
+    int moduleId;
   };
 
 
@@ -134,7 +135,7 @@ namespace ZeraModules
     return localHub;
   }
 
-  void ModuleManager::startModule(QString uniqueModuleName, QByteArray xmlConfigData)
+  void ModuleManager::startModule(QString uniqueModuleName, QByteArray xmlConfigData, int moduleId)
   {
     if(moduleStartLock == false)
     {
@@ -145,8 +146,12 @@ namespace ZeraModules
       tmpFactory=factoryTable.value(uniqueModuleName);
       if(tmpFactory)
       {
+        VeinEntity *tmpNameEntity=0;
         moduleCount = tmpFactory->listModules().size();
-        tmpPeer=localHub->peerAdd(QString("%1%2").arg(uniqueModuleName).arg(moduleCount));
+        tmpPeer=localHub->peerAdd(QString("%1%2").arg(uniqueModuleName).arg(moduleCount), moduleId);
+        tmpNameEntity = tmpPeer->dataAdd("EntityName");
+        tmpNameEntity->setValue(QString("%1%2").arg(uniqueModuleName).arg(moduleCount));
+
         qDebug()<<"Creating module instance:"<<tmpPeer->getName(); //<< "with config" << xmlConfigData;
         VirtualModule *tmpModule = tmpFactory->createModule(proxyInstance,tmpPeer,this);
         if(tmpModule)
@@ -160,13 +165,13 @@ namespace ZeraModules
           connect(tmpModule, &VirtualModule::moduleError, this, &ModuleManager::onModuleError);
           moduleStartLock = true;
           tmpModule->startModule();
-          moduleList.append(new ModuleData(tmpModule, uniqueModuleName, QByteArray()));
+          moduleList.append(new ModuleData(tmpModule, uniqueModuleName, QByteArray(), moduleId));
         }
       }
     }
     else
     {
-      deferedStartList.enqueue(new ModuleData(0, uniqueModuleName, xmlConfigData));
+      deferedStartList.enqueue(new ModuleData(0, uniqueModuleName, xmlConfigData, moduleId));
     }
   }
 
@@ -236,7 +241,7 @@ namespace ZeraModules
     {
       ModuleData *tmpData = deferedStartList.dequeue();
       qDebug() << "###Defered module start for"<< tmpData->uniqueName;
-      startModule(tmpData->uniqueName, tmpData->configData);
+      startModule(tmpData->uniqueName, tmpData->configData, tmpData->moduleId);
       delete tmpData;
     }
     else

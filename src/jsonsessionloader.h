@@ -12,7 +12,7 @@ public:
   const QString &getSessionFilePath() const;
 
 signals:
-  void sigLoadModule(QString uniqueModuleName, QByteArray xmlData);
+  void sigLoadModule(QString uniqueModuleName, QByteArray xmlData, int moduleId);
 
 public slots:
   void loadSession(QString filePath);
