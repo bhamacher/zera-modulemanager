@@ -37,8 +37,8 @@ DEFINES += SESSION_PATH=\\\"$$PWD/\\\"
     include(modulemanager.user.pri)
   }
   VEIN_BASEDIR=/work/qt_projects/vein-framework
-  exists( /work/qt_projects/vein-framework/project-paths.pri ) {
-    include(/work/qt_projects/vein-framework/project-paths.pri)
+  exists($$VEIN_BASEDIR/project-paths.pri) {
+    include($$VEIN_BASEDIR/project-paths.pri)
   }
   exists(../../include/project-paths.pri) {
     include(../../include/project-paths.pri)

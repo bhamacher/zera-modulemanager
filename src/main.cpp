@@ -30,6 +30,7 @@ int main(int argc, char *argv[])
   QStringList loggingFilters = QStringList() << QString("%1.debug=false").arg(VEIN_API_HUB().categoryName()) <<
                                                 QString("%1.debug=false").arg(VEIN_EVENT().categoryName()) <<
                                                 QString("%1.debug=false").arg(VEIN_NET().categoryName()) <<
+                                                QString("%1.debug=true").arg(VEIN_NET_INTRO().categoryName()) << //< Introspection logging is still enabled
                                                 QString("%1.debug=false").arg(VEIN_NET_TCP().categoryName()) <<
                                                 QString("%1.debug=false").arg(VEIN_STORAGE_HASH().categoryName());
 
