@@ -185,7 +185,7 @@ namespace ZeraModules
 
   void ModuleManager::onChangeSession(QVariant newSessionPath)
   {
-    QString finalSessionPath = QString("://%1").arg(SESSION_PATH) + newSessionPath.toString();
+    QString finalSessionPath = QString("%1").arg(SESSION_PATH) + newSessionPath.toString();
     if(moduleStartLock==false && QFile::exists(finalSessionPath)) // do not mess up with state machines
     {
       stopModules();

@@ -24,6 +24,7 @@ void JsonSessionLoader::loadSession(QString filePath)
 
   if(sesFile.exists() && sesFile.open(QIODevice::Unbuffered | QIODevice::ReadOnly))
   {
+    qDebug() << "loading session:" << filePath;
     QByteArray sesFileContent;
     QJsonDocument jsonSession;
     QJsonParseError jsonError;
