@@ -13,7 +13,7 @@ MODMAN_CONFIG_FILES = target/default-session.json \
 target/ref-session.json
 
 config_files.files = $$MODMAN_CONFIG_FILES
-config_files.path = $$SESSION_PATH
+config_files.path = /etc/zera/modules/sessions
 INSTALLS += config_files
 }
 else {
