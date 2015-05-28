@@ -44,6 +44,10 @@ namespace ZeraModules
     proxyInstance(Zera::Proxy::cProxy::getInstance()),
     moduleStartLock(false)
   {
+    QStringList sessionExtension("*.json");
+    QDir directory(SESSION_PATH);
+    m_sessionsAvailable = directory.entryList(sessionExtension);
+    qDebug() << m_sessionsAvailable;
   }
 
   ModuleManager::~ModuleManager()
@@ -108,14 +112,18 @@ namespace ZeraModules
     {
       localHub = vHub;
       modManPeer = localHub->peerAdd("ModuleManager"); ///@todo remove hardcoded
-      sessionSwitchEntity = modManPeer->dataAdd("SessionFile"); ///@todo remove hardcoded
-      sessionReadyEntity = modManPeer->dataAdd("SessionReady"); ///@todo remove hardcoded
+      sessionSwitchEntity = modManPeer->dataAdd("SessionFile");
+      sessionReadyEntity = modManPeer->dataAdd("SessionReady");
+      sessionListEntity = modManPeer->dataAdd("SessionList");
 
       sessionSwitchEntity->modifiersAdd(VeinEntity::MOD_NOECHO);
 
       sessionReadyEntity->setValue(false, modManPeer);
       sessionReadyEntity->modifiersAdd(VeinEntity::MOD_READONLY);
       sessionReadyEntity->modifiersAdd(VeinEntity::MOD_NOECHO);
+
+      sessionListEntity->setValue(QVariant::fromValue<QList<QString> >(m_sessionsAvailable));
+      sessionListEntity->modifiersAdd(VeinEntity::MOD_CONST);
 
       connect(sessionSwitchEntity, SIGNAL(sigValueChanged(QVariant)), this, SLOT(onChangeSession(QVariant)));
     }

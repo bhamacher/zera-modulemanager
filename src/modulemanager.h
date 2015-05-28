@@ -66,6 +66,9 @@ namespace ZeraModules
     VeinPeer *modManPeer;
     VeinEntity *sessionSwitchEntity;
     VeinEntity *sessionReadyEntity;
+    VeinEntity *sessionListEntity;
+
+    QList<QString> m_sessionsAvailable;
 
     bool moduleStartLock;
   };

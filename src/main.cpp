@@ -28,6 +28,7 @@ int main(int argc, char *argv[])
   bool modulesFound;
 
   qRegisterMetaTypeStreamOperators<QList<qreal> >("QList<qreal>");
+  qRegisterMetaTypeStreamOperators<QList<QString> >("QList<QString>");
 
   localHub->setUuid(QUuid::createUuid());
   modMan->setHub(localHub);
