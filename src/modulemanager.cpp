@@ -101,7 +101,7 @@ namespace ZeraModules
 
   void ModuleManager::loadDefaultSession()
   {
-    sessionSwitchEntity->setValue("default-session.json");///< @todo add code for lastsession
+    sessionSwitchEntity->setValue("0_default-session.json"); ///< @todo remove hardcoded and add code for lastsession
   }
 
 
@@ -111,7 +111,7 @@ namespace ZeraModules
     if(vHub)
     {
       localHub = vHub;
-      modManPeer = localHub->peerAdd("ModuleManager"); ///@todo remove hardcoded
+      modManPeer = localHub->peerAdd("ModuleManager"); ///< @todo remove hardcoded
       sessionSwitchEntity = modManPeer->dataAdd("SessionFile");
       sessionReadyEntity = modManPeer->dataAdd("SessionReady");
       sessionListEntity = modManPeer->dataAdd("SessionList");
