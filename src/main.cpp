@@ -29,10 +29,10 @@ int main(int argc, char *argv[])
 
   QStringList loggingFilters = QStringList() << QString("%1.debug=false").arg(VEIN_API_HUB().categoryName()) <<
                                                 QString("%1.debug=false").arg(VEIN_EVENT().categoryName()) <<
-                                                QString("%1.debug=false").arg(VEIN_NET().categoryName()) <<
-                                                QString("%1.debug=true").arg(VEIN_NET_INTRO().categoryName()) << //< Introspection logging is still enabled
-                                                QString("%1.debug=false").arg(VEIN_NET_TCP().categoryName()) <<
-                                                QString("%1.debug=false").arg(VEIN_STORAGE_HASH().categoryName());
+                                                QString("%1.debug=false").arg(VEIN_NET_VERBOSE().categoryName()) <<
+                                                QString("%1.debug=false").arg(VEIN_NET_INTRO_VERBOSE().categoryName()) << //< Introspection logging is still enabled
+                                                QString("%1.debug=false").arg(VEIN_NET_TCP_VERBOSE().categoryName()) <<
+                                                QString("%1.debug=false").arg(VEIN_STORAGE_HASH_VERBOSE().categoryName());
 
 
   QLoggingCategory::setFilterRules(loggingFilters.join("\n"));
@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
   VeinHub *localHub=new VeinHub(&a);
   localHub->setStorage(storSystem);
 
-  netSystem->setOperationMode(VeinNet::NetworkSystem::VNOM_PASS_THROUGH);
+  netSystem->setOperationMode(VeinNet::NetworkSystem::VNOM_SUBCRIPTION);
 
   QList<VeinEvent::EventSystem*> subSystems;
 
