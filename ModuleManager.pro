@@ -6,7 +6,7 @@
 
 contains(DEFINES, OE_BUILD) {
   message(Openembedded build)
-DEFINES += SESSION_PATH=\\\"/etc/zera/modules/sessions/\\\"
+DEFINES += SESSION_PATH=\\\"://target/\\\"
 DEFINES += MODMAN_MODULE_PATH=\\\"/usr/lib/zera-modules\\\"
 
 MODMAN_CONFIG_FILES = target/default-session.json \

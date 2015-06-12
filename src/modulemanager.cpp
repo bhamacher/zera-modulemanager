@@ -47,7 +47,7 @@ namespace ZeraModules
     QStringList sessionExtension("*.json");
     QDir directory(SESSION_PATH);
     m_sessionsAvailable = directory.entryList(sessionExtension);
-    qDebug() << m_sessionsAvailable;
+    qDebug() << "sessions available:" << m_sessionsAvailable;
   }
 
   ModuleManager::~ModuleManager()
