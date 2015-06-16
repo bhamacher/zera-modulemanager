@@ -36,13 +36,15 @@ DEFINES += SESSION_PATH=\\\"$$PWD/\\\"
   exists(modulemanager.user.pri) {
     include(modulemanager.user.pri)
   }
-  VEIN_BASEDIR=/work/qt_projects/vein-framework
-  exists($$VEIN_BASEDIR/project-paths.pri) {
-    include($$VEIN_BASEDIR/project-paths.pri)
-  }
+
   exists(../../include/project-paths.pri) {
     include(../../include/project-paths.pri)
   }
+
+  exists($$VEIN_BASEDIR/project-paths.pri) {
+    include($$VEIN_BASEDIR/project-paths.pri)
+  }
+
 }
 
 QT       += core network qml
