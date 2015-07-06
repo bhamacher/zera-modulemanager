@@ -2,53 +2,58 @@
   "modules" : [
     {
       "name" : "modemodule",
-      "configPath" : "/work/qt_projects/Zera/zera-classes/zera-modules/modemodule/src/modemoduleAC.xml",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/modemodule/src/modemoduleAC.xml",
       "id": 1000
     },
     {
       "name" : "rangemodule",
-      "configPath" : "/work/qt_projects/Zera/zera-classes/zera-modules/rangemodule/src/rangemodule.xml",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/rangemodule/src/rangemodule.xml",
       "id": 1001
     },
     {
       "name" : "rmsmodule",
-      "configPath" : "/work/qt_projects/Zera/zera-classes/zera-modules/rmsmodule/src/rmsmodule.xml",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/rmsmodule/src/rmsmodule.xml",
       "id": 1002
     },
     {
       "name" : "dftmodule",
-      "configPath" : "/work/qt_projects/Zera/zera-classes/zera-modules/dftmodule/src/dftmodule.xml",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/dftmodule/src/dftmodule.xml",
       "id": 1003
     },
     {
       "name" : "fftmodule",
-      "configPath" : "/work/qt_projects/Zera/zera-classes/zera-modules/fftmodule/src/fftmodule.xml",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/fftmodule/src/fftmodule.xml",
       "id": 1004
     },
     {
       "name" : "power1module",
-      "configPath" : "/work/qt_projects/Zera/zera-classes/zera-modules/power1module/src/power1module.xml",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/power1module/src/power1module.xml",
       "id": 1005
     },
     {
       "name" : "power1module",
-      "configPath" : "/work/qt_projects/Zera/zera-classes/zera-modules/power1module/src/power1module2.xml",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/power1module/src/power1module2.xml",
       "id": 1006
     },
     {
       "name" : "power1module",
-      "configPath" : "/work/qt_projects/Zera/zera-classes/zera-modules/power1module/src/power1module3.xml",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/power1module/src/power1module3.xml",
       "id": 1007
     },
     {
       "name" : "thdnmodule",
-      "configPath" : "/work/qt_projects/Zera/zera-classes/zera-modules/thdnmodule/src/thdnmodule.xml",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/thdnmodule/src/thdnmodule.xml",
       "id": 1008
     },
     {
       "name" : "oscimodule",
-      "configPath" : "/work/qt_projects/Zera/zera-classes/zera-modules/oscimodule/src/oscimodule.xml",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/oscimodule/src/oscimodule.xml",
       "id": 1009
+    },
+    {
+      "name" : "scpimodule",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/scpimodule/src/scpimodule.xml",
+      "id": 1010
     }
   ]
 }

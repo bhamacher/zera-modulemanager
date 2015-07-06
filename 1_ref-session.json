@@ -2,19 +2,19 @@
   "modules" : [
     {
       "name" : "modemodule",
-      "configPath" : "/work/qt_projects/Zera/zera-classes/zera-modules/modemodule/src/modemoduleREF.xml"
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/modemodule/src/modemoduleREF.xml"
     },
     {
       "name" : "referencemodule",
-      "configPath" : "/work/qt_projects/Zera/zera-classes/zera-modules/referencemodule/src/referencemodule.xml"
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/referencemodule/src/referencemodule.xml"
     },
     {
       "name" : "rangemodule",
-      "configPath" : "/work/qt_projects/Zera/zera-classes/zera-modules/rangemodule/src/rangemoduleREF.xml"
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/rangemodule/src/rangemoduleREF.xml"
     },
     {
       "name" : "rmsmodule",
-      "configPath" : "/work/qt_projects/Zera/zera-classes/zera-modules/rmsmodule/src/rmsmoduleREF.xml"
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/rmsmodule/src/rmsmoduleREF.xml"
     }
   ]
 }
