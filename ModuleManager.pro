@@ -15,7 +15,6 @@ VEIN_DEP_PROTOBUF = 1
 VEIN_DEP_TCP = 1
 VEIN_DEP_NET = 1
 VEIN_DEP_HELPER = 1
-VEIN_DEP_CCAPI = 1
 
 contains(DEFINES, OE_BUILD) {
   message(Openembedded build)
@@ -41,8 +40,8 @@ DEFINES += SESSION_PATH=\\\"$$PWD/\\\"
     include(../../include/project-paths.pri)
   }
 
-  exists($$VEIN_BASEDIR/project-paths.pri) {
-    include($$VEIN_BASEDIR/project-paths.pri)
+  exists($$VEIN_BASEDIR/vein-framework.pri) {
+    include($$VEIN_BASEDIR/vein-framework.pri)
   }
 
 }

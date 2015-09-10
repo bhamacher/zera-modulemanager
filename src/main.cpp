@@ -6,8 +6,6 @@
 #include <QByteArray>
 #include <QUuid>
 
-#include <veinhub.h>
-
 #include <ve_eventhandler.h>
 #include <ve_validator.h>
 #include <ve_scriptengine.h>
@@ -22,13 +20,13 @@
 
 #include <QLoggingCategory>
 #include <QStringList>
+#include <QDataStream>
 
 int main(int argc, char *argv[])
 {
   QCoreApplication a(argc, argv);
 
-  QStringList loggingFilters = QStringList() << QString("%1.debug=false").arg(VEIN_API_HUB().categoryName()) <<
-                                                QString("%1.debug=false").arg(VEIN_EVENT().categoryName()) <<
+  QStringList loggingFilters = QStringList() << QString("%1.debug=false").arg(VEIN_EVENT().categoryName()) <<
                                                 QString("%1.debug=false").arg(VEIN_NET_VERBOSE().categoryName()) <<
                                                 QString("%1.debug=false").arg(VEIN_NET_INTRO_VERBOSE().categoryName()) << //< Introspection logging is still enabled
                                                 QString("%1.debug=false").arg(VEIN_NET_TCP_VERBOSE().categoryName()) <<
@@ -50,10 +48,6 @@ int main(int argc, char *argv[])
   ZeraModules::ModuleManager *modMan = new ZeraModules::ModuleManager(&a);
   JsonSessionLoader *sessionLoader = new JsonSessionLoader(&a);
 
-
-  VeinHub *localHub=new VeinHub(&a);
-  localHub->setStorage(storSystem);
-
   netSystem->setOperationMode(VeinNet::NetworkSystem::VNOM_SUBCRIPTION);
 
   QList<VeinEvent::EventSystem*> subSystems;
@@ -61,7 +55,6 @@ int main(int argc, char *argv[])
   subSystems.append(validator);
 //  subSystems.append(scrSystem);
   subSystems.append(storSystem);
-  subSystems.append(localHub);
   subSystems.append(introspectionSystem);
   subSystems.append(netSystem);
   subSystems.append(tcpSystem);
@@ -70,18 +63,16 @@ int main(int argc, char *argv[])
   evHandler->setSubsystems(subSystems);
 
   introspectionSystem->setStorage(storSystem);
+  modMan->setStorage(storSystem);
+  modMan->setEventHandler(evHandler);
 
   QObject::connect(sessionLoader, &JsonSessionLoader::sigLoadModule, modMan, &ZeraModules::ModuleManager::startModule);
   QObject::connect(modMan, &ZeraModules::ModuleManager::sigSessionSwitched, sessionLoader, &JsonSessionLoader::loadSession);
 
   bool modulesFound;
 
-  qRegisterMetaTypeStreamOperators<QList<qreal> >("QList<qreal>");
+  qRegisterMetaTypeStreamOperators<QList<double> >("QList<double>");
   qRegisterMetaTypeStreamOperators<QList<QString> >("QList<QString>");
-
-  localHub->setUuid(QUuid::createUuid());
-  modMan->setHub(localHub);
-
 
   modulesFound = modMan->loadModules();
 

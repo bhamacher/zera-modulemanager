@@ -1,10 +1,8 @@
 #include "modulemanager.h"
 
-#include <veinhub.h>
-#include <veinpeer.h>
-#include <veinentity.h>
-
 #include <proxy.h>
+
+#include <ve_eventsystem.h>
 
 #include <QPluginLoader>
 #include <abstractmodulefactory.h>
@@ -71,7 +69,7 @@ namespace ZeraModules
 
   bool ModuleManager::loadModules()
   {
-    bool retVal = true;
+    bool retVal = false;
     QDir moduleDir;
     qDebug() << "Loading modules";
     foreach (QObject *staticModule, QPluginLoader::staticInstances())
@@ -89,11 +87,11 @@ namespace ZeraModules
       qDebug() << "Analyzing:" << loader.fileName() << "loaded:" << loader.isLoaded();
       if (module)
       {
+        retVal=true;
         factoryTable.insert(module->getFactoryName(), module);
       }
       else
       {
-        retVal=false;
         qDebug() << "Error string:\n" << loader.errorString();
       }
     }
@@ -102,58 +100,39 @@ namespace ZeraModules
 
   void ModuleManager::loadDefaultSession()
   {
-    sessionSwitchEntity->setValue("0_default-session.json"); ///< @todo remove hardcoded and add code for lastsession
+    onChangeSession(QVariant("0_default-session.json"));
+    //sessionSwitchEntity->setValue("0_default-session.json"); ///< @todo remove hardcoded and add code for lastsession
   }
 
-
-
-  void ModuleManager::setHub(VeinHub *vHub)
+  void ModuleManager::setStorage(VeinEvent::StorageSystem *t_storage)
   {
-    if(vHub)
-    {
-      localHub = vHub;
-      modManPeer = localHub->peerAdd("ModuleManager"); ///< @todo remove hardcoded
-      sessionSwitchEntity = modManPeer->dataAdd("SessionFile");
-      sessionReadyEntity = modManPeer->dataAdd("SessionReady");
-      sessionListEntity = modManPeer->dataAdd("SessionList");
-
-      sessionSwitchEntity->modifiersAdd(VeinEntity::MOD_NOECHO);
-
-      sessionReadyEntity->setValue(false, modManPeer);
-      sessionReadyEntity->modifiersAdd(VeinEntity::MOD_READONLY);
-      sessionReadyEntity->modifiersAdd(VeinEntity::MOD_NOECHO);
-
-      sessionListEntity->setValue(QVariant::fromValue<QList<QString> >(m_sessionsAvailable));
-      sessionListEntity->modifiersAdd(VeinEntity::MOD_CONST);
-
-      connect(sessionSwitchEntity, SIGNAL(sigValueChanged(QVariant)), this, SLOT(onChangeSession(QVariant)));
-    }
+    m_storage = t_storage;
   }
 
-  VeinHub *ModuleManager::getHub()
+  void ModuleManager::setEventHandler(VeinEvent::EventHandler *t_eventHandler)
   {
-    return localHub;
+    m_eventHandler = t_eventHandler;
   }
 
   void ModuleManager::startModule(QString uniqueModuleName, QByteArray xmlConfigData, int moduleId)
   {
     if(moduleStartLock == false)
     {
-      VeinPeer *tmpPeer=0;
-      int moduleCount = 0;
+      //VeinPeer *tmpPeer=0;
+      //int moduleCount = 0;
       MeasurementModuleFactory *tmpFactory=0;
 
       tmpFactory=factoryTable.value(uniqueModuleName);
       if(tmpFactory)
       {
-        VeinEntity *tmpNameEntity=0;
-        moduleCount = tmpFactory->listModules().size();
-        tmpPeer=localHub->peerAdd(QString("%1%2").arg(uniqueModuleName).arg(moduleCount), moduleId);
-        tmpNameEntity = tmpPeer->dataAdd("EntityName");
-        tmpNameEntity->setValue(QString("%1%2").arg(uniqueModuleName).arg(moduleCount));
+        //VeinEntity *tmpNameEntity=0;
+        //moduleCount = tmpFactory->listModules().size();
+        //tmpPeer=localHub->peerAdd(QString("%1%2").arg(uniqueModuleName).arg(moduleCount), moduleId);
+        //tmpNameEntity = tmpPeer->dataAdd("EntityName");
+        //tmpNameEntity->setValue(QString("%1%2").arg(uniqueModuleName).arg(moduleCount));
 
-        qDebug()<<"Creating module instance:"<<tmpPeer->getName(); //<< "with config" << xmlConfigData;
-        VirtualModule *tmpModule = tmpFactory->createModule(proxyInstance,tmpPeer,this);
+        //qDebug()<<"Creating module instance:"<<tmpPeer->getName(); //<< "with config" << xmlConfigData;
+        VirtualModule *tmpModule = tmpFactory->createModule(proxyInstance, moduleId, m_storage, this);
         if(tmpModule)
         {
           if(!xmlConfigData.isNull())
@@ -181,7 +160,7 @@ namespace ZeraModules
     if(moduleList.isEmpty() == false)
     {
       moduleStartLock = true;
-      sessionReadyEntity->setValue(false, modManPeer);
+      //sessionReadyEntity->setValue(false, modManPeer);
       for(int i = moduleList.length()-1; i>=0; i--)
       {
         VirtualModule *toStop = moduleList.at(i)->reference;
@@ -227,7 +206,7 @@ namespace ZeraModules
     }
     if(moduleList.isEmpty())
     {
-      onDeletionFinished();
+      //onDeletionFinished();
 
       //start modules that were unable to start while shutting down
       onModuleStartNext();
@@ -244,10 +223,10 @@ namespace ZeraModules
       startModule(tmpData->uniqueName, tmpData->configData, tmpData->moduleId);
       delete tmpData;
     }
-    else
-    {
-      sessionReadyEntity->setValue(true, modManPeer);
-    }
+//    else
+//    {
+//      sessionReadyEntity->setValue(true, modManPeer);
+//    }
   }
 
   void ModuleManager::onModuleError(const QString &error)
@@ -259,20 +238,18 @@ namespace ZeraModules
   {
     if(moduleList.isEmpty())
     {
-      onDeletionFinished();
+      //onDeletionFinished();
 
       //start modules that were unable to start while shutting down
       onModuleStartNext();
     }
   }
 
-  void ModuleManager::onDeletionFinished()
+  void ModuleManager::onModuleEventSystemAdded(VeinEvent::EventSystem *t_eventSystem)
   {
-    foreach (VeinPeer *tmpPeer, localHub->listPeers()) {
-      if(tmpPeer != modManPeer)
-      {
-        localHub->peerRemove(tmpPeer); //will be deleted by the hub
-      }
-    }
+    t_eventSystem->attach(m_eventHandler);
+    m_modules.append(t_eventSystem);
   }
+
+
 }
