@@ -15,8 +15,13 @@
 #include <vs_veinhash.h>
 #include <vscr_componentengine.h>
 
+#include <vcmp_entitydata.h>
+#include <vcmp_componentdata.h>
+#include <ve_commandevent.h>
+
 #include <QDebug>
 #include <QFile>
+#include <QTimer>
 
 #include <QLoggingCategory>
 #include <QStringList>
@@ -32,6 +37,9 @@ int main(int argc, char *argv[])
                                                 QString("%1.debug=false").arg(VEIN_NET_TCP_VERBOSE().categoryName()) <<
                                                 QString("%1.debug=false").arg(VEIN_STORAGE_HASH_VERBOSE().categoryName());
 
+  QTimer introspectionTimer;
+  introspectionTimer.setInterval(100);
+  introspectionTimer.setSingleShot(true);
 
   QLoggingCategory::setFilterRules(loggingFilters.join("\n"));
 
@@ -86,5 +94,44 @@ int main(int argc, char *argv[])
     modMan->loadDefaultSession();
     tcpSystem->startServer(12000);
   }
+
+  QObject::connect(&introspectionTimer, &QTimer::timeout, [&]() {
+    VeinComponent::EntityData *systemData = new VeinComponent::EntityData();
+    systemData->setCommand(VeinComponent::EntityData::Command::ECMD_ADD);
+    systemData->setEntityId(0);
+
+    VeinEvent::CommandEvent *systemEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::TRANSACTION, systemData);
+
+    QCoreApplication::postEvent(evHandler, systemEvent);
+    systemEvent=0;
+    systemData=0;
+
+    VeinComponent::ComponentData *introspectionData=0;
+
+    introspectionData = new VeinComponent::ComponentData();
+    introspectionData->setEntityId(0);
+    introspectionData->setCommand(VeinComponent::ComponentData::Command::CCMD_ADD);
+    introspectionData->setComponentName("EntityName");
+    introspectionData->setNewValue("_System");
+
+    systemEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::TRANSACTION, introspectionData);
+    QCoreApplication::postEvent(evHandler, systemEvent);
+    systemEvent = 0;
+
+    introspectionData = new VeinComponent::ComponentData();
+    introspectionData->setEntityId(0);
+    introspectionData->setCommand(VeinComponent::ComponentData::Command::CCMD_ADD);
+    introspectionData->setComponentName("Entities");
+    qDebug() << "ENTITIES" << storSystem->getEntityList() << QVariant::fromValue<QList<int> >(storSystem->getEntityList()).value<QList<int> >();
+    introspectionData->setNewValue(QVariant::fromValue<QList<int> >(storSystem->getEntityList()));
+
+    systemEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::TRANSACTION, introspectionData);
+    QCoreApplication::postEvent(evHandler, systemEvent);
+
+    systemEvent = 0;
+  });
+
+
+  introspectionTimer.start();
   return a.exec();
 }
