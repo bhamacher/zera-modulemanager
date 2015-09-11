@@ -224,10 +224,11 @@ namespace ZeraModules
       startModule(tmpData->uniqueName, tmpData->configData, tmpData->moduleId);
       delete tmpData;
     }
-//    else
-//    {
-//      sessionReadyEntity->setValue(true, modManPeer);
-//    }
+    else
+    {
+      emit sigModulesLoaded();
+      //sessionReadyEntity->setValue(true, modManPeer);
+    }
   }
 
   void ModuleManager::onModuleError(const QString &error)

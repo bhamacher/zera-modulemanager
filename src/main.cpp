@@ -21,7 +21,6 @@
 
 #include <QDebug>
 #include <QFile>
-#include <QTimer>
 
 #include <QLoggingCategory>
 #include <QStringList>
@@ -37,9 +36,6 @@ int main(int argc, char *argv[])
                                                 QString("%1.debug=false").arg(VEIN_NET_TCP_VERBOSE().categoryName()) <<
                                                 QString("%1.debug=false").arg(VEIN_STORAGE_HASH_VERBOSE().categoryName());
 
-  QTimer introspectionTimer;
-  introspectionTimer.setInterval(100);
-  introspectionTimer.setSingleShot(true);
 
   QLoggingCategory::setFilterRules(loggingFilters.join("\n"));
 
@@ -95,7 +91,7 @@ int main(int argc, char *argv[])
     tcpSystem->startServer(12000);
   }
 
-  QObject::connect(&introspectionTimer, &QTimer::timeout, [&]() {
+  QObject::connect(modMan, &ZeraModules::ModuleManager::sigModulesLoaded, [&]() {
     VeinComponent::EntityData *systemData = new VeinComponent::EntityData();
     systemData->setCommand(VeinComponent::EntityData::Command::ECMD_ADD);
     systemData->setEntityId(0);
@@ -132,6 +128,5 @@ int main(int argc, char *argv[])
   });
 
 
-  introspectionTimer.start();
   return a.exec();
 }
