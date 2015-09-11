@@ -135,6 +135,7 @@ namespace ZeraModules
         VirtualModule *tmpModule = tmpFactory->createModule(proxyInstance, moduleId, m_storage, this);
         if(tmpModule)
         {
+          connect(tmpModule, &VirtualModule::addEventSystem, this, &ModuleManager::onModuleEventSystemAdded);
           if(!xmlConfigData.isNull())
           {
             tmpModule->setConfiguration(xmlConfigData);
