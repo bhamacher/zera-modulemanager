@@ -75,6 +75,8 @@ int main(int argc, char *argv[])
 
   bool modulesFound;
 
+  qRegisterMetaTypeStreamOperators<QList<int> >("QList<int>");
+  qRegisterMetaTypeStreamOperators<QList<float> >("QList<float>");
   qRegisterMetaTypeStreamOperators<QList<double> >("QList<double>");
   qRegisterMetaTypeStreamOperators<QList<QString> >("QList<QString>");
 
