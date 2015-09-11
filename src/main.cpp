@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
     systemData->setCommand(VeinComponent::EntityData::Command::ECMD_ADD);
     systemData->setEntityId(0);
 
-    VeinEvent::CommandEvent *systemEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::TRANSACTION, systemData);
+    VeinEvent::CommandEvent *systemEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, systemData);
 
     QCoreApplication::postEvent(evHandler, systemEvent);
     systemEvent=0;
@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
     introspectionData->setComponentName("EntityName");
     introspectionData->setNewValue("_System");
 
-    systemEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::TRANSACTION, introspectionData);
+    systemEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, introspectionData);
     QCoreApplication::postEvent(evHandler, systemEvent);
     systemEvent = 0;
 
@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
     qDebug() << "ENTITIES" << storSystem->getEntityList() << QVariant::fromValue<QList<int> >(storSystem->getEntityList()).value<QList<int> >();
     introspectionData->setNewValue(QVariant::fromValue<QList<int> >(storSystem->getEntityList()));
 
-    systemEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::TRANSACTION, introspectionData);
+    systemEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, introspectionData);
     QCoreApplication::postEvent(evHandler, systemEvent);
 
     systemEvent = 0;
