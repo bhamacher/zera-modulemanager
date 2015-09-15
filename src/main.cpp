@@ -1,5 +1,6 @@
 #include "modulemanager.h"
 #include "jsonsessionloader.h"
+#include "modulemanagercontroller.h"
 
 #include <QCoreApplication>
 #include <QFile>
@@ -41,8 +42,7 @@ int main(int argc, char *argv[])
 
   VeinEvent::EventHandler *evHandler = new VeinEvent::EventHandler();
 
-  VeinEvent::Validator *validator = new VeinEvent::Validator(&a);
-//  VeinScript::ComponentEngine *scrSystem = new VeinScript::ComponentEngine(&a);
+  ModuleManagerController *mmController = new ModuleManagerController(&a);
   VeinStorage::VeinHash *storSystem = new VeinStorage::VeinHash(&a);
   VeinNet::IntrospectionSystem *introspectionSystem = new VeinNet::IntrospectionSystem(&a);
   VeinNet::NetworkSystem *netSystem = new VeinNet::NetworkSystem(&a);
@@ -56,8 +56,7 @@ int main(int argc, char *argv[])
 
   QList<VeinEvent::EventSystem*> subSystems;
 
-  subSystems.append(validator);
-//  subSystems.append(scrSystem);
+  subSystems.append(mmController);
   subSystems.append(storSystem);
   subSystems.append(introspectionSystem);
   subSystems.append(netSystem);
@@ -69,6 +68,7 @@ int main(int argc, char *argv[])
   introspectionSystem->setStorage(storSystem);
   modMan->setStorage(storSystem);
   modMan->setEventHandler(evHandler);
+  mmController->setStorage(storSystem);
 
   QObject::connect(sessionLoader, &JsonSessionLoader::sigLoadModule, modMan, &ZeraModules::ModuleManager::startModule);
   QObject::connect(modMan, &ZeraModules::ModuleManager::sigSessionSwitched, sessionLoader, &JsonSessionLoader::loadSession);
@@ -92,43 +92,7 @@ int main(int argc, char *argv[])
     modMan->loadDefaultSession();
     tcpSystem->startServer(12000);
   }
-
-  QObject::connect(modMan, &ZeraModules::ModuleManager::sigModulesLoaded, [&]() {
-    VeinComponent::EntityData *systemData = new VeinComponent::EntityData();
-    systemData->setCommand(VeinComponent::EntityData::Command::ECMD_ADD);
-    systemData->setEntityId(0);
-
-    VeinEvent::CommandEvent *systemEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::TRANSACTION, systemData);
-
-    QCoreApplication::postEvent(evHandler, systemEvent);
-    systemEvent=0;
-    systemData=0;
-
-    VeinComponent::ComponentData *introspectionData=0;
-
-    introspectionData = new VeinComponent::ComponentData();
-    introspectionData->setEntityId(0);
-    introspectionData->setCommand(VeinComponent::ComponentData::Command::CCMD_ADD);
-    introspectionData->setComponentName("EntityName");
-    introspectionData->setNewValue("_System");
-
-    systemEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::TRANSACTION, introspectionData);
-    QCoreApplication::postEvent(evHandler, systemEvent);
-    systemEvent = 0;
-
-    introspectionData = new VeinComponent::ComponentData();
-    introspectionData->setEntityId(0);
-    introspectionData->setCommand(VeinComponent::ComponentData::Command::CCMD_ADD);
-    introspectionData->setComponentName("Entities");
-    qDebug() << "ENTITIES" << storSystem->getEntityList() << QVariant::fromValue<QList<int> >(storSystem->getEntityList()).value<QList<int> >();
-    introspectionData->setNewValue(QVariant::fromValue<QList<int> >(storSystem->getEntityList()));
-
-    systemEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::TRANSACTION, introspectionData);
-    QCoreApplication::postEvent(evHandler, systemEvent);
-
-    systemEvent = 0;
-  });
-
+  QObject::connect(modMan, &ZeraModules::ModuleManager::sigModulesLoaded, mmController, &ModuleManagerController::initializeEntities);
 
   return a.exec();
 }

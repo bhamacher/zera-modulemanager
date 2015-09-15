@@ -59,7 +59,8 @@ TEMPLATE = app
 INCLUDEPATH += src/
 SOURCES += src/main.cpp \
     src/modulemanager.cpp \
-    src/jsonsessionloader.cpp
+    src/jsonsessionloader.cpp \
+    src/modulemanagercontroller.cpp
 
 QMAKE_CXXFLAGS += -Wall -Wshadow
 
@@ -74,7 +75,8 @@ LIBS += $$RESOURCE_PROTOBUF_LIBDIR
 LIBS += -lzera-proxy -lproto-net-qt -lzera-resourcemanager-protobuf -lMeasurementModuleInterface
 
 HEADERS += src/modulemanager.h \
-    src/jsonsessionloader.h
+    src/jsonsessionloader.h \
+    src/modulemanagercontroller.h
 
 target.path = /usr/bin
 INSTALLS += target
