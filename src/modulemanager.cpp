@@ -1,5 +1,6 @@
 #include "modulemanager.h"
 
+#include "moduleeventhandler.h"
 #include <proxy.h>
 
 #include <ve_eventsystem.h>
@@ -10,6 +11,7 @@
 #include <QDebug>
 
 #include <QState>
+
 
 namespace ZeraModules
 {
@@ -109,7 +111,7 @@ namespace ZeraModules
     m_storage = t_storage;
   }
 
-  void ModuleManager::setEventHandler(VeinEvent::EventHandler *t_eventHandler)
+  void ModuleManager::setEventHandler(ModuleEventHandler *t_eventHandler)
   {
     m_eventHandler = t_eventHandler;
   }
@@ -125,12 +127,6 @@ namespace ZeraModules
       tmpFactory=factoryTable.value(uniqueModuleName);
       if(tmpFactory)
       {
-        //VeinEntity *tmpNameEntity=0;
-        //moduleCount = tmpFactory->listModules().size();
-        //tmpPeer=localHub->peerAdd(QString("%1%2").arg(uniqueModuleName).arg(moduleCount), moduleId);
-        //tmpNameEntity = tmpPeer->dataAdd("EntityName");
-        //tmpNameEntity->setValue(QString("%1%2").arg(uniqueModuleName).arg(moduleCount));
-
         //qDebug()<<"Creating module instance:"<<tmpPeer->getName(); //<< "with config" << xmlConfigData;
         VirtualModule *tmpModule = tmpFactory->createModule(proxyInstance, moduleId, m_storage, this);
         if(tmpModule)
@@ -205,13 +201,7 @@ namespace ZeraModules
         qWarning() << "Could not find data for VirtualModule" << toDelete;
       }
     }
-    if(moduleList.isEmpty())
-    {
-      //onDeletionFinished();
-
-      //start modules that were unable to start while shutting down
-      onModuleStartNext();
-    }
+    checkModuleList();
   }
 
   void ModuleManager::onModuleStartNext()
@@ -240,7 +230,7 @@ namespace ZeraModules
   {
     if(moduleList.isEmpty())
     {
-      //onDeletionFinished();
+      m_eventHandler->clearSystems();
 
       //start modules that were unable to start while shutting down
       onModuleStartNext();
@@ -249,8 +239,7 @@ namespace ZeraModules
 
   void ModuleManager::onModuleEventSystemAdded(VeinEvent::EventSystem *t_eventSystem)
   {
-    t_eventSystem->attach(m_eventHandler);
-    m_modules.append(t_eventSystem);
+    m_eventHandler->addSystem(t_eventSystem);
   }
 
 

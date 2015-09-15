@@ -60,7 +60,8 @@ INCLUDEPATH += src/
 SOURCES += src/main.cpp \
     src/modulemanager.cpp \
     src/jsonsessionloader.cpp \
-    src/modulemanagercontroller.cpp
+    src/modulemanagercontroller.cpp \
+    src/moduleeventhandler.cpp
 
 QMAKE_CXXFLAGS += -Wall -Wshadow
 
@@ -76,7 +77,8 @@ LIBS += -lzera-proxy -lproto-net-qt -lzera-resourcemanager-protobuf -lMeasuremen
 
 HEADERS += src/modulemanager.h \
     src/jsonsessionloader.h \
-    src/modulemanagercontroller.h
+    src/modulemanagercontroller.h \
+    src/moduleeventhandler.h
 
 target.path = /usr/bin
 INSTALLS += target

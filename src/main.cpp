@@ -1,27 +1,16 @@
 #include "modulemanager.h"
 #include "jsonsessionloader.h"
 #include "modulemanagercontroller.h"
+#include "moduleeventhandler.h"
 
 #include <QCoreApplication>
-#include <QFile>
-#include <QByteArray>
-#include <QUuid>
 
-#include <ve_eventhandler.h>
-#include <ve_validator.h>
-#include <ve_scriptengine.h>
 #include <vn_networksystem.h>
 #include <vn_tcpsystem.h>
 #include <vn_introspectionsystem.h>
 #include <vs_veinhash.h>
-#include <vscr_componentengine.h>
-
-#include <vcmp_entitydata.h>
-#include <vcmp_componentdata.h>
-#include <ve_commandevent.h>
 
 #include <QDebug>
-#include <QFile>
 
 #include <QLoggingCategory>
 #include <QStringList>
@@ -40,7 +29,8 @@ int main(int argc, char *argv[])
 
   QLoggingCategory::setFilterRules(loggingFilters.join("\n"));
 
-  VeinEvent::EventHandler *evHandler = new VeinEvent::EventHandler();
+
+  ModuleEventHandler *evHandler = new ModuleEventHandler();
 
   ModuleManagerController *mmController = new ModuleManagerController(&a);
   VeinStorage::VeinHash *storSystem = new VeinStorage::VeinHash(&a);
@@ -95,4 +85,6 @@ int main(int argc, char *argv[])
   QObject::connect(modMan, &ZeraModules::ModuleManager::sigModulesLoaded, mmController, &ModuleManagerController::initializeEntities);
 
   return a.exec();
+
+  delete evHandler;
 }

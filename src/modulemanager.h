@@ -21,8 +21,9 @@ namespace Zera
 namespace VeinEvent
 {
   class StorageSystem;
-  class EventHandler;
 }
+
+class ModuleEventHandler;
 
 namespace ZeraModules
 {
@@ -38,34 +39,7 @@ namespace ZeraModules
     bool loadModules();
     void loadDefaultSession();
     void setStorage(VeinEvent::StorageSystem *t_storage);
-    void setEventHandler(VeinEvent::EventHandler *t_eventHandler);
-
-//    void setHub(VeinHub *vHub)
-//    {
-//      if(vHub)
-//      {
-//        localHub = vHub;
-//        modManPeer = localHub->peerAdd("ModuleManager"); ///< @todo remove hardcoded
-//        sessionSwitchEntity = modManPeer->dataAdd("SessionFile");
-//        sessionReadyEntity = modManPeer->dataAdd("SessionReady");
-//        sessionListEntity = modManPeer->dataAdd("SessionList");
-
-//        sessionSwitchEntity->modifiersAdd(VeinEntity::MOD_NOECHO);
-
-//        sessionReadyEntity->setValue(false, modManPeer);
-//        sessionReadyEntity->modifiersAdd(VeinEntity::MOD_READONLY);
-//        sessionReadyEntity->modifiersAdd(VeinEntity::MOD_NOECHO);
-
-//        sessionListEntity->setValue(QVariant::fromValue<QList<QString> >(m_sessionsAvailable));
-//        sessionListEntity->modifiersAdd(VeinEntity::MOD_CONST);
-
-//        connect(sessionSwitchEntity, SIGNAL(sigValueChanged(QVariant)), this, SLOT(onChangeSession(QVariant)));
-//      }
-//    }
-//    VeinHub *getHub()
-//    {
-//      return localHub;
-//    }
+    void setEventHandler(ModuleEventHandler *t_eventHandler);
 
   signals:
     void sigSessionSwitched(QString newSessionPath);
@@ -85,31 +59,13 @@ namespace ZeraModules
     void onModuleEventSystemAdded(VeinEvent::EventSystem *t_eventSystem);
 
   private:
-//    void onDeletionFinished()
-//    {
-//      foreach (VeinPeer *tmpPeer, localHub->listPeers()) {
-//        if(tmpPeer != modManPeer)
-//        {
-//          localHub->peerRemove(tmpPeer); //will be deleted by the hub
-//        }
-//      }
-//    }
-
     QHash<QString, MeasurementModuleFactory*> factoryTable;
     QList<ModuleData *> moduleList;
     QQueue<ModuleData *> deferedStartList;
     Zera::Proxy::cProxy *proxyInstance;
 
     VeinEvent::StorageSystem *m_storage=0;
-    VeinEvent::EventHandler *m_eventHandler=0;
-
-    QList<VeinEvent::EventSystem *> m_modules;
-
-//    VeinHub *localHub;
-//    VeinPeer *modManPeer;
-//    VeinEntity *sessionSwitchEntity;
-//    VeinEntity *sessionReadyEntity;
-//    VeinEntity *sessionListEntity;
+    ModuleEventHandler *m_eventHandler=0;
 
     QList<QString> m_sessionsAvailable;
 
