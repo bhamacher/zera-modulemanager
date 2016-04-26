@@ -9,7 +9,6 @@ TEMPLATE = app
 #dependencies
 VEIN_DEP_EVENT = 1
 VEIN_DEP_COMP = 1
-VEIN_DEP_SCRIPT = 1
 VEIN_DEP_HASH = 1
 VEIN_DEP_PROTOBUF = 1
 VEIN_DEP_TCP = 1
@@ -65,15 +64,13 @@ SOURCES += src/main.cpp \
 
 QMAKE_CXXFLAGS += -Wall -Wshadow
 
-INCLUDEPATH += $$PROTONET_INCLUDEDIR
 INCLUDEPATH += $$VIRTUALMODULE_INCLUDEDIR
 INCLUDEPATH += $$PROXY_INCLUDEDIR
 
-LIBS += $$PROTONET_LIBDIR
 LIBS += $$VIRTUALMODULE_LIBDIR
 LIBS += $$PROXY_LIBDIR
 LIBS += $$RESOURCE_PROTOBUF_LIBDIR
-LIBS += -lzera-proxy -lproto-net-qt -lzera-resourcemanager-protobuf -lMeasurementModuleInterface
+LIBS += -lzera-proxy -lzera-resourcemanager-protobuf -lMeasurementModuleInterface
 
 HEADERS += src/modulemanager.h \
     src/jsonsessionloader.h \
