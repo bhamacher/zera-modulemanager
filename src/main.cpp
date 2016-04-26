@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
 
   ModuleManagerController *mmController = new ModuleManagerController(&a);
   VeinStorage::VeinHash *storSystem = new VeinStorage::VeinHash(&a);
-  VeinNet::IntrospectionSystem *introspectionSystem = new VeinNet::IntrospectionSystem(&a);
+  VeinNet::IntrospectionSystem *introspectionSystem = new VeinNet::IntrospectionSystem(storSystem);
   VeinNet::NetworkSystem *netSystem = new VeinNet::NetworkSystem(&a);
   VeinNet::TcpSystem *tcpSystem = new VeinNet::TcpSystem(&a);
 
@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
   ZeraModules::ModuleManager *modMan = new ZeraModules::ModuleManager(&a);
   JsonSessionLoader *sessionLoader = new JsonSessionLoader(&a);
 
-  netSystem->setOperationMode(VeinNet::NetworkSystem::VNOM_SUBCRIPTION);
+  netSystem->setOperationMode(VeinNet::NetworkSystem::VNOM_SUBSCRIPTION);
 
   QList<VeinEvent::EventSystem*> subSystems;
 
@@ -55,7 +55,6 @@ int main(int argc, char *argv[])
 
   evHandler->setSubsystems(subSystems);
 
-  introspectionSystem->setStorage(storSystem);
   modMan->setStorage(storSystem);
   modMan->setEventHandler(evHandler);
   mmController->setStorage(storSystem);
