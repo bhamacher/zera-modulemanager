@@ -54,7 +54,7 @@ bool ModuleManagerController::processEvent(QEvent *t_event)
       {
         VeinComponent::EntityData *eData=0;
         eData = static_cast<VeinComponent::EntityData *>(cEvent->eventData());
-        if(eData!=0 && eData->Command==VeinComponent::EntityData::Command::ECMD_SUBSCRIBE) /// @todo maybe add roles/views later
+        if(eData!=0 && eData->eventCommand()==VeinComponent::EntityData::Command::ECMD_SUBSCRIBE) /// @todo maybe add roles/views later
         {
           retVal = true;
           cEvent->setEventSubtype(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION);
