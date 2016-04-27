@@ -5,6 +5,7 @@
 #include <ve_storagesystem.h>
 #include <vcmp_componentdata.h>
 #include <vcmp_entitydata.h>
+#include <vcmp_introspectiondata.h>
 
 ModuleManagerController::ModuleManagerController(QObject *t_parent) : VeinEvent::EventSystem(t_parent)
 {
@@ -40,20 +41,14 @@ bool ModuleManagerController::processEvent(QEvent *t_event)
   {
     VeinEvent::CommandEvent *cEvent = 0;
     cEvent = static_cast<VeinEvent::CommandEvent *>(t_event);
-    if(cEvent != 0 && cEvent->eventData()->entityId()==m_entityId)
+    if(cEvent != 0)
     {
-      switch(cEvent->eventSubtype())
+      if(cEvent->eventData()->type() == VeinComponent::IntrospectionData::dataTypedataType()) // introspection requests are always valid
       {
-        case VeinEvent::CommandEvent::EventSubtype::TRANSACTION:
-        {
-          retVal = true;
-          cEvent->setEventSubtype(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION);
-          cEvent->eventData()->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL); //the validated answer is authored from the system that runs the validator (aka. this system)
-          cEvent->eventData()->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL); //inform all users (may or may not result in network messages)
-          break;
-        }
-        default:
-          break;
+        retVal = true;
+        cEvent->setEventSubtype(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION);
+        cEvent->eventData()->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL); //the validated answer is authored from the system that runs the validator (aka. this system)
+        cEvent->eventData()->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL); //inform all users (may or may not result in network messages)
       }
     }
   }
