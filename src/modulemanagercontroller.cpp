@@ -43,12 +43,24 @@ bool ModuleManagerController::processEvent(QEvent *t_event)
     cEvent = static_cast<VeinEvent::CommandEvent *>(t_event);
     if(cEvent != 0)
     {
-      if(cEvent->eventData()->type() == VeinComponent::IntrospectionData::dataTypedataType()) // introspection requests are always valid
+      if(cEvent->eventData()->type() == VeinComponent::IntrospectionData::dataType()) //introspection requests are always valid
       {
         retVal = true;
         cEvent->setEventSubtype(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION);
         cEvent->eventData()->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL); //the validated answer is authored from the system that runs the validator (aka. this system)
         cEvent->eventData()->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL); //inform all users (may or may not result in network messages)
+      }
+      else if(cEvent->eventData()->type() == VeinComponent::EntityData::dataType()) //validate subscription requests
+      {
+        VeinComponent::EntityData *eData=0;
+        eData = static_cast<VeinComponent::EntityData *>(cEvent->eventData());
+        if(eData!=0 && eData->Command==VeinComponent::EntityData::Command::ECMD_SUBSCRIBE) /// @todo maybe add roles/views later
+        {
+          retVal = true;
+          cEvent->setEventSubtype(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION);
+          cEvent->eventData()->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL); //the validated answer is authored from the system that runs the validator (aka. this system)
+          cEvent->eventData()->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL); //inform all users (may or may not result in network messages)
+        }
       }
     }
   }
