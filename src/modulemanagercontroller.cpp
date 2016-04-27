@@ -86,7 +86,7 @@ void ModuleManagerController::initializeEntities()
     introspectionData->setComponentName("EntityName");
     introspectionData->setNewValue("_System");
 
-    systemEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::TRANSACTION, introspectionData);
+    systemEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, introspectionData);
     emit sigSendEvent(systemEvent);
     systemEvent = 0;
 
@@ -97,7 +97,7 @@ void ModuleManagerController::initializeEntities()
     qDebug() << "ENTITIES" << m_storageSystem->getEntityList() << QVariant::fromValue<QList<int> >(m_storageSystem->getEntityList()).value<QList<int> >();
     introspectionData->setNewValue(QVariant::fromValue<QList<int> >(m_storageSystem->getEntityList()));
 
-    systemEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::TRANSACTION, introspectionData);
+    systemEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, introspectionData);
     emit sigSendEvent(systemEvent);
   }
   else
