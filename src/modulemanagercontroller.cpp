@@ -41,7 +41,7 @@ bool ModuleManagerController::processEvent(QEvent *t_event)
   {
     VeinEvent::CommandEvent *cEvent = 0;
     cEvent = static_cast<VeinEvent::CommandEvent *>(t_event);
-    if(cEvent != 0)
+    if(cEvent != 0 && cEvent->eventSubtype() != VeinEvent::CommandEvent::EventSubtype::NOTIFICATION) //we do not need to process notifications
     {
       if(cEvent->eventData()->type() == VeinComponent::IntrospectionData::dataType()) //introspection requests are always valid
       {
@@ -55,6 +55,18 @@ bool ModuleManagerController::processEvent(QEvent *t_event)
         VeinComponent::EntityData *eData=0;
         eData = static_cast<VeinComponent::EntityData *>(cEvent->eventData());
         if(eData!=0 && eData->eventCommand()==VeinComponent::EntityData::Command::ECMD_SUBSCRIBE) /// @todo maybe add roles/views later
+        {
+          retVal = true;
+          cEvent->setEventSubtype(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION);
+          cEvent->eventData()->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL); //the validated answer is authored from the system that runs the validator (aka. this system)
+          cEvent->eventData()->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL); //inform all users (may or may not result in network messages)
+        }
+      }
+      else if(cEvent->eventData()->type() == VeinComponent::ComponentData::dataType()) //validate subscription requests
+      {
+        VeinComponent::ComponentData *cData=0;
+        cData = static_cast<VeinComponent::ComponentData *>(cEvent->eventData());
+        if(cData!=0 && cData->eventCommand()==VeinComponent::ComponentData::Command::CCMD_FETCH) /// @todo maybe add roles/views later
         {
           retVal = true;
           cEvent->setEventSubtype(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION);
@@ -79,7 +91,7 @@ void ModuleManagerController::initializeEntities()
     systemData->setCommand(VeinComponent::EntityData::Command::ECMD_ADD);
     systemData->setEntityId(0);
 
-    VeinEvent::CommandEvent *systemEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::TRANSACTION, systemData);
+    VeinEvent::CommandEvent *systemEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, systemData);
 
     emit sigSendEvent(systemEvent);
     systemEvent=0;
