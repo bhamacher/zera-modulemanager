@@ -1,20 +1,29 @@
 {
-  "modules" : [
-    {
-      "name" : "modemodule",
-      "configPath" : "/home/peter/C++/zera-classes/zera-modules/modemodule/src/modemoduleREF.xml"
-    },
-    {
-      "name" : "referencemodule",
-      "configPath" : "/home/peter/C++/zera-classes/zera-modules/referencemodule/src/referencemodule.xml"
-    },
-    {
-      "name" : "rangemodule",
-      "configPath" : "/home/peter/C++/zera-classes/zera-modules/rangemodule/src/rangemoduleREF.xml"
-    },
-    {
-      "name" : "rmsmodule",
-      "configPath" : "/home/peter/C++/zera-classes/zera-modules/rmsmodule/src/rmsmoduleREF.xml"
-    }
+    "modules" : [
+      {
+        "name" : "modemodule",
+        "configPath" : "/home/peter/C++/zera-classes/zera-modules/modemodule/src/modemoduleREF.xml",
+        "id": 1000
+      },
+      {
+        "name" : "referencemodule",
+        "configPath" : "/home/peter/C++/zera-classes/zera-modules/referencemodule/src/referencemodule.xml",
+        "id": 1001
+      },
+      {
+        "name" : "rangemodule",
+        "configPath" : "/home/peter/C++/zera-classes/zera-modules/rangemodule/src/rangemoduleREF.xml",
+        "id": 1002
+      },
+      {
+        "name" : "dftmodule",
+        "configPath" : "/home/peter/C++/zera-classes/zera-modules/dftmodule/src/dftmoduleREF.xml",
+        "id": 1003
+      },
+      {
+        "name" : "scpimodule",
+        "configPath" : "/home/peter/C++/zera-classes/zera-modules/scpimodule/src/scpimodule.xml",
+        "id": 1004
+      }
   ]
 }
