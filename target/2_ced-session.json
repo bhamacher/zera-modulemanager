@@ -1,52 +1,74 @@
 {
-  "modules" : [
-    {
-      "name" : "modemodule",
-      "configPath" : "/etc/zera/modules/modemoduleAC.xml"
-    },
-    {
-      "name" : "rangemodule",
-      "configPath" : "/etc/zera/modules/rangemodule.xml"
-    },
-    {
-      "name" : "samplemodule",
-      "configPath" : "/etc/zera/modules/samplemodule.xml"
-    },
-    {
-      "name" : "rmsmodule",
-      "configPath" : "/etc/zera/modules/rmsmoduleCED.xml"
-    },
-    {
-      "name" : "dftmodule",
-      "configPath" : "/etc/zera/modules/dftmodule.xml"
-    },
-    {
-      "name" : "fftmodule",
-      "configPath" : "/etc/zera/modules/fftmodule.xml"
-    },
-    {
-      "name" : "power1module",
-      "configPath" : "/etc/zera/modules/power1moduleCED.xml"
-    },
-    {
-      "name" : "power1module",
-      "configPath" : "/etc/zera/modules/power1module2CED.xml"
-    },
-    {
-      "name" : "power1module",
-      "configPath" : "/etc/zera/modules/power1module3CED.xml"
-    },
-    {
-      "name" : "thdnmodule",
-      "configPath" : "/etc/zera/modules/thdnmodule.xml"
-    },
-    {
-      "name" : "oscimodule",
-      "configPath" : "/etc/zera/modules/oscimodule.xml"
-    },
-    {
-      "name" : "scpimodule",
-      "configPath" : "/etc/zera/modules/scpimodule.xml"
-    }
-  ]
+    "modules" : [
+      {
+        "name" : "modemodule",
+        "configPath" : "/etc/zera/modules/modemoduleAC.xml",
+        "id": 1000
+      },
+      {
+        "name" : "rangemodule",
+        "configPath" : "/etc/zera/modules/rangemodule.xml",
+        "id": 1001
+      },
+      {
+        "name" : "samplemodule",
+        "configPath" : "/etc/zera/modules/samplemodule.xml",
+        "id": 1002
+      },
+      {
+        "name" : "rmsmodule",
+        "configPath" : "/etc/zera/modules/rmsmoduleCED.xml",
+        "id": 1003
+      },
+      {
+        "name" : "dftmodule",
+        "configPath" : "/etc/zera/modules/dftmodule.xml",
+        "id": 1004
+      },
+      {
+        "name" : "fftmodule",
+        "configPath" : "/etc/zera/modules/fftmodule.xml",
+        "id": 1005
+      },
+      {
+        "name" : "power1module",
+        "configPath" : "/etc/zera/modules/power1moduleCED.xml",
+        "id": 1006
+      },
+      {
+        "name" : "power1module",
+        "configPath" : "/etc/zera/modules/power1module2CED.xml",
+        "id": 1007
+      },
+      {
+        "name" : "power1module",
+        "configPath" : "/etc/zera/modules/power1module3CED.xml",
+        "id": 1008
+      },
+      {
+        "name" : "thdnmodule",
+        "configPath" : "/etc/zera/modules/thdnmodule.xml",
+        "id": 1009
+      },
+      {
+        "name" : "oscimodule",
+        "configPath" : "/etc/zera/modules/oscimodule.xml",
+        "id": 1010
+      },
+      {
+        "name" : "power2module",
+        "configPath" : "/etc/zera/modules/power2moduleCED.xml",
+        "id": 1011
+      },
+      {
+        "name" : "sec1module",
+        "configPath" : "/etc/zera/modules/sec1module.xml",
+        "id": 1012
+      },
+      {
+        "name" : "scpimodule",
+        "configPath" : "/etc/zera/modules/scpimodule.xml",
+        "id": 1013
+      }
+    ]
 }

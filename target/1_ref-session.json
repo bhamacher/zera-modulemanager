@@ -1,24 +1,29 @@
 {
-  "modules" : [
-    {
-      "name" : "modemodule",
-      "configPath" : "/etc/zera/modules/modemoduleREF.xml"
-    },
-    {
-      "name" : "referencemodule",
-      "configPath" : "/etc/zera/modules/referencemodule.xml"
-    },
-    {
-      "name" : "rangemodule",
-      "configPath" : "/etc/zera/modules/rangemoduleREF.xml"
-    },
-    {
-      "name" : "dftmodule",
-      "configPath" : "/etc/zera/modules/dftmoduleREF.xml"
-    },
-    {
-      "name" : "scpimodule",
-      "configPath" : "/etc/zera/modules/scpimodule.xml"
-    }
+    "modules" : [
+      {
+        "name" : "modemodule",
+        "configPath" : "/etc/zera/modules/modemoduleREF.xml",
+        "id": 1000
+      },
+      {
+        "name" : "referencemodule",
+        "configPath" : "/etc/zera/modules/referencemodule.xml",
+        "id": 1001
+      },
+      {
+        "name" : "rangemodule",
+        "configPath" : "/etc/zera/modules/rangemoduleREF.xml",
+        "id": 1002
+      },
+      {
+        "name" : "dftmodule",
+        "configPath" : "/etc/zera/modules/dftmoduleREF.xml",
+        "id": 1003
+      },
+      {
+        "name" : "scpimodule",
+        "configPath" : "/etc/zera/modules/scpimodule.xml",
+        "id": 1004
+      }
   ]
 }
