@@ -61,17 +61,20 @@ bool ModuleManagerController::processEvent(QEvent *t_event)
       {
         VeinComponent::ComponentData *cData=0;
         cData = static_cast<VeinComponent::ComponentData *>(cEvent->eventData());
-        if(cData!=0 && cData->eventCommand()==VeinComponent::ComponentData::Command::CCMD_FETCH) /// @todo maybe add roles/views later
+        Q_ASSERT(cData!=0);
+
+        if(cData->eventCommand()==VeinComponent::ComponentData::Command::CCMD_FETCH) /// @todo maybe add roles/views later
         {
           retVal = true;
           cEvent->setEventSubtype(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION);
           cEvent->eventData()->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL); //the validated answer is authored from the system that runs the validator (aka. this system)
           cEvent->eventData()->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL); //inform all users (may or may not result in network messages)
-
-          if(cData->entityId() == m_entityId && cData->componentName() == m_sessionComponentName)
-          {
-            emit sigChangeSession(cData->newValue());
-          }
+        }
+        else if(cData->eventCommand()==VeinComponent::ComponentData::Command::CCMD_SET
+           && cData->entityId() == m_entityId
+           && cData->componentName() == m_sessionComponentName)
+        {
+          emit sigChangeSession(cData->newValue());
         }
       }
     }
