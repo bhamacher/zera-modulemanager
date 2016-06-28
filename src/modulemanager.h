@@ -48,9 +48,9 @@ namespace ZeraModules
   public slots:
     void startModule(QString uniqueModuleName, QByteArray xmlConfigData, int moduleId);
     void stopModules();
+    void onChangeSession(QVariant newSessionPath);
 
   private slots:
-    void onChangeSession(QVariant newSessionPath);
     void onModuleDelete();
     void onModuleStartNext();
     void onModuleError(const QString &error);
@@ -62,10 +62,12 @@ namespace ZeraModules
     QHash<QString, MeasurementModuleFactory*> factoryTable;
     QList<ModuleData *> moduleList;
     QQueue<ModuleData *> deferedStartList;
-    Zera::Proxy::cProxy *proxyInstance;
+    Zera::Proxy::cProxy * proxyInstance;
 
     VeinEvent::StorageSystem *m_storage=0;
     ModuleEventHandler *m_eventHandler=0;
+
+    QString m_sessionPath;
 
     QList<QString> m_sessionsAvailable;
 

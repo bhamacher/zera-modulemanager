@@ -12,11 +12,6 @@ ModuleManagerController::ModuleManagerController(QObject *t_parent) : VeinEvent:
 
 }
 
-void ModuleManagerController::setEntityId(int t_entityId)
-{
-  m_entityId=t_entityId;
-}
-
 int ModuleManagerController::getEntityId() const
 {
   return m_entityId;
@@ -72,6 +67,11 @@ bool ModuleManagerController::processEvent(QEvent *t_event)
           cEvent->setEventSubtype(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION);
           cEvent->eventData()->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL); //the validated answer is authored from the system that runs the validator (aka. this system)
           cEvent->eventData()->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL); //inform all users (may or may not result in network messages)
+
+          if(cData->entityId() == m_entityId && cData->componentName() == m_sessionComponentName)
+          {
+            emit sigChangeSession(cData->newValue());
+          }
         }
       }
     }
@@ -89,7 +89,7 @@ void ModuleManagerController::initializeEntities()
   {
     VeinComponent::EntityData *systemData = new VeinComponent::EntityData();
     systemData->setCommand(VeinComponent::EntityData::Command::ECMD_ADD);
-    systemData->setEntityId(0);
+    systemData->setEntityId(m_entityId);
 
     VeinEvent::CommandEvent *systemEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, systemData);
 
@@ -100,21 +100,30 @@ void ModuleManagerController::initializeEntities()
     VeinComponent::ComponentData *introspectionData=0;
 
     introspectionData = new VeinComponent::ComponentData();
-    introspectionData->setEntityId(0);
+    introspectionData->setEntityId(m_entityId);
     introspectionData->setCommand(VeinComponent::ComponentData::Command::CCMD_ADD);
-    introspectionData->setComponentName("EntityName");
-    introspectionData->setNewValue("_System");
+    introspectionData->setComponentName(m_entitynNameComponentName);
+    introspectionData->setNewValue(m_entityName);
 
     systemEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, introspectionData);
     emit sigSendEvent(systemEvent);
     systemEvent = 0;
 
     introspectionData = new VeinComponent::ComponentData();
-    introspectionData->setEntityId(0);
+    introspectionData->setEntityId(m_entityId);
     introspectionData->setCommand(VeinComponent::ComponentData::Command::CCMD_ADD);
-    introspectionData->setComponentName("Entities");
+    introspectionData->setComponentName(m_entitiesComponentName);
     qDebug() << "ENTITIES" << m_storageSystem->getEntityList() << QVariant::fromValue<QList<int> >(m_storageSystem->getEntityList()).value<QList<int> >();
     introspectionData->setNewValue(QVariant::fromValue<QList<int> >(m_storageSystem->getEntityList()));
+
+    systemEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, introspectionData);
+    emit sigSendEvent(systemEvent);
+
+    introspectionData = new VeinComponent::ComponentData();
+    introspectionData->setEntityId(m_entityId);
+    introspectionData->setCommand(VeinComponent::ComponentData::Command::CCMD_ADD);
+    introspectionData->setComponentName(m_sessionComponentName);
+    introspectionData->setNewValue(QVariant("0_default-session.json"));
 
     systemEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, introspectionData);
     emit sigSendEvent(systemEvent);

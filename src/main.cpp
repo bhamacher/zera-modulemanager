@@ -82,6 +82,7 @@ int main(int argc, char *argv[])
     tcpSystem->startServer(12000);
   }
   QObject::connect(modMan, &ZeraModules::ModuleManager::sigModulesLoaded, mmController, &ModuleManagerController::initializeEntities);
+  QObject::connect(mmController, &ModuleManagerController::sigChangeSession, modMan, &ZeraModules::ModuleManager::onChangeSession);
 
   return a.exec();
 

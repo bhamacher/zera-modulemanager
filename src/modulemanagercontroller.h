@@ -12,7 +12,6 @@ class ModuleManagerController : public VeinEvent::EventSystem
   Q_OBJECT
 public:
   explicit ModuleManagerController(QObject *t_parent = 0);
-  void setEntityId(int t_entityId);
   int getEntityId() const;
   VeinEvent::StorageSystem *getStorageSystem() const;
   void setStorage(VeinEvent::StorageSystem *t_storageSystem);
@@ -22,13 +21,18 @@ public:
   bool processEvent(QEvent *t_event) override;
 
 signals:
+  void sigChangeSession(QVariant newSessionPath);
 
 public slots:
   void initializeEntities();
 
 private:
-  int m_entityId=0;
-  VeinEvent::StorageSystem *m_storageSystem=0;
+  const int m_entityId = 0;
+  const QString m_entityName = "_System";
+  const QString m_entitynNameComponentName = "EntityName";
+  const QString m_entitiesComponentName = "Entities";
+  const QString m_sessionComponentName = "Session";
+  VeinEvent::StorageSystem *m_storageSystem = 0;
 
 };
 
