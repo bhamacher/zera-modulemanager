@@ -180,6 +180,7 @@ namespace ZeraModules
       QString finalSessionPath = QString("%1").arg(SESSION_PATH) + m_sessionPath;
       if(moduleStartLock==false && QFile::exists(finalSessionPath)) // do not mess up with state machines
       {
+        m_eventHandler->clearSystems();
         stopModules();
         emit sigSessionSwitched(finalSessionPath);
       }
@@ -234,8 +235,6 @@ namespace ZeraModules
   {
     if(moduleList.isEmpty())
     {
-      m_eventHandler->clearSystems();
-
       //start modules that were unable to start while shutting down
       onModuleStartNext();
     }
