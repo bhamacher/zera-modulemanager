@@ -49,7 +49,9 @@ bool ModuleManagerController::processEvent(QEvent *t_event)
       {
         VeinComponent::EntityData *eData=0;
         eData = static_cast<VeinComponent::EntityData *>(cEvent->eventData());
-        if(eData!=0 && eData->eventCommand()==VeinComponent::EntityData::Command::ECMD_SUBSCRIBE) /// @todo maybe add roles/views later
+        Q_ASSERT(eData!=0);
+        if(eData->eventCommand()==VeinComponent::EntityData::Command::ECMD_SUBSCRIBE
+           || eData->eventCommand()==VeinComponent::EntityData::Command::ECMD_UNSUBSCRIBE) /// @todo maybe add roles/views later
         {
           retVal = true;
           cEvent->setEventSubtype(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION);
@@ -75,6 +77,10 @@ bool ModuleManagerController::processEvent(QEvent *t_event)
            && cData->componentName() == m_sessionComponentName)
         {
           emit sigChangeSession(cData->newValue());
+          retVal = true;
+          cEvent->setEventSubtype(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION);
+          cEvent->eventData()->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL); //the validated answer is authored from the system that runs the validator (aka. this system)
+          cEvent->eventData()->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL); //inform all users (may or may not result in network messages)
         }
       }
     }
