@@ -34,16 +34,14 @@ bool ModuleManagerController::processEvent(QEvent *t_event)
 
   if(t_event->type() == VeinEvent::CommandEvent::eventType())
   {
+    bool validated=false;
     VeinEvent::CommandEvent *cEvent = 0;
     cEvent = static_cast<VeinEvent::CommandEvent *>(t_event);
     if(cEvent != 0 && cEvent->eventSubtype() != VeinEvent::CommandEvent::EventSubtype::NOTIFICATION) //we do not need to process notifications
     {
       if(cEvent->eventData()->type() == VeinComponent::IntrospectionData::dataType()) //introspection requests are always valid
       {
-        retVal = true;
-        cEvent->setEventSubtype(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION);
-        cEvent->eventData()->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL); //the validated answer is authored from the system that runs the validator (aka. this system)
-        cEvent->eventData()->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL); //inform all users (may or may not result in network messages)
+        validated = true;
       }
       else if(cEvent->eventData()->type() == VeinComponent::EntityData::dataType()) //validate subscription requests
       {
@@ -53,36 +51,36 @@ bool ModuleManagerController::processEvent(QEvent *t_event)
         if(eData->eventCommand()==VeinComponent::EntityData::Command::ECMD_SUBSCRIBE
            || eData->eventCommand()==VeinComponent::EntityData::Command::ECMD_UNSUBSCRIBE) /// @todo maybe add roles/views later
         {
-          retVal = true;
-          cEvent->setEventSubtype(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION);
-          cEvent->eventData()->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL); //the validated answer is authored from the system that runs the validator (aka. this system)
-          cEvent->eventData()->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL); //inform all users (may or may not result in network messages)
+          validated = true;
         }
       }
-      else if(cEvent->eventData()->type() == VeinComponent::ComponentData::dataType()) //validate subscription requests
+      else if(cEvent->eventData()->type() == VeinComponent::ComponentData::dataType())
       {
         VeinComponent::ComponentData *cData=0;
         cData = static_cast<VeinComponent::ComponentData *>(cEvent->eventData());
         Q_ASSERT(cData!=0);
 
+        //validate fetch requests
         if(cData->eventCommand()==VeinComponent::ComponentData::Command::CCMD_FETCH) /// @todo maybe add roles/views later
         {
-          retVal = true;
-          cEvent->setEventSubtype(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION);
-          cEvent->eventData()->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL); //the validated answer is authored from the system that runs the validator (aka. this system)
-          cEvent->eventData()->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL); //inform all users (may or may not result in network messages)
+          validated = true;
         }
-        else if(cData->eventCommand()==VeinComponent::ComponentData::Command::CCMD_SET
+        else if(cData->eventCommand()==VeinComponent::ComponentData::Command::CCMD_SET //validate set event for _System.Session
            && cData->entityId() == m_entityId
            && cData->componentName() == m_sessionComponentName)
         {
           emit sigChangeSession(cData->newValue());
-          retVal = true;
-          cEvent->setEventSubtype(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION);
-          cEvent->eventData()->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL); //the validated answer is authored from the system that runs the validator (aka. this system)
-          cEvent->eventData()->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL); //inform all users (may or may not result in network messages)
+          validated = true;
         }
       }
+    }
+
+    if(validated == true)
+    {
+      retVal = true;
+      cEvent->setEventSubtype(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION);
+      cEvent->eventData()->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL); //the validated answer is authored from the system that runs the validator (aka. this system)
+      cEvent->eventData()->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL); //inform all users (may or may not result in network messages)
     }
   }
   return retVal;
