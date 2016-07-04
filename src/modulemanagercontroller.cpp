@@ -69,7 +69,9 @@ bool ModuleManagerController::processEvent(QEvent *t_event)
            && cData->entityId() == m_entityId
            && cData->componentName() == m_sessionComponentName)
         {
+          m_currentSession=cData->newValue().toString();
           emit sigChangeSession(cData->newValue());
+          cData->setNewValue(QVariant()); //set the value to invalid in order to announce the session switch to all clients, later the proper session will be set in initializeEntities()
           validated = true;
         }
       }
@@ -93,6 +95,29 @@ bool ModuleManagerController::processEvent(QEvent *t_event)
 void ModuleManagerController::initializeEntities()
 {
   if(m_storageSystem!=0)
+  {
+    initOnce();
+
+    VeinComponent::ComponentData *initData=0;
+    VeinEvent::CommandEvent *initEvent = 0;
+
+    initData = new VeinComponent::ComponentData();
+    initData->setEntityId(m_entityId);
+    initData->setCommand(VeinComponent::ComponentData::Command::CCMD_SET);
+    initData->setComponentName(m_sessionComponentName);
+    initData->setNewValue(QVariant(m_currentSession));
+    initEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, initData);
+    emit sigSendEvent(initEvent);
+  }
+  else
+  {
+    qCritical() << "[ModuleManagerController] StorageSystem required to call initializeEntities";
+  }
+}
+
+void ModuleManagerController::initOnce()
+{
+  if(m_initDone == false)
   {
     VeinComponent::EntityData *systemData = new VeinComponent::EntityData();
     systemData->setCommand(VeinComponent::EntityData::Command::ECMD_ADD);
@@ -130,14 +155,12 @@ void ModuleManagerController::initializeEntities()
     introspectionData->setEntityId(m_entityId);
     introspectionData->setCommand(VeinComponent::ComponentData::Command::CCMD_ADD);
     introspectionData->setComponentName(m_sessionComponentName);
-    introspectionData->setNewValue(QVariant("0_default-session.json"));
+    introspectionData->setNewValue(QVariant(m_currentSession));
 
     systemEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, introspectionData);
     emit sigSendEvent(systemEvent);
-  }
-  else
-  {
-    qCritical() << "[ModuleManagerController] StorageSystem required to call initializeEntities";
+
+    m_initDone = true;
   }
 }
 

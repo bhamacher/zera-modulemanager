@@ -27,13 +27,16 @@ public slots:
   void initializeEntities();
 
 private:
+  void initOnce();
+
   const int m_entityId = 0;
   const QString m_entityName = "_System";
   const QString m_entitynNameComponentName = "EntityName";
   const QString m_entitiesComponentName = "Entities";
   const QString m_sessionComponentName = "Session";
   VeinEvent::StorageSystem *m_storageSystem = 0;
-
+  QString m_currentSession;
+  bool m_initDone=false;
 };
 
 #endif // MODULEMANAGERSETTINGS_H
