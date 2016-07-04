@@ -24,7 +24,7 @@ signals:
   void sigChangeSession(QVariant newSessionPath);
 
 public slots:
-  void initializeEntities();
+  void initializeEntities(QString t_sessionPath);
 
 private:
   void initOnce();

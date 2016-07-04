@@ -43,7 +43,7 @@ namespace ZeraModules
 
   signals:
     void sigSessionSwitched(QString newSessionPath);
-    void sigModulesLoaded();
+    void sigModulesLoaded(QString t_sessionPath);
 
   public slots:
     void startModule(QString uniqueModuleName, QByteArray xmlConfigData, int moduleId);

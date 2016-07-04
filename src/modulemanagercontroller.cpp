@@ -7,7 +7,8 @@
 #include <vcmp_entitydata.h>
 #include <vcmp_introspectiondata.h>
 
-ModuleManagerController::ModuleManagerController(QObject *t_parent) : VeinEvent::EventSystem(t_parent)
+ModuleManagerController::ModuleManagerController(QObject *t_parent) :
+  VeinEvent::EventSystem(t_parent)
 {
 
 }
@@ -92,14 +93,28 @@ bool ModuleManagerController::processEvent(QEvent *t_event)
 
 
 
-void ModuleManagerController::initializeEntities()
+void ModuleManagerController::initializeEntities(QString t_sessionPath)
 {
   if(m_storageSystem!=0)
   {
+    m_currentSession=t_sessionPath;
     initOnce();
 
     VeinComponent::ComponentData *initData=0;
     VeinEvent::CommandEvent *initEvent = 0;
+
+
+    initData = new VeinComponent::ComponentData();
+    initData->setEntityId(m_entityId);
+    initData->setCommand(VeinComponent::ComponentData::Command::CCMD_SET);
+    initData->setComponentName(m_entitiesComponentName);
+    qDebug() << "ENTITIES" << m_storageSystem->getEntityList() << QVariant::fromValue<QList<int> >(m_storageSystem->getEntityList()).value<QList<int> >();
+    initData->setNewValue(QVariant::fromValue<QList<int> >(m_storageSystem->getEntityList()));
+
+    initEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, initData);
+    emit sigSendEvent(initEvent);
+    initEvent=0;
+
 
     initData = new VeinComponent::ComponentData();
     initData->setEntityId(m_entityId);

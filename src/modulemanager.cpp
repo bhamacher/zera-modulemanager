@@ -221,7 +221,7 @@ namespace ZeraModules
     }
     else
     {
-      emit sigModulesLoaded();
+      emit sigModulesLoaded(m_sessionPath);
       //sessionReadyEntity->setValue(true, modManPeer);
     }
   }
