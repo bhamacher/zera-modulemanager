@@ -37,6 +37,7 @@ private:
   VeinEvent::StorageSystem *m_storageSystem = 0;
   QString m_currentSession;
   bool m_initDone=false;
+  bool m_sessionReady=false;
 };
 
 #endif // MODULEMANAGERSETTINGS_H
