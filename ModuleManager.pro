@@ -50,7 +50,7 @@ QT       += core network qml
 QT       -= gui
 
 TARGET = zera-modulemanager
-CONFIG += console
+CONFIG += console c++11
 CONFIG -= app_bundle
 
 TEMPLATE = app
@@ -70,6 +70,7 @@ INCLUDEPATH += $$PROXY_INCLUDEDIR
 LIBS += $$VIRTUALMODULE_LIBDIR
 LIBS += $$PROXY_LIBDIR
 LIBS += $$RESOURCE_PROTOBUF_LIBDIR
+LIBS += $$SCPI_LIBDIR
 LIBS += -lzera-proxy -lzera-resourcemanager-protobuf -lMeasurementModuleInterface
 
 HEADERS += src/modulemanager.h \
