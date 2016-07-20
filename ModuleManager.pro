@@ -26,6 +26,10 @@ target/ref-session.json
 config_files.files = $$MODMAN_CONFIG_FILES
 config_files.path = /etc/zera/modules/sessions
 INSTALLS += config_files
+
+  exists(../oe-build.pri) {
+    include(../oe-build.pri)
+  }
 }
 else {
 DEFINES += SESSION_PATH=\\\"$$PWD/\\\"
