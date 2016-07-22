@@ -53,7 +53,7 @@
       {
         "name" : "thdnmodule",
         "configPath" : "/etc/zera/modules/thdnmodule.xml",
-        "id": 10010
+        "id": 1010
       },
       {
         "name" : "oscimodule",
