@@ -79,6 +79,7 @@ int main(int argc, char *argv[])
   else
   {
     modMan->loadDefaultSession();
+    mmController->initOnce();
     tcpSystem->startServer(12000);
   }
   QObject::connect(modMan, &ZeraModules::ModuleManager::sigModulesLoaded, mmController, &ModuleManagerController::initializeEntities);

@@ -12,7 +12,6 @@
 ModuleManagerController::ModuleManagerController(QObject *t_parent) :
   VeinEvent::EventSystem(t_parent)
 {
-
 }
 
 int ModuleManagerController::getEntityId() const
@@ -113,7 +112,6 @@ void ModuleManagerController::initializeEntities(QString t_sessionPath)
   {
     m_sessionReady=true;
     m_currentSession=t_sessionPath;
-    initOnce();
 
     VeinComponent::ComponentData *initData=0;
     VeinEvent::CommandEvent *initEvent = 0;
@@ -182,7 +180,7 @@ void ModuleManagerController::initOnce()
     introspectionData->setCommand(VeinComponent::ComponentData::Command::CCMD_ADD);
     introspectionData->setComponentName(m_entitiesComponentName);
     //qDebug() << "ENTITIES" << m_storageSystem->getEntityList() << QVariant::fromValue<QList<int> >(m_storageSystem->getEntityList()).value<QList<int> >();
-    introspectionData->setNewValue(QVariant::fromValue<QList<int> >(m_storageSystem->getEntityList()));
+    introspectionData->setNewValue(QVariant());
     introspectionData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
     introspectionData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
 

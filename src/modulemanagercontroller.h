@@ -27,9 +27,9 @@ signals:
 
 public slots:
   void initializeEntities(QString t_sessionPath);
+  void initOnce();
 
 private:
-  void initOnce();
 
   void handleErrorMessage(QJsonObject t_message);
 
