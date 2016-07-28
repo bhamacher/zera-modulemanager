@@ -7,6 +7,8 @@
 #include <vcmp_entitydata.h>
 #include <vcmp_introspectiondata.h>
 
+#include <QJsonArray>
+
 ModuleManagerController::ModuleManagerController(QObject *t_parent) :
   VeinEvent::EventSystem(t_parent)
 {
@@ -49,8 +51,8 @@ bool ModuleManagerController::processEvent(QEvent *t_event)
         VeinComponent::EntityData *eData=0;
         eData = static_cast<VeinComponent::EntityData *>(cEvent->eventData());
         Q_ASSERT(eData!=0);
-        if(eData->eventCommand()==VeinComponent::EntityData::Command::ECMD_SUBSCRIBE
-           || eData->eventCommand()==VeinComponent::EntityData::Command::ECMD_UNSUBSCRIBE) /// @todo maybe add roles/views later
+        if(eData->eventCommand() == VeinComponent::EntityData::Command::ECMD_SUBSCRIBE
+           || eData->eventCommand() == VeinComponent::EntityData::Command::ECMD_UNSUBSCRIBE) /// @todo maybe add roles/views later
         {
           validated = true;
         }
@@ -62,27 +64,29 @@ bool ModuleManagerController::processEvent(QEvent *t_event)
         Q_ASSERT(cData!=0);
 
         //validate fetch requests
-        if(cData->eventCommand()==VeinComponent::ComponentData::Command::CCMD_FETCH) /// @todo maybe add roles/views later
+        if(cData->eventCommand() == VeinComponent::ComponentData::Command::CCMD_FETCH) /// @todo maybe add roles/views later
         {
           validated = true;
         }
-        else if(cData->eventCommand()==VeinComponent::ComponentData::Command::CCMD_SET //validate set event for _System.Session
-           && cData->entityId() == m_entityId
-           && cData->componentName() == m_sessionComponentName)
+        else if(cData->eventCommand() == VeinComponent::ComponentData::Command::CCMD_SET && //validate set event for _System.Session
+                cData->entityId() == m_entityId)
         {
-          //m_currentSession=cData->newValue().toString();
-          if(m_sessionReady == true)
+          if(cData->componentName() == m_sessionComponentName)
           {
-            emit sigChangeSession(cData->newValue());
-            m_sessionReady = false;
+            //m_currentSession=cData->newValue().toString();
+            if(m_sessionReady == true)
+            {
+              emit sigChangeSession(cData->newValue());
+              m_sessionReady = false;
+            }
+            if(cData->eventOrigin() != VeinEvent::EventData::EventOrigin::EO_LOCAL)
+            {
+              t_event->accept();
+            }
           }
-          if(cData->eventOrigin() == VeinEvent::EventData::EventOrigin::EO_LOCAL)
+          else if(cData->componentName() == m_errorMessagesComponentName)
           {
-
-          }
-          else
-          {
-            t_event->accept();
+            handleErrorMessage(cData->newValue().toJsonObject());
           }
         }
       }
@@ -196,7 +200,34 @@ void ModuleManagerController::initOnce()
     systemEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, introspectionData);
     emit sigSendEvent(systemEvent);
 
+    introspectionData = new VeinComponent::ComponentData();
+    introspectionData->setEntityId(m_entityId);
+    introspectionData->setCommand(VeinComponent::ComponentData::Command::CCMD_ADD);
+    introspectionData->setComponentName(m_errorMessagesComponentName);
+    introspectionData->setNewValue(QVariant(m_errorMessages.toJson()));
+    introspectionData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
+    introspectionData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
+
+    systemEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, introspectionData);
+    emit sigSendEvent(systemEvent);
+
+
     m_initDone = true;
   }
+}
+
+void ModuleManagerController::handleErrorMessage(QJsonObject t_message)
+{
+  Q_ASSERT(t_message.isEmpty() == false);
+  VeinComponent::ComponentData *errorMessagesData = new VeinComponent::ComponentData(m_entityId);
+  VeinEvent::CommandEvent *emDataEvent = 0;
+  errorMessagesData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
+  errorMessagesData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
+
+  m_errorMessages.array().append(t_message);
+  errorMessagesData->setNewValue(m_errorMessages.toJson());new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, errorMessagesData);
+
+  emDataEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, errorMessagesData);
+  emit sigSendEvent(emDataEvent);
 }
 

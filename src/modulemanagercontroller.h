@@ -3,6 +3,8 @@
 
 #include <ve_eventsystem.h>
 
+#include <QJsonDocument>
+
 namespace VeinEvent {
   class StorageSystem;
 }
@@ -29,12 +31,17 @@ public slots:
 private:
   void initOnce();
 
+  void handleErrorMessage(QJsonObject t_message);
+
   const int m_entityId = 0;
   const QString m_entityName = "_System";
   const QString m_entitynNameComponentName = "EntityName";
   const QString m_entitiesComponentName = "Entities";
   const QString m_sessionComponentName = "Session";
+  const QString m_errorMessagesComponentName = "Error_Messages";
+
   VeinEvent::StorageSystem *m_storageSystem = 0;
+  QJsonDocument m_errorMessages;
   QString m_currentSession;
   bool m_initDone=false;
   bool m_sessionReady=false;
