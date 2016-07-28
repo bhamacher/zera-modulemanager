@@ -86,6 +86,7 @@ bool ModuleManagerController::processEvent(QEvent *t_event)
           else if(cData->componentName() == m_errorMessagesComponentName)
           {
             handleErrorMessage(cData->newValue().toJsonObject());
+            t_event->accept();
           }
         }
       }
@@ -217,8 +218,10 @@ void ModuleManagerController::initOnce()
 void ModuleManagerController::handleErrorMessage(QJsonObject t_message)
 {
   Q_ASSERT(t_message.isEmpty() == false);
-  VeinComponent::ComponentData *errorMessagesData = new VeinComponent::ComponentData(m_entityId);
+  VeinComponent::ComponentData *errorMessagesData = new VeinComponent::ComponentData();
   VeinEvent::CommandEvent *emDataEvent = 0;
+  errorMessagesData->setEntityId(m_entityId);
+  errorMessagesData->setComponentName(m_errorMessagesComponentName);
   errorMessagesData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
   errorMessagesData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
 
