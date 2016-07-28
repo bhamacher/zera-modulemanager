@@ -225,8 +225,10 @@ void ModuleManagerController::handleErrorMessage(QJsonObject t_message)
   errorMessagesData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
   errorMessagesData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
 
-  m_errorMessages.array().append(t_message);
-  errorMessagesData->setNewValue(m_errorMessages.toJson());new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, errorMessagesData);
+  auto tmpArray = m_errorMessages.array();
+  tmpArray.append(t_message);
+  m_errorMessages.setArray(tmpArray);
+  errorMessagesData->setNewValue(m_errorMessages.toJson());
 
   emDataEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, errorMessagesData);
   emit sigSendEvent(emDataEvent);
