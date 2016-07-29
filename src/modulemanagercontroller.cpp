@@ -8,10 +8,20 @@
 #include <vcmp_introspectiondata.h>
 
 #include <QJsonArray>
+#include <QDateTime>
 
 ModuleManagerController::ModuleManagerController(QObject *t_parent) :
   VeinEvent::EventSystem(t_parent)
 {
+  QJsonArray tmpArray;
+  QJsonObject tmpObject;
+  tmpObject.insert("Error", "System started");
+  tmpObject.insert("Time", QDateTime::currentDateTime().toString("yyyy/MM/dd HH:mm:ss"));
+  tmpObject.insert("ModuleName", "SYSTEM");
+  tmpArray.append(tmpObject);
+
+  //do not use handleNotificationMessage() here since the eventsystem is not connected
+  m_notificationMessages.setArray(tmpArray);
 }
 
 int ModuleManagerController::getEntityId() const
@@ -83,9 +93,9 @@ bool ModuleManagerController::processEvent(QEvent *t_event)
               t_event->accept();
             }
           }
-          else if(cData->componentName() == m_errorMessagesComponentName)
+          else if(cData->componentName() == m_notificationMessagesComponentName)
           {
-            handleErrorMessage(cData->newValue().toJsonObject());
+            handleNotificationMessage(cData->newValue().toJsonObject());
             t_event->accept();
           }
         }
@@ -202,8 +212,8 @@ void ModuleManagerController::initOnce()
     introspectionData = new VeinComponent::ComponentData();
     introspectionData->setEntityId(m_entityId);
     introspectionData->setCommand(VeinComponent::ComponentData::Command::CCMD_ADD);
-    introspectionData->setComponentName(m_errorMessagesComponentName);
-    introspectionData->setNewValue(QVariant(m_errorMessages.toJson()));
+    introspectionData->setComponentName(m_notificationMessagesComponentName);
+    introspectionData->setNewValue(QVariant(m_notificationMessages.toJson()));
     introspectionData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
     introspectionData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
 
@@ -215,22 +225,23 @@ void ModuleManagerController::initOnce()
   }
 }
 
-void ModuleManagerController::handleErrorMessage(QJsonObject t_message)
+void ModuleManagerController::handleNotificationMessage(QJsonObject t_message)
 {
   Q_ASSERT(t_message.isEmpty() == false);
-  VeinComponent::ComponentData *errorMessagesData = new VeinComponent::ComponentData();
+  VeinComponent::ComponentData *notificationMessagesData = new VeinComponent::ComponentData();
   VeinEvent::CommandEvent *emDataEvent = 0;
-  errorMessagesData->setEntityId(m_entityId);
-  errorMessagesData->setComponentName(m_errorMessagesComponentName);
-  errorMessagesData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
-  errorMessagesData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
+  notificationMessagesData->setEntityId(m_entityId);
+  notificationMessagesData->setCommand(VeinComponent::ComponentData::Command::CCMD_SET);
+  notificationMessagesData->setComponentName(m_notificationMessagesComponentName);
+  notificationMessagesData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
+  notificationMessagesData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
 
-  auto tmpArray = m_errorMessages.array();
+  QJsonArray tmpArray = m_notificationMessages.array();
   tmpArray.append(t_message);
-  m_errorMessages.setArray(tmpArray);
-  errorMessagesData->setNewValue(m_errorMessages.toJson());
+  m_notificationMessages.setArray(tmpArray);
+  notificationMessagesData->setNewValue(m_notificationMessages.toJson());
 
-  emDataEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, errorMessagesData);
+  emDataEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, notificationMessagesData);
   emit sigSendEvent(emDataEvent);
 }
 

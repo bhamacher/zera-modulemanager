@@ -31,17 +31,17 @@ public slots:
 
 private:
 
-  void handleErrorMessage(QJsonObject t_message);
+  void handleNotificationMessage(QJsonObject t_message);
 
   const int m_entityId = 0;
   const QString m_entityName = "_System";
   const QString m_entitynNameComponentName = "EntityName";
   const QString m_entitiesComponentName = "Entities";
   const QString m_sessionComponentName = "Session";
-  const QString m_errorMessagesComponentName = "Error_Messages";
+  const QString m_notificationMessagesComponentName = "Error_Messages";
 
   VeinEvent::StorageSystem *m_storageSystem = 0;
-  QJsonDocument m_errorMessages;
+  QJsonDocument m_notificationMessages;
   QString m_currentSession;
   bool m_initDone=false;
   bool m_sessionReady=false;
