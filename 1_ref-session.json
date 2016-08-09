@@ -21,9 +21,14 @@
         "id": 2003
       },
       {
+        "name" : "statusmodule",
+        "configPath" : "/home/peter/C++/zera-classes/zera-modules/statusmodule/src/statusmodule.xml",
+        "id": 2004
+      } ,
+      {
         "name" : "scpimodule",
         "configPath" : "/home/peter/C++/zera-classes/zera-modules/scpimodule/src/scpimodule.xml",
-        "id": 2004
+        "id": 2005
       }
   ]
 }
