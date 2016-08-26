@@ -7,8 +7,8 @@
 #include <QJsonArray>
 #include <QDebug>
 
-JsonSessionLoader::JsonSessionLoader(QObject *qObjParent) :
-  QObject(qObjParent)
+JsonSessionLoader::JsonSessionLoader(QObject *t_Parent) :
+  QObject(t_Parent)
 {
 }
 
@@ -17,14 +17,14 @@ const QString &JsonSessionLoader::getSessionFilePath() const
   return m_currentSessionFile;
 }
 
-void JsonSessionLoader::loadSession(QString filePath)
+void JsonSessionLoader::loadSession(QString t_filePath)
 {
   QFile sesFile;
-  sesFile.setFileName(filePath);
+  sesFile.setFileName(t_filePath);
 
   if(sesFile.exists() && sesFile.open(QIODevice::Unbuffered | QIODevice::ReadOnly))
   {
-    qDebug() << "loading session:" << filePath;
+    qDebug() << "loading session:" << t_filePath;
     QByteArray sesFileContent;
     QJsonDocument jsonSession;
     QJsonParseError jsonError;
@@ -62,7 +62,7 @@ void JsonSessionLoader::loadSession(QString filePath)
               {
                 xmlConfigData = tmpXmlConfigFile.readAll();
                 tmpXmlConfigFile.close();
-                emit sigLoadModule(tmpNameString, xmlConfigData, moduleId);
+                emit sigLoadModule(tmpNameString, tmpConfigString, xmlConfigData, moduleId);
               }
               else
               {
@@ -73,17 +73,17 @@ void JsonSessionLoader::loadSession(QString filePath)
         }
         else
         {
-          qDebug() << "Error parsing session file:" << filePath << "content mismatch";
+          qDebug() << "Error parsing session file:" << t_filePath << "content mismatch";
         }
       }
     }
     else
     {
-      qDebug() << "Error parsing session file:" << filePath << "error:" << jsonError.errorString();
+      qDebug() << "Error parsing session file:" << t_filePath << "error:" << jsonError.errorString();
     }
   }
   else
   {
-    qDebug() << "Error opening session file:" << filePath;
+    qDebug() << "Error opening session file:" << t_filePath;
   }
 }
