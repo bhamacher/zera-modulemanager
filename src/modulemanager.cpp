@@ -17,14 +17,14 @@ namespace ZeraModules
 {
   class ModuleData {
   public:
-    ModuleData(VirtualModule *pRef, QString pName, QByteArray pConfData, int pModuleId) : reference(pRef), uniqueName(pName), configData(pConfData), moduleId(pModuleId) {}
+    ModuleData(VirtualModule *t_ref, const QString &t_name, const QString &t_confPath, const QByteArray &t_confData, int t_moduleId) : _reference(t_ref), m_uniqueName(t_name), m_configPath(t_confPath), m_configData(t_confData), m_moduleId(t_moduleId) {}
 
-    static ModuleData *findByReference(QList<ModuleData*> list, VirtualModule *ref)
+    static ModuleData *findByReference(QList<ModuleData*> t_list, VirtualModule *t_ref)
     {
       ModuleData *retVal = 0;
-      foreach(ModuleData *tmpData, list)
+      foreach(ModuleData *tmpData, t_list)
       {
-        if(tmpData->reference == ref)
+        if(tmpData->_reference == t_ref)
         {
           retVal = tmpData;
           break;
@@ -33,36 +33,42 @@ namespace ZeraModules
       return retVal;
     }
 
-    VirtualModule *reference;
-    const QString uniqueName;
-    QByteArray configData;
-    int moduleId;
+    VirtualModule *_reference;
+    const QString m_uniqueName;
+    const QString m_configPath;
+    QByteArray m_configData;
+    int m_moduleId;
   };
 
 
-  ModuleManager::ModuleManager(QObject *qobjParent) :
-    QObject(qobjParent),
-    proxyInstance(Zera::Proxy::cProxy::getInstance()),
-    moduleStartLock(false)
-  {
+  ModuleManager::ModuleManager(QObject *t_parent) :
+    QObject(t_parent),
+    m_proxyInstance(Zera::Proxy::cProxy::getInstance()),
+    m_configBackupTimer(new QTimer(this)),
+    m_moduleStartLock(false)
+ {
     QStringList sessionExtension("*.json");
     QDir directory(SESSION_PATH);
     m_sessionsAvailable = directory.entryList(sessionExtension);
     qDebug() << "sessions available:" << m_sessionsAvailable;
+
+    m_configBackupTimer->setInterval(60*1000); //1 minute interval
+    connect(m_configBackupTimer, &QTimer::timeout, this, &ModuleManager::onSaveModuleConfig);
   }
 
   ModuleManager::~ModuleManager()
   {
-    foreach(ModuleData *toDelete, moduleList)
+    foreach(ModuleData *toDelete, m_moduleList)
     {
-      delete toDelete->reference;
+      saveModuleConfig(toDelete);
+      delete toDelete->_reference;
     }
-    proxyInstance->deleteLater();
+    m_proxyInstance->deleteLater();
   }
 
-  bool ModuleManager::isModuleLicensed(VirtualModule *module)
+  bool ModuleManager::isModuleLicensed(VirtualModule *t_module) const
   {
-    Q_UNUSED(module)
+    Q_UNUSED(t_module)
     /**
      * @todo implement function later
      */
@@ -90,7 +96,7 @@ namespace ZeraModules
       if (module)
       {
         retVal=true;
-        factoryTable.insert(module->getFactoryName(), module);
+        m_factoryTable.insert(module->getFactoryName(), module);
       }
       else
       {
@@ -116,69 +122,71 @@ namespace ZeraModules
     m_eventHandler = t_eventHandler;
   }
 
-  void ModuleManager::startModule(QString uniqueModuleName, QByteArray xmlConfigData, int moduleId)
+  void ModuleManager::startModule(const QString & t_uniqueModuleName, const QString & t_xmlConfigPath, const QByteArray &t_xmlConfigData, int t_moduleId)
   {
-    if(moduleStartLock == false)
+    // do not allow starting until all modules are shut down
+    if(m_moduleStartLock == false)
     {
       //VeinPeer *tmpPeer=0;
       //int moduleCount = 0;
       MeasurementModuleFactory *tmpFactory=0;
 
-      tmpFactory=factoryTable.value(uniqueModuleName);
+      tmpFactory=m_factoryTable.value(t_uniqueModuleName);
       if(tmpFactory)
       {
         //qDebug()<<"Creating module instance:"<<tmpPeer->getName(); //<< "with config" << xmlConfigData;
-        VirtualModule *tmpModule = tmpFactory->createModule(proxyInstance, moduleId, m_storage, this);
+        VirtualModule *tmpModule = tmpFactory->createModule(m_proxyInstance, t_moduleId, m_storage, this);
         if(tmpModule)
         {
           connect(tmpModule, &VirtualModule::addEventSystem, this, &ModuleManager::onModuleEventSystemAdded);
-          if(!xmlConfigData.isNull())
+          if(!t_xmlConfigData.isNull())
           {
-            tmpModule->setConfiguration(xmlConfigData);
+            tmpModule->setConfiguration(t_xmlConfigData);
           }
           connect(tmpModule, SIGNAL(moduleDeactivated()), this, SLOT(onModuleDelete()));
           connect(tmpModule, &VirtualModule::moduleActivated, this, &ModuleManager::onModuleStartNext);
           connect(tmpModule, &VirtualModule::moduleError, this, &ModuleManager::onModuleError);
-          moduleStartLock = true;
+          m_moduleStartLock = true;
           tmpModule->startModule();
-          moduleList.append(new ModuleData(tmpModule, uniqueModuleName, QByteArray(), moduleId));
+          m_moduleList.append(new ModuleData(tmpModule, t_uniqueModuleName, t_xmlConfigPath, QByteArray(), t_moduleId));
         }
       }
     }
     else
     {
-      deferedStartList.enqueue(new ModuleData(0, uniqueModuleName, xmlConfigData, moduleId));
+      m_deferedStartList.enqueue(new ModuleData(0, t_uniqueModuleName, t_xmlConfigPath, t_xmlConfigData, t_moduleId));
     }
   }
 
   void ModuleManager::stopModules()
   {
-    // do not allow starting until all modules are shut down
-    if(moduleList.isEmpty() == false)
+    if(m_moduleList.isEmpty() == false)
     {
-      moduleStartLock = true;
-      //sessionReadyEntity->setValue(false, modManPeer);
-      for(int i = moduleList.length()-1; i>=0; i--)
+      m_moduleStartLock = true;
+      onSaveModuleConfig();
+      m_configBackupTimer->stop();
+
+      for(int i = m_moduleList.length()-1; i>=0; i--)
       {
-        VirtualModule *toStop = moduleList.at(i)->reference;
-        QString tmpModuleName = moduleList.at(i)->uniqueName;
+        VirtualModule *toStop = m_moduleList.at(i)->_reference;
+        QString tmpModuleName = m_moduleList.at(i)->m_uniqueName;
         //toStop->stopModule();
-        if(factoryTable.contains(tmpModuleName))
+        if(m_factoryTable.contains(tmpModuleName))
         {
           qDebug() << "Destroying module:" << tmpModuleName;
-          factoryTable.value(tmpModuleName)->destroyModule(toStop);
+          m_factoryTable.value(tmpModuleName)->destroyModule(toStop);
         }
       }
     }
   }
 
-  void ModuleManager::onChangeSession(QVariant newSessionPath)
+  void ModuleManager::onChangeSession(QVariant t_newSessionPath)
   {
-    if(m_sessionPath != newSessionPath.toString())
+    if(m_sessionPath != t_newSessionPath.toString())
     {
-      m_sessionPath = newSessionPath.toString();
+      m_sessionPath = t_newSessionPath.toString();
       QString finalSessionPath = QString("%1").arg(SESSION_PATH) + m_sessionPath;
-      if(moduleStartLock==false && QFile::exists(finalSessionPath)) // do not mess up with state machines
+      if(m_moduleStartLock==false && QFile::exists(finalSessionPath)) // do not mess up with state machines
       {
         m_eventHandler->clearSystems();
         stopModules();
@@ -192,11 +200,11 @@ namespace ZeraModules
     VirtualModule *toDelete = qobject_cast<VirtualModule*>(QObject::sender());
     if(toDelete)
     {
-      ModuleData *tmpData = ModuleData::findByReference(moduleList, toDelete);
+      ModuleData *tmpData = ModuleData::findByReference(m_moduleList, toDelete);
       if(tmpData)
       {
-        moduleList.removeAll(tmpData);
-        qDebug() << "Deleted module:" << tmpData->uniqueName;
+        m_moduleList.removeAll(tmpData);
+        qDebug() << "Deleted module:" << tmpData->m_uniqueName;
         connect(toDelete, &VirtualModule::destroyed, this, &ModuleManager::checkModuleList);
         toDelete->deleteLater();
         delete tmpData;
@@ -211,29 +219,38 @@ namespace ZeraModules
 
   void ModuleManager::onModuleStartNext()
   {
-    moduleStartLock = false;
-    if(deferedStartList.length()>0)
+    m_moduleStartLock = false;
+    if(m_deferedStartList.length()>0)
     {
-      ModuleData *tmpData = deferedStartList.dequeue();
-      qDebug() << "###Defered module start for"<< tmpData->uniqueName;
-      startModule(tmpData->uniqueName, tmpData->configData, tmpData->moduleId);
+      ModuleData *tmpData = m_deferedStartList.dequeue();
+      qDebug() << "###Defered module start for"<< tmpData->m_uniqueName;
+      startModule(tmpData->m_uniqueName, tmpData->m_configPath, tmpData->m_configData, tmpData->m_moduleId);
       delete tmpData;
     }
     else
     {
       emit sigModulesLoaded(m_sessionPath);
-      //sessionReadyEntity->setValue(true, modManPeer);
+      m_configBackupTimer->start();
     }
   }
 
-  void ModuleManager::onModuleError(const QString &error)
+  void ModuleManager::onModuleError(const QString &t_error)
   {
-    qWarning() << "Module error:" << error;
+    qWarning() << "Module error:" << t_error;
   }
+
+  void ModuleManager::onSaveModuleConfig()
+  {
+    foreach(ModuleData *toBackup, m_moduleList)
+    {
+      saveModuleConfig(toBackup);
+    }
+  }
+
 
   void ModuleManager::checkModuleList()
   {
-    if(moduleList.isEmpty())
+    if(m_moduleList.isEmpty())
     {
       //start modules that were unable to start while shutting down
       onModuleStartNext();
@@ -245,5 +262,25 @@ namespace ZeraModules
     m_eventHandler->addSystem(t_eventSystem);
   }
 
+  void ModuleManager::saveModuleConfig(ModuleData *t_moduleData)
+  {
+    QByteArray configData = t_moduleData->_reference->getConfiguration();
 
+    if(configData.isEmpty() == false)
+    {
+      QFile f;
+
+      f.setFileName(QString("%1").arg(t_moduleData->m_configPath));
+      f.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered);
+      if(f.isOpen() && f.isWritable())
+      {
+        f.write(configData);
+        f.close();
+      }
+    }
+    else
+    {
+      qWarning() << "Configuration could not be retrieved from module:" << t_moduleData->m_uniqueName;
+    }
+  }
 }

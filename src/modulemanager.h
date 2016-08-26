@@ -6,6 +6,7 @@
 #include <QVariant>
 #include <QHash>
 #include <QQueue>
+#include <QTimer>
 
 
 class MeasurementModuleFactory;
@@ -33,45 +34,49 @@ namespace ZeraModules
   {
     Q_OBJECT
   public:
-    explicit ModuleManager(QObject *qobjParent = 0);
+    explicit ModuleManager(QObject *t_parent = 0);
     ~ModuleManager();
-    bool isModuleLicensed(VirtualModule *module);
+    bool isModuleLicensed(VirtualModule *t_module) const;
     bool loadModules();
     void loadDefaultSession();
     void setStorage(VeinEvent::StorageSystem *t_storage);
     void setEventHandler(ModuleEventHandler *t_eventHandler);
 
   signals:
-    void sigSessionSwitched(QString newSessionPath);
-    void sigModulesLoaded(QString t_sessionPath);
+    void sigSessionSwitched(const QString &t_newSessionPath);
+    void sigModulesLoaded(const QString &t_sessionPath);
 
   public slots:
-    void startModule(QString uniqueModuleName, QByteArray xmlConfigData, int moduleId);
+    void startModule(const QString &t_uniqueName, const QString &t_xmlConfigPath, const QByteArray &t_xmlConfigData, int t_moduleId);
     void stopModules();
-    void onChangeSession(QVariant newSessionPath);
+    void onChangeSession(QVariant t_newSessionPath);
 
   private slots:
     void onModuleDelete();
     void onModuleStartNext();
-    void onModuleError(const QString &error);
+    void onModuleError(const QString &t_error);
+    void onSaveModuleConfig();
     void checkModuleList();
 
     void onModuleEventSystemAdded(VeinEvent::EventSystem *t_eventSystem);
 
   private:
-    QHash<QString, MeasurementModuleFactory*> factoryTable;
-    QList<ModuleData *> moduleList;
-    QQueue<ModuleData *> deferedStartList;
-    Zera::Proxy::cProxy * proxyInstance;
+    void saveModuleConfig(ModuleData *t_moduleData);
+
+    QHash<QString, MeasurementModuleFactory*> m_factoryTable;
+    QList<ModuleData *> m_moduleList;
+    QQueue<ModuleData *> m_deferedStartList;
+    Zera::Proxy::cProxy * m_proxyInstance;
 
     VeinEvent::StorageSystem *m_storage=0;
     ModuleEventHandler *m_eventHandler=0;
 
-    QString m_sessionPath;
+    QTimer *m_configBackupTimer = 0;
 
+    QString m_sessionPath;
     QList<QString> m_sessionsAvailable;
 
-    bool moduleStartLock;
+    bool m_moduleStartLock;
   };
 }
 
