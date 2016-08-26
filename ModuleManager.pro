@@ -17,11 +17,12 @@ VEIN_DEP_HELPER = 1
 
 contains(DEFINES, OE_BUILD) {
   message(Openembedded build)
-DEFINES += SESSION_PATH=\\\"://target/\\\"
+DEFINES += SESSION_PATH=\\\"/etc/zera/modules/sessions\\\"
 DEFINES += MODMAN_MODULE_PATH=\\\"/usr/lib/zera-modules\\\"
 
-MODMAN_CONFIG_FILES = target/default-session.json \
-target/ref-session.json
+MODMAN_CONFIG_FILES = target/0_default-session.json \
+target/1_ref-session.json \
+target/2_ced-session.json
 
 config_files.files = $$MODMAN_CONFIG_FILES
 config_files.path = /etc/zera/modules/sessions
