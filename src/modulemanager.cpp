@@ -11,7 +11,7 @@
 #include <QDebug>
 
 #include <QState>
-
+#include <QCoreApplication>
 
 namespace ZeraModules
 {
@@ -241,6 +241,7 @@ namespace ZeraModules
   void ModuleManager::onModuleError(const QString &t_error)
   {
     qWarning() << "Module error:" << t_error;
+    QCoreApplication::exit(1);
   }
 
   void ModuleManager::onSaveModuleConfig()
