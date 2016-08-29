@@ -192,6 +192,10 @@ namespace ZeraModules
         stopModules();
         emit sigSessionSwitched(finalSessionPath);
       }
+      else
+      {
+        qWarning() << "Session file not found:" << finalSessionPath << "Search path:" << SESSION_PATH;
+      }
     }
   }
 
