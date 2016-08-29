@@ -17,8 +17,8 @@ VEIN_DEP_HELPER = 1
 
 contains(DEFINES, OE_BUILD) {
   message(Openembedded build)
-DEFINES += SESSION_PATH=\\\"/etc/zera/modules/sessions\\\"
-DEFINES += MODMAN_MODULE_PATH=\\\"/usr/lib/zera-modules\\\"
+DEFINES += SESSION_PATH=\\\"/etc/zera/modules/sessions/\\\"
+DEFINES += MODMAN_MODULE_PATH=\\\"/usr/lib/zera-modules/\\\"
 
 MODMAN_CONFIG_FILES = target/0_default-session.json \
 target/1_ref-session.json \
