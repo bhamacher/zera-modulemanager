@@ -108,8 +108,7 @@ namespace ZeraModules
 
   void ModuleManager::loadDefaultSession()
   {
-    onChangeSession(QVariant("0_default-session.json"));
-    //sessionSwitchEntity->setValue("0_default-session.json"); ///< @todo remove hardcoded and add code for lastsession
+    onChangeSession(QVariant("0_default-session.json"));///< @todo remove hardcoded and add code for lastsession
   }
 
   void ModuleManager::setStorage(VeinEvent::StorageSystem *t_storage)
@@ -275,11 +274,16 @@ namespace ZeraModules
       QFile f;
 
       f.setFileName(QString("%1").arg(t_moduleData->m_configPath));
+      qDebug() << "Storing configuration for module:" << t_moduleData->m_uniqueName << "in file:" << f.fileName();
       f.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered);
       if(f.isOpen() && f.isWritable())
       {
         f.write(configData);
         f.close();
+      }
+      else
+      {
+        qWarning() << "Failed to write configuration file:" << f.fileName() << "error:" << f.errorString();
       }
     }
     else
