@@ -8,6 +8,7 @@
 #include <QPluginLoader>
 #include <abstractmodulefactory.h>
 #include <QDir>
+#include <QSaveFile>
 #include <QDebug>
 
 #include <QState>
@@ -17,14 +18,14 @@ namespace ZeraModules
 {
   class ModuleData {
   public:
-    ModuleData(VirtualModule *t_ref, const QString &t_name, const QString &t_confPath, const QByteArray &t_confData, int t_moduleId) : _reference(t_ref), m_uniqueName(t_name), m_configPath(t_confPath), m_configData(t_confData), m_moduleId(t_moduleId) {}
+    ModuleData(VirtualModule *t_ref, const QString &t_name, const QString &t_confPath, const QByteArray &t_confData, int t_moduleId) : m_reference(t_ref), m_uniqueName(t_name), m_configPath(t_confPath), m_configData(t_confData), m_moduleId(t_moduleId) {}
 
     static ModuleData *findByReference(QList<ModuleData*> t_list, VirtualModule *t_ref)
     {
       ModuleData *retVal = 0;
       foreach(ModuleData *tmpData, t_list)
       {
-        if(tmpData->_reference == t_ref)
+        if(tmpData->m_reference == t_ref)
         {
           retVal = tmpData;
           break;
@@ -33,7 +34,7 @@ namespace ZeraModules
       return retVal;
     }
 
-    VirtualModule *_reference;
+    VirtualModule *m_reference;
     const QString m_uniqueName;
     const QString m_configPath;
     QByteArray m_configData;
@@ -44,16 +45,15 @@ namespace ZeraModules
   ModuleManager::ModuleManager(QObject *t_parent) :
     QObject(t_parent),
     m_proxyInstance(Zera::Proxy::cProxy::getInstance()),
-    m_configBackupTimer(new QTimer(this)),
     m_moduleStartLock(false)
- {
+  {
     QStringList sessionExtension("*.json");
     QDir directory(SESSION_PATH);
     m_sessionsAvailable = directory.entryList(sessionExtension);
     qDebug() << "sessions available:" << m_sessionsAvailable;
 
-    m_configBackupTimer->setInterval(60*1000); //1 minute interval
-    connect(m_configBackupTimer, &QTimer::timeout, this, &ModuleManager::onSaveModuleConfig);
+    m_configBackupTimer.setInterval(60*1000); //1 minute interval
+    connect(&m_configBackupTimer, &QTimer::timeout, this, &ModuleManager::onSaveModuleConfig);
   }
 
   ModuleManager::~ModuleManager()
@@ -61,7 +61,7 @@ namespace ZeraModules
     foreach(ModuleData *toDelete, m_moduleList)
     {
       saveModuleConfig(toDelete);
-      delete toDelete->_reference;
+      delete toDelete->m_reference;
     }
     m_proxyInstance->deleteLater();
   }
@@ -159,15 +159,15 @@ namespace ZeraModules
 
   void ModuleManager::stopModules()
   {
+    m_configBackupTimer.stop();
     if(m_moduleList.isEmpty() == false)
     {
       m_moduleStartLock = true;
       onSaveModuleConfig();
-      m_configBackupTimer->stop();
 
       for(int i = m_moduleList.length()-1; i>=0; i--)
       {
-        VirtualModule *toStop = m_moduleList.at(i)->_reference;
+        VirtualModule *toStop = m_moduleList.at(i)->m_reference;
         QString tmpModuleName = m_moduleList.at(i)->m_uniqueName;
         //toStop->stopModule();
         if(m_factoryTable.contains(tmpModuleName))
@@ -233,7 +233,7 @@ namespace ZeraModules
     else
     {
       emit sigModulesLoaded(m_sessionPath);
-      m_configBackupTimer->start();
+      m_configBackupTimer.start();
     }
   }
 
@@ -267,19 +267,19 @@ namespace ZeraModules
 
   void ModuleManager::saveModuleConfig(ModuleData *t_moduleData)
   {
-    QByteArray configData = t_moduleData->_reference->getConfiguration();
+    QByteArray configData = t_moduleData->m_reference->getConfiguration();
 
     if(configData.isEmpty() == false)
     {
-      QFile f;
+      QSaveFile f; //if the application is closed while writing it will not end up with empty files due to truncate
 
       f.setFileName(QString("%1").arg(t_moduleData->m_configPath));
-      qDebug() << "Storing configuration for module:" << t_moduleData->m_uniqueName << "in file:" << f.fileName();
+      //qDebug() << "Storing configuration for module:" << t_moduleData->m_uniqueName << "in file:" << f.fileName();
       f.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered);
       if(f.isOpen() && f.isWritable())
       {
         f.write(configData);
-        f.close();
+        f.commit(); //writes into the permanent file and closes the file descriptors
       }
       else
       {

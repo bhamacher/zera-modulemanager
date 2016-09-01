@@ -71,7 +71,7 @@ namespace ZeraModules
     VeinEvent::StorageSystem *m_storage=0;
     ModuleEventHandler *m_eventHandler=0;
 
-    QTimer *m_configBackupTimer = 0;
+    QTimer m_configBackupTimer;
 
     QString m_sessionPath;
     QList<QString> m_sessionsAvailable;
