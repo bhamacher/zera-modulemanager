@@ -51,16 +51,12 @@ namespace ZeraModules
     QDir directory(SESSION_PATH);
     m_sessionsAvailable = directory.entryList(sessionExtension);
     qDebug() << "sessions available:" << m_sessionsAvailable;
-
-    m_configBackupTimer.setInterval(60*1000); //1 minute interval
-    connect(&m_configBackupTimer, &QTimer::timeout, this, &ModuleManager::onSaveModuleConfig);
   }
 
   ModuleManager::~ModuleManager()
   {
     foreach(ModuleData *toDelete, m_moduleList)
     {
-      saveModuleConfig(toDelete);
       delete toDelete->m_reference;
     }
     m_proxyInstance->deleteLater();
@@ -145,9 +141,14 @@ namespace ZeraModules
           connect(tmpModule, SIGNAL(moduleDeactivated()), this, SLOT(onModuleDelete()));
           connect(tmpModule, &VirtualModule::moduleActivated, this, &ModuleManager::onModuleStartNext);
           connect(tmpModule, &VirtualModule::moduleError, this, &ModuleManager::onModuleError);
+
           m_moduleStartLock = true;
           tmpModule->startModule();
-          m_moduleList.append(new ModuleData(tmpModule, t_uniqueModuleName, t_xmlConfigPath, QByteArray(), t_moduleId));
+          ModuleData *moduleData = new ModuleData(tmpModule, t_uniqueModuleName, t_xmlConfigPath, QByteArray(), t_moduleId);
+          connect(tmpModule, &VirtualModule::parameterChanged, [this, moduleData](){
+            saveModuleConfig(moduleData);
+          });
+          m_moduleList.append(moduleData);
         }
       }
     }
@@ -159,11 +160,9 @@ namespace ZeraModules
 
   void ModuleManager::stopModules()
   {
-    m_configBackupTimer.stop();
     if(m_moduleList.isEmpty() == false)
     {
       m_moduleStartLock = true;
-      onSaveModuleConfig();
 
       for(int i = m_moduleList.length()-1; i>=0; i--)
       {
@@ -233,21 +232,12 @@ namespace ZeraModules
     else
     {
       emit sigModulesLoaded(m_sessionPath);
-      m_configBackupTimer.start();
     }
   }
 
   void ModuleManager::onModuleError(const QString &t_error)
   {
     qWarning() << "Module error:" << t_error;
-  }
-
-  void ModuleManager::onSaveModuleConfig()
-  {
-    foreach(ModuleData *toBackup, m_moduleList)
-    {
-      saveModuleConfig(toBackup);
-    }
   }
 
 
