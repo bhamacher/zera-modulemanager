@@ -13,15 +13,6 @@
 ModuleManagerController::ModuleManagerController(QObject *t_parent) :
   VeinEvent::EventSystem(t_parent)
 {
-  QJsonArray tmpArray;
-  QJsonObject tmpObject;
-  tmpObject.insert("Error", "System started");
-  tmpObject.insert("Time", QDateTime::currentDateTime().toString("yyyy/MM/dd HH:mm:ss"));
-  tmpObject.insert("ModuleName", "SYSTEM");
-  tmpArray.append(tmpObject);
-
-  //do not use handleNotificationMessage() here since the eventsystem is not connected
-  m_notificationMessages.setArray(tmpArray);
 }
 
 int ModuleManagerController::getEntityId() const
