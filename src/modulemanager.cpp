@@ -122,8 +122,6 @@ namespace ZeraModules
     // do not allow starting until all modules are shut down
     if(m_moduleStartLock == false)
     {
-      //VeinPeer *tmpPeer=0;
-      //int moduleCount = 0;
       MeasurementModuleFactory *tmpFactory=0;
 
       tmpFactory=m_factoryTable.value(t_uniqueModuleName);
@@ -225,7 +223,7 @@ namespace ZeraModules
     if(m_deferedStartList.length()>0)
     {
       ModuleData *tmpData = m_deferedStartList.dequeue();
-      qDebug() << "###Defered module start for"<< tmpData->m_uniqueName;
+      qDebug() << "###Defered module start for" << tmpData->m_uniqueName;
       startModule(tmpData->m_uniqueName, tmpData->m_configPath, tmpData->m_configData, tmpData->m_moduleId);
       delete tmpData;
     }
@@ -263,7 +261,7 @@ namespace ZeraModules
     {
       QSaveFile f; //if the application is closed while writing it will not end up with empty files due to truncate
 
-      f.setFileName(QString("%1").arg(t_moduleData->m_configPath));
+      f.setFileName(t_moduleData->m_configPath);
       //qDebug() << "Storing configuration for module:" << t_moduleData->m_uniqueName << "in file:" << f.fileName();
       f.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered);
       if(f.isOpen() && f.isWritable())
