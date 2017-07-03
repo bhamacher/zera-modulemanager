@@ -74,11 +74,16 @@
         "name" : "statusmodule",
         "configPath" : "/etc/zera/modules/statusmodule.xml",
         "id": 1014
-      } ,
+      },
+      {
+        "name" : "adjustmentmodule",
+        "configPath" : "/etc/zera/modules/adjustmentmodule.xml",
+        "id": 9998
+      },
       {
         "name" : "scpimodule",
         "configPath" : "/etc/zera/modules/scpimodule.xml",
-        "id": 1015
+        "id": 9999
       }
     ]
 }

@@ -74,11 +74,16 @@
       "name" : "statusmodule",
       "configPath" : "/home/peter/C++/zera-classes/zera-modules/statusmodule/src/statusmodule.xml",
       "id": 1014
-    } ,
+    },
+    {
+      "name" : "adjustmentmodule",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/adjustmentmodule/src/adjustmentmodule.xml",
+      "id": 9998
+    },
     {
       "name" : "scpimodule",
       "configPath" : "/home/peter/C++/zera-classes/zera-modules/scpimodule/src/scpimodule.xml",
-      "id": 1015
+      "id": 9999
     }
   ]
 }
