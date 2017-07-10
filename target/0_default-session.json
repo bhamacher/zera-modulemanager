@@ -76,6 +76,11 @@
         "id": 1014
       },
       {
+        "name" : "lambdamodule",
+        "configPath" : "/etc/zera/modules/lambdamodule.xml",
+        "id": 1015
+      },
+      {
         "name" : "adjustmentmodule",
         "configPath" : "/etc/zera/modules/adjustmentmodule.xml",
         "id": 9998
