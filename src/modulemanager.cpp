@@ -4,6 +4,7 @@
 #include <proxy.h>
 
 #include <ve_eventsystem.h>
+#include <vsc_scriptsystem.h>
 
 #include <QPluginLoader>
 #include <abstractmodulefactory.h>
@@ -11,14 +12,20 @@
 #include <QSaveFile>
 #include <QDebug>
 
-#include <QState>
-
 
 namespace ZeraModules
 {
   class ModuleData {
   public:
-    ModuleData(VirtualModule *t_ref, const QString &t_name, const QString &t_confPath, const QByteArray &t_confData, int t_moduleId) : m_reference(t_ref), m_uniqueName(t_name), m_configPath(t_confPath), m_configData(t_confData), m_moduleId(t_moduleId) {}
+    ModuleData(VirtualModule *t_ref, const QString &t_name, const QString &t_confPath, const QByteArray &t_confData, int t_moduleId) :
+      m_reference(t_ref),
+      m_uniqueName(t_name),
+      m_configPath(t_confPath),
+      m_configData(t_confData),
+      m_moduleId(t_moduleId)
+    {}
+
+    ~ModuleData() {}
 
     static ModuleData *findByReference(QList<ModuleData*> t_list, VirtualModule *t_ref)
     {
@@ -57,8 +64,10 @@ namespace ZeraModules
   {
     foreach(ModuleData *toDelete, m_moduleList)
     {
-      delete toDelete->m_reference;
+      m_factoryTable.value(toDelete->m_uniqueName)->destroyModule(toDelete->m_reference);
+      delete toDelete;
     }
+    m_moduleList.clear();
     m_proxyInstance->deleteLater();
   }
 
@@ -87,7 +96,7 @@ namespace ZeraModules
     {
       qDebug() << "File is a library?" << QLibrary::isLibrary(moduleDir.absoluteFilePath(fileName));
       QPluginLoader loader(moduleDir.absoluteFilePath(fileName));
-      MeasurementModuleFactory *module = qobject_cast<MeasurementModuleFactory *>(loader.instance());
+     MeasurementModuleFactory *module = qobject_cast<MeasurementModuleFactory *>(loader.instance());
       qDebug() << "Analyzing:" << loader.fileName() << "loaded:" << loader.isLoaded();
       if (module)
       {
@@ -105,6 +114,23 @@ namespace ZeraModules
   void ModuleManager::loadDefaultSession()
   {
     onChangeSession(QVariant("0_default-session.json"));///< @todo remove hardcoded and add code for lastsession
+  }
+
+  void ModuleManager::loadScripts(VeinScript::ScriptSystem *t_scriptSystem)
+  {
+    //load builtin scripts
+    QDir virtualFiles = QDir(":/scripts");
+    const QStringList scriptList = virtualFiles.entryList();
+    for(const QString &scriptFilePath : scriptList)
+    {
+      const QString dataLocation = QString("%1/%2").arg(virtualFiles.path()).arg(scriptFilePath);
+      qDebug() << "Loading script:" << dataLocation;
+      if(t_scriptSystem->loadScriptFromFile(dataLocation) == false)
+      {
+        qWarning() << "Error loading script file:" << scriptFilePath;
+      }
+    }
+
   }
 
   void ModuleManager::setStorage(VeinEvent::StorageSystem *t_storage)

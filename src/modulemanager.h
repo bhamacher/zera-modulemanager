@@ -24,6 +24,11 @@ namespace VeinEvent
   class StorageSystem;
 }
 
+namespace VeinScript
+{
+  class ScriptSystem;
+}
+
 class ModuleEventHandler;
 
 namespace ZeraModules
@@ -39,6 +44,7 @@ namespace ZeraModules
     bool isModuleLicensed(VirtualModule *t_module) const;
     bool loadModules();
     void loadDefaultSession();
+    void loadScripts(VeinScript::ScriptSystem *t_scriptSystem);
     void setStorage(VeinEvent::StorageSystem *t_storage);
     void setEventHandler(ModuleEventHandler *t_eventHandler);
 

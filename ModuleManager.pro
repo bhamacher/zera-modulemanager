@@ -14,6 +14,11 @@ VEIN_DEP_PROTOBUF = 1
 VEIN_DEP_TCP = 1
 VEIN_DEP_NET = 1
 VEIN_DEP_HELPER = 1
+VEIN_DEP_SCRIPT = 1
+VEIN_DEP_QML = 1
+VEIN_DEP_LOGGER = 1
+
+VEIN_BASEDIR = /work/qt_projects/vein-framework
 
 contains(DEFINES, OE_BUILD) {
   message(Openembedded build)
@@ -47,11 +52,9 @@ DEFINES += SESSION_PATH=\\\"$$PWD/\\\"
   exists($$VEIN_BASEDIR/vein-framework.pri) {
     include($$VEIN_BASEDIR/vein-framework.pri)
   }
-
 }
 
 QT       += core network qml
-
 QT       -= gui
 
 TARGET = zera-modulemanager
@@ -71,6 +74,7 @@ QMAKE_CXXFLAGS += -Wall -Wshadow
 
 INCLUDEPATH += $$VIRTUALMODULE_INCLUDEDIR
 INCLUDEPATH += $$PROXY_INCLUDEDIR
+INCLUDEPATH += $$VEIN_QML_INCLUDEDIR
 
 LIBS += $$VIRTUALMODULE_LIBDIR
 LIBS += $$PROXY_LIBDIR
