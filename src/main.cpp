@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
   });
 
   QList<VeinEvent::EventSystem*> subSystems;
-
+  //do not reorder
   subSystems.append(mmController);
   subSystems.append(storSystem);
   subSystems.append(introspectionSystem);

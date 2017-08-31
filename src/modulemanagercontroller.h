@@ -33,12 +33,13 @@ private:
 
   void handleNotificationMessage(QJsonObject t_message);
 
-  const int m_entityId = 0;
-  const QString m_entityName = "_System";
-  const QString m_entitynNameComponentName = "EntityName";
-  const QString m_entitiesComponentName = "Entities";
-  const QString m_sessionComponentName = "Session";
-  const QString m_notificationMessagesComponentName = "Error_Messages";
+  static constexpr int s_entityId = 0;
+  static constexpr char const *s_entityName = "_System";
+  static constexpr char const *s_entityNameComponentName = "EntityName";
+  static constexpr char const *s_entitiesComponentName = "Entities";
+  static constexpr char const *s_sessionComponentName = "Session";
+  static constexpr char const *s_notificationMessagesComponentName = "Error_Messages";
+  static constexpr char const *s_loggedComponentsComponentName = "LoggedComponents";
 
   VeinEvent::StorageSystem *m_storageSystem = 0;
   QJsonDocument m_notificationMessages;

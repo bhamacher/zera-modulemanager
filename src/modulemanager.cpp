@@ -119,7 +119,7 @@ namespace ZeraModules
   void ModuleManager::loadScripts(VeinScript::ScriptSystem *t_scriptSystem)
   {
     //load builtin scripts
-    QDir virtualFiles = QDir(":/scripts");
+    const QDir virtualFiles = QDir(":/scripts");
     const QStringList scriptList = virtualFiles.entryList();
     for(const QString &scriptFilePath : scriptList)
     {
@@ -130,7 +130,6 @@ namespace ZeraModules
         qWarning() << "Error loading script file:" << scriptFilePath;
       }
     }
-
   }
 
   void ModuleManager::setStorage(VeinEvent::StorageSystem *t_storage)
