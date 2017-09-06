@@ -6,6 +6,6 @@
         <file>target/0_default-session.json</file>
         <file>2_ced-session.json</file>
         <file>target/2_ced-session.json</file>
-        <file>scripts/test_script_logger.qml</file>
+        <file>scripts/data_logger.qml</file>
     </qresource>
 </RCC>
