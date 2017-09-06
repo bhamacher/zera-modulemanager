@@ -8,82 +8,82 @@
       {
         "name" : "rangemodule",
         "configPath" : "/etc/zera/modules/rangemodule.xml",
-        "id": 1001
+        "id": 1020
       },
       {
         "name" : "samplemodule",
         "configPath" : "/etc/zera/modules/samplemodule.xml",
-        "id": 1002
+        "id": 1030
       },
       {
         "name" : "rmsmodule",
         "configPath" : "/etc/zera/modules/rmsmodule.xml",
-        "id": 1003
+        "id": 1040
       },
       {
         "name" : "dftmodule",
         "configPath" : "/etc/zera/modules/dftmodule.xml",
-        "id": 1004
+        "id": 1050
       },
       {
         "name" : "fftmodule",
         "configPath" : "/etc/zera/modules/fftmodule.xml",
-        "id": 1005
+        "id": 1060
       },
       {
         "name" : "power1module",
         "configPath" : "/etc/zera/modules/power1module.xml",
-        "id": 1006
+        "id": 1070
       },
       {
         "name" : "power1module",
         "configPath" : "/etc/zera/modules/power1module2.xml",
-        "id": 1007
+        "id": 1071
       },
       {
         "name" : "power1module",
         "configPath" : "/etc/zera/modules/power1module3.xml",
-        "id": 1008
+        "id": 1072
       },
       {
         "name" : "power1module",
         "configPath" : "/etc/zera/modules/power1module4.xml",
-        "id": 1009
-      },
-      {
-        "name" : "thdnmodule",
-        "configPath" : "/etc/zera/modules/thdnmodule.xml",
-        "id": 1010
-      },
-      {
-        "name" : "oscimodule",
-        "configPath" : "/etc/zera/modules/oscimodule.xml",
-        "id": 1011
-      },
-      {
-        "name" : "sec1module",
-        "configPath" : "/etc/zera/modules/sec1module.xml",
-        "id": 1012
+        "id": 1073
       },
       {
         "name" : "power3module",
         "configPath" : "/etc/zera/modules/power3module.xml",
-        "id": 1013
+        "id": 1100
       },
       {
-        "name" : "statusmodule",
-        "configPath" : "/etc/zera/modules/statusmodule.xml",
-        "id": 1014
+        "name" : "thdnmodule",
+        "configPath" : "/etc/zera/modules/thdnmodule.xml",
+        "id": 1110
+      },
+      {
+        "name" : "oscimodule",
+        "configPath" : "/etc/zera/modules/oscimodule.xml",
+        "id": 1120
+      },
+      {
+        "name" : "sec1module",
+        "configPath" : "/etc/zera/modules/sec1module.xml",
+        "id": 1130
       },
       {
         "name" : "lambdamodule",
         "configPath" : "/etc/zera/modules/lambdamodule.xml",
-        "id": 1015
+        "id": 1140
+      },
+      {
+        "name" : "statusmodule",
+        "configPath" : "/etc/zera/modules/statusmodule.xml",
+        "id": 1150
       },
       {
         "name" : "adjustmentmodule",
         "configPath" : "/etc/zera/modules/adjustmentmodule.xml",
-        "id": 9998
+        "id": 1190
       },
       {
         "name" : "scpimodule",

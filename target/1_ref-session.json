@@ -3,32 +3,32 @@
       {
         "name" : "modemodule",
         "configPath" : "/etc/zera/modules/modemoduleREF.xml",
-        "id": 2000
+        "id": 1000
       },
       {
         "name" : "referencemodule",
         "configPath" : "/etc/zera/modules/referencemodule.xml",
-        "id": 2001
+        "id": 1001
       },
       {
         "name" : "rangemodule",
         "configPath" : "/etc/zera/modules/rangemoduleREF.xml",
-        "id": 2002
+        "id": 1020
       },
       {
         "name" : "dftmodule",
         "configPath" : "/etc/zera/modules/dftmoduleREF.xml",
-        "id": 2003
+        "id": 1050
       },
       {
         "name" : "statusmodule",
         "configPath" : "/etc/zera/modules/statusmodule.xml",
-        "id": 2004
+        "id": 1150
       } ,
       {
         "name" : "scpimodule",
         "configPath" : "/etc/zera/modules/scpimodule.xml",
-        "id": 2005
+        "id": 9999
       }
   ]
 }
