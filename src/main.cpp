@@ -96,6 +96,10 @@ int main(int argc, char *argv[])
 
   QObject::connect(sessionLoader, &JsonSessionLoader::sigLoadModule, modMan, &ZeraModules::ModuleManager::startModule);
   QObject::connect(modMan, &ZeraModules::ModuleManager::sigSessionSwitched, sessionLoader, &JsonSessionLoader::loadSession);
+  QObject::connect(modMan, &ZeraModules::ModuleManager::sigSessionSwitched, [&dataLoggerSystem]() {
+    //disable logging to prevent data logging between session switching
+    dataLoggerSystem->setLoggingEnabled(false);
+  });
 
   bool modulesFound;
 
