@@ -24,10 +24,12 @@ public:
 
 signals:
   void sigChangeSession(QVariant newSessionPath);
+  void sigModulesPausedChanged(bool t_paused);
 
 public slots:
   void initializeEntities(QString t_sessionPath);
   void initOnce();
+  void setModulesPaused(bool t_paused);
 
 private:
 
@@ -40,12 +42,15 @@ private:
   static constexpr char const *s_sessionComponentName = "Session";
   static constexpr char const *s_notificationMessagesComponentName = "Error_Messages";
   static constexpr char const *s_loggedComponentsComponentName = "LoggedComponents";
+  static constexpr char const *s_modulesPausedComponentName = "ModulesPaused";
+
 
   VeinEvent::StorageSystem *m_storageSystem = 0;
   QJsonDocument m_notificationMessages;
   QString m_currentSession;
   bool m_initDone=false;
   bool m_sessionReady=false;
+  bool m_modulesPaused=false;
 };
 
 #endif // MODULEMANAGERSETTINGS_H

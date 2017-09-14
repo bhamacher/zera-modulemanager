@@ -57,6 +57,8 @@ namespace ZeraModules
     void stopModules();
     void onChangeSession(QVariant t_newSessionPath);
 
+    void setModulesPaused(bool t_paused);
+
   private slots:
     void onModuleDelete();
     void onModuleStartNext();

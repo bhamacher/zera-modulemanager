@@ -38,9 +38,10 @@ bool ModuleManagerController::processEvent(QEvent *t_event)
   if(t_event->type() == VeinEvent::CommandEvent::eventType())
   {
     bool validated=false;
-    VeinEvent::CommandEvent *cEvent = 0;
+    VeinEvent::CommandEvent *cEvent = nullptr;
     cEvent = static_cast<VeinEvent::CommandEvent *>(t_event);
-    if(cEvent != 0 && cEvent->eventSubtype() != VeinEvent::CommandEvent::EventSubtype::NOTIFICATION) //we do not need to process notifications
+    Q_ASSERT(cEvent != nullptr);
+    if(cEvent->eventSubtype() != VeinEvent::CommandEvent::EventSubtype::NOTIFICATION) //we do not need to process notifications
     {
       if(cEvent->eventData()->type() == VeinComponent::IntrospectionData::dataType()) //introspection requests are always valid
       {
@@ -48,9 +49,9 @@ bool ModuleManagerController::processEvent(QEvent *t_event)
       }
       else if(cEvent->eventData()->type() == VeinComponent::EntityData::dataType()) //validate subscription requests
       {
-        VeinComponent::EntityData *eData=0;
+        VeinComponent::EntityData *eData=nullptr;
         eData = static_cast<VeinComponent::EntityData *>(cEvent->eventData());
-        Q_ASSERT(eData!=0);
+        Q_ASSERT(eData != nullptr);
         if(eData->eventCommand() == VeinComponent::EntityData::Command::ECMD_SUBSCRIBE
            || eData->eventCommand() == VeinComponent::EntityData::Command::ECMD_UNSUBSCRIBE) /// @todo maybe add roles/views later
         {
@@ -59,9 +60,9 @@ bool ModuleManagerController::processEvent(QEvent *t_event)
       }
       else if(cEvent->eventData()->type() == VeinComponent::ComponentData::dataType())
       {
-        VeinComponent::ComponentData *cData=0;
+        VeinComponent::ComponentData *cData=nullptr;
         cData = static_cast<VeinComponent::ComponentData *>(cEvent->eventData());
-        Q_ASSERT(cData!=0);
+        Q_ASSERT(cData != nullptr);
 
         //validate fetch requests
         if(cData->eventCommand() == VeinComponent::ComponentData::Command::CCMD_FETCH) /// @todo maybe add roles/views later
@@ -79,10 +80,7 @@ bool ModuleManagerController::processEvent(QEvent *t_event)
               emit sigChangeSession(cData->newValue());
               m_sessionReady = false;
             }
-            if(cData->eventOrigin() != VeinEvent::EventData::EventOrigin::EO_LOCAL)
-            {
-              t_event->accept();
-            }
+            t_event->accept();
           }
           else if(cData->componentName() == ModuleManagerController::s_notificationMessagesComponentName)
           {
@@ -91,15 +89,13 @@ bool ModuleManagerController::processEvent(QEvent *t_event)
           }
           else if(cData->componentName() == ModuleManagerController::s_loggedComponentsComponentName)
           {
-            VeinComponent::ComponentData *loggedComponentsData = new VeinComponent::ComponentData();
-            loggedComponentsData->setEntityId(ModuleManagerController::s_entityId);
-            loggedComponentsData->setCommand(VeinComponent::ComponentData::Command::CCMD_SET);
-            loggedComponentsData->setComponentName(ModuleManagerController::s_loggedComponentsComponentName);
-            loggedComponentsData->setNewValue(cData->newValue());
-            loggedComponentsData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
-            loggedComponentsData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
-
-            emit sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, loggedComponentsData));
+            validated=true;
+          }
+          else if(cData->componentName() == ModuleManagerController::s_modulesPausedComponentName)
+          {
+            validated=true;
+            qDebug() << cData->newValue();
+            setModulesPaused(cData->newValue().toBool());
           }
         }
       }
@@ -177,22 +173,31 @@ void ModuleManagerController::initOnce()
     componentData.insert(ModuleManagerController::s_sessionComponentName, QVariant(m_currentSession));
     componentData.insert(ModuleManagerController::s_notificationMessagesComponentName, QVariant(m_notificationMessages.toJson()));
     componentData.insert(ModuleManagerController::s_loggedComponentsComponentName, QVariantMap());
+    componentData.insert(ModuleManagerController::s_modulesPausedComponentName, QVariant(false));
 
-    VeinComponent::ComponentData *introspectionData=0;
+    VeinComponent::ComponentData *initialData=0;
     for(const QString &compName : componentData.keys())
     {
-      introspectionData = new VeinComponent::ComponentData();
-      introspectionData->setEntityId(s_entityId);
-      introspectionData->setCommand(VeinComponent::ComponentData::Command::CCMD_ADD);
-      introspectionData->setComponentName(compName);
-      introspectionData->setNewValue(componentData.value(compName));
-      introspectionData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
-      introspectionData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
-      emit sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, introspectionData));
+      initialData = new VeinComponent::ComponentData();
+      initialData->setEntityId(s_entityId);
+      initialData->setCommand(VeinComponent::ComponentData::Command::CCMD_ADD);
+      initialData->setComponentName(compName);
+      initialData->setNewValue(componentData.value(compName));
+      initialData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
+      initialData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
+      emit sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, initialData));
     }
 
-
     m_initDone = true;
+  }
+}
+
+void ModuleManagerController::setModulesPaused(bool t_paused)
+{
+  if(t_paused != m_modulesPaused)
+  {
+    m_modulesPaused = t_paused;
+    emit sigModulesPausedChanged(m_modulesPaused);
   }
 }
 

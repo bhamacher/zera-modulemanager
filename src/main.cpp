@@ -124,6 +124,7 @@ int main(int argc, char *argv[])
   }
   QObject::connect(modMan, &ZeraModules::ModuleManager::sigModulesLoaded, mmController, &ModuleManagerController::initializeEntities);
   QObject::connect(mmController, &ModuleManagerController::sigChangeSession, modMan, &ZeraModules::ModuleManager::onChangeSession);
+  QObject::connect(mmController, &ModuleManagerController::sigModulesPausedChanged, modMan, &ZeraModules::ModuleManager::setModulesPaused);
 
   qmlSystem->setRequiredIds(QList<int>()<<0<<VeinLogger::DatabaseLogger::entityId());
   bool initOnce = false;

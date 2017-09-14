@@ -220,6 +220,23 @@ namespace ZeraModules
     }
   }
 
+  void ModuleManager::setModulesPaused(bool t_paused)
+  {
+    for(ModuleData *module : m_moduleList)
+    {
+      if(t_paused)
+      {
+        qDebug() << "pausing module:" << module->m_uniqueName;
+        module->m_reference->stopModule();
+      }
+      else
+      {
+        qDebug() << "unpausing module:" << module->m_uniqueName;
+        module->m_reference->startModule();
+      }
+    }
+  }
+
   void ModuleManager::onModuleDelete()
   {
     VirtualModule *toDelete = qobject_cast<VirtualModule*>(QObject::sender());
