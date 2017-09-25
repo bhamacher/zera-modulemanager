@@ -18,6 +18,7 @@
 #include <vl_databaselogger.h>
 #include <vl_datasource.h>
 #include <vl_qmllogger.h>
+#include <vl_sqlitedb.h>
 
 #include <QDebug>
 
@@ -37,6 +38,9 @@ int main(int argc, char *argv[])
                                                 QString("%1.debug=false").arg(VEIN_API_QML_VERBOSE().categoryName()) <<
                                                 QString("%1.debug=false").arg(VEIN_STORAGE_HASH_VERBOSE().categoryName());
 
+  const VeinLogger::DBFactory sqliteFactory = [](){
+    return new VeinLogger::SQLiteDB();
+  };
 
   QLoggingCategory::setFilterRules(loggingFilters.join("\n"));
 
@@ -49,7 +53,7 @@ int main(int argc, char *argv[])
   VeinNet::TcpSystem *tcpSystem = new VeinNet::TcpSystem(&a);
   VeinScript::ScriptSystem *scriptSystem = new VeinScript::ScriptSystem(&a);
   VeinApiQml::VeinQml *qmlSystem = new VeinApiQml::VeinQml(&a);
-  VeinLogger::DatabaseLogger *dataLoggerSystem = new VeinLogger::DatabaseLogger(new VeinLogger::DataSource(storSystem, &a), &a);
+  VeinLogger::DatabaseLogger *dataLoggerSystem = new VeinLogger::DatabaseLogger(new VeinLogger::DataSource(storSystem, &a), sqliteFactory, &a);
 
   VeinApiQml::VeinQml::setStaticInstance(qmlSystem);
   VeinLogger::QmlLogger::setStaticLogger(dataLoggerSystem);
@@ -126,7 +130,8 @@ int main(int argc, char *argv[])
   QObject::connect(mmController, &ModuleManagerController::sigChangeSession, modMan, &ZeraModules::ModuleManager::onChangeSession);
   QObject::connect(mmController, &ModuleManagerController::sigModulesPausedChanged, modMan, &ZeraModules::ModuleManager::setModulesPaused);
 
-  qmlSystem->setRequiredIds(QList<int>()<<0<<VeinLogger::DatabaseLogger::entityId());
+  //0 = ModuleManagerController, 2 = VeinLogger::DatabaseLogger
+  qmlSystem->setRequiredIds(QList<int>()<<0<<2);
   bool initOnce = false;
 
   QObject::connect(qmlSystem, &VeinApiQml::VeinQml::sigStateChanged, [&](VeinApiQml::VeinQml::ConnectionState t_state){
