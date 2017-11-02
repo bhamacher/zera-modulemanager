@@ -24,6 +24,7 @@ contains(DEFINES, OE_BUILD) {
   message(Openembedded build)
 DEFINES += SESSION_PATH=\\\"/etc/zera/modules/sessions/\\\"
 DEFINES += MODMAN_MODULE_PATH=\\\"/usr/lib/zera-modules/\\\"
+DEFINES += MODMAN_CUSTOMERDATA_PATH=\\\"/home/operator/customerdata/\\\"
 
 MODMAN_CONFIG_FILES = target/0_default-session.json \
 target/1_ref-session.json \
@@ -54,7 +55,7 @@ DEFINES += SESSION_PATH=\\\"$$PWD/\\\"
   }
 }
 
-QT       += core network qml
+QT       += core network qml concurrent
 QT       -= gui
 
 TARGET = zera-modulemanager
@@ -68,7 +69,8 @@ SOURCES += src/main.cpp \
     src/modulemanager.cpp \
     src/jsonsessionloader.cpp \
     src/modulemanagercontroller.cpp \
-    src/moduleeventhandler.cpp
+    src/moduleeventhandler.cpp \
+    src/customerdatasystem.cpp
 
 QMAKE_CXXFLAGS += -Wall -Wshadow
 
@@ -85,7 +87,8 @@ LIBS += -lzera-proxy -lzera-resourcemanager-protobuf -lMeasurementModuleInterfac
 HEADERS += src/modulemanager.h \
     src/jsonsessionloader.h \
     src/modulemanagercontroller.h \
-    src/moduleeventhandler.h
+    src/moduleeventhandler.h \
+    src/customerdatasystem.h
 
 target.path = /usr/bin
 INSTALLS += target

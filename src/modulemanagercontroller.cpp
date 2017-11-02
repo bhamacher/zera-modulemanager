@@ -10,12 +10,21 @@
 #include <QJsonArray>
 #include <QDateTime>
 
+//constexpr definition, see: https://stackoverflow.com/questions/8016780/undefined-reference-to-static-constexpr-char
+constexpr QLatin1String ModuleManagerController::s_entityName;
+constexpr QLatin1String ModuleManagerController::s_entityNameComponentName;
+constexpr QLatin1String ModuleManagerController::s_entitiesComponentName;
+constexpr QLatin1String ModuleManagerController::s_sessionComponentName;
+constexpr QLatin1String ModuleManagerController::s_notificationMessagesComponentName;
+constexpr QLatin1String ModuleManagerController::s_loggedComponentsComponentName;
+constexpr QLatin1String ModuleManagerController::s_modulesPausedComponentName;
+
 ModuleManagerController::ModuleManagerController(QObject *t_parent) :
   VeinEvent::EventSystem(t_parent)
 {
 }
 
-int ModuleManagerController::getEntityId() const
+constexpr int ModuleManagerController::getEntityId()
 {
   return s_entityId;
 }
@@ -94,7 +103,6 @@ bool ModuleManagerController::processEvent(QEvent *t_event)
           else if(cData->componentName() == ModuleManagerController::s_modulesPausedComponentName)
           {
             validated=true;
-            qDebug() << cData->newValue();
             setModulesPaused(cData->newValue().toBool());
           }
         }
@@ -116,7 +124,7 @@ bool ModuleManagerController::processEvent(QEvent *t_event)
 
 
 
-void ModuleManagerController::initializeEntities(QString t_sessionPath)
+void ModuleManagerController::initializeEntity(QString t_sessionPath)
 {
   if(m_storageSystem!=0)
   {

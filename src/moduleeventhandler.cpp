@@ -1,5 +1,5 @@
 #include "moduleeventhandler.h"
-
+#include <vn_introspectionsystem.h>
 #include <QEvent>
 
 ModuleEventHandler::ModuleEventHandler(QObject *t_parent) : VeinEvent::EventHandler(t_parent)

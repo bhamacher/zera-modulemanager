@@ -5,12 +5,16 @@
 #include <ve_eventsystem.h>
 #include <QList>
 
+namespace VeinNet {
+  class IntrospectionSystem;
+}
+
 class ModuleEventHandler : public VeinEvent::EventHandler
 {
   Q_OBJECT
 public:
   explicit ModuleEventHandler(QObject *t_parent = 0);
-
+  void setIntrospectionSystem(VeinNet::IntrospectionSystem *t_introspectionSystem);
 signals:
 
 public slots:
@@ -23,6 +27,7 @@ protected:
 
 private:
   QList<VeinEvent::EventSystem *> m_moduleSystems;
+  VeinNet::IntrospectionSystem *m_introspection=nullptr;
 };
 
 #endif // MODULEEVENTHANDLER_H

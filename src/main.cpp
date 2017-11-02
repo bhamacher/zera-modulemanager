@@ -2,6 +2,7 @@
 #include "jsonsessionloader.h"
 #include "modulemanagercontroller.h"
 #include "moduleeventhandler.h"
+#include "customerdatasystem.h"
 
 #include <QCoreApplication>
 
@@ -36,6 +37,7 @@ int main(int argc, char *argv[])
                                                 QString("%1.debug=false").arg(VEIN_NET_TCP_VERBOSE().categoryName()) <<
                                                 QString("%1.debug=false").arg(VEIN_API_QML().categoryName()) <<
                                                 QString("%1.debug=false").arg(VEIN_API_QML_VERBOSE().categoryName()) <<
+//                                                QString("%1.debug=false").arg(VEIN_LOGGER().categoryName()) <<
                                                 QString("%1.debug=false").arg(VEIN_STORAGE_HASH_VERBOSE().categoryName());
 
   const VeinLogger::DBFactory sqliteFactory = [](){
@@ -47,8 +49,9 @@ int main(int argc, char *argv[])
   ModuleEventHandler *evHandler = new ModuleEventHandler(&a);
 
   ModuleManagerController *mmController = new ModuleManagerController(&a);
+  CustomerDataSystem *customerDataSystem = new CustomerDataSystem(&a);
+  VeinNet::IntrospectionSystem *introspectionSystem = new VeinNet::IntrospectionSystem(&a);
   VeinStorage::VeinHash *storSystem = new VeinStorage::VeinHash(&a);
-  VeinNet::IntrospectionSystem *introspectionSystem = new VeinNet::IntrospectionSystem(storSystem);
   VeinNet::NetworkSystem *netSystem = new VeinNet::NetworkSystem(&a);
   VeinNet::TcpSystem *tcpSystem = new VeinNet::TcpSystem(&a);
   VeinScript::ScriptSystem *scriptSystem = new VeinScript::ScriptSystem(&a);
@@ -62,7 +65,7 @@ int main(int argc, char *argv[])
   JsonSessionLoader *sessionLoader = new JsonSessionLoader(&a);
 
   netSystem->setOperationMode(VeinNet::NetworkSystem::VNOM_SUBSCRIPTION);
-  QObject::connect(dataLoggerSystem, &VeinLogger::DatabaseLogger::sigDatabaseError, [dataLoggerSystem](const QString &t_error){
+  auto errorReportFunction = [dataLoggerSystem](const QString &t_error){
     QJsonObject jsonErrorObj;
 
     jsonErrorObj.insert("ModuleName", "DataLogger");
@@ -79,13 +82,17 @@ int main(int argc, char *argv[])
     cData->setNewValue(jsonErrorObj);
 
     emit dataLoggerSystem->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::TRANSACTION, cData));
-  });
+  };
+
+  QObject::connect(customerDataSystem, &CustomerDataSystem::sigCustomerDataError, errorReportFunction);
+  QObject::connect(dataLoggerSystem, &VeinLogger::DatabaseLogger::sigDatabaseError, errorReportFunction);
 
   QList<VeinEvent::EventSystem*> subSystems;
   //do not reorder
   subSystems.append(mmController);
-  subSystems.append(storSystem);
+  subSystems.append(customerDataSystem);
   subSystems.append(introspectionSystem);
+  subSystems.append(storSystem);
   subSystems.append(netSystem);
   subSystems.append(tcpSystem);
   subSystems.append(qmlSystem);
@@ -117,7 +124,7 @@ int main(int argc, char *argv[])
 
   if(!modulesFound)
   {
-    qDebug() << "[Zera-Module-Manager] No modules found";
+    qCritical() << "[Zera-Module-Manager] No modules found";
     a.quit();
   }
   else
@@ -126,7 +133,7 @@ int main(int argc, char *argv[])
     mmController->initOnce();
     tcpSystem->startServer(12000);
   }
-  QObject::connect(modMan, &ZeraModules::ModuleManager::sigModulesLoaded, mmController, &ModuleManagerController::initializeEntities);
+  QObject::connect(modMan, &ZeraModules::ModuleManager::sigModulesLoaded, mmController, &ModuleManagerController::initializeEntity);
   QObject::connect(mmController, &ModuleManagerController::sigChangeSession, modMan, &ZeraModules::ModuleManager::onChangeSession);
   QObject::connect(mmController, &ModuleManagerController::sigModulesPausedChanged, modMan, &ZeraModules::ModuleManager::setModulesPaused);
 

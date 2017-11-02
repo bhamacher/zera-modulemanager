@@ -14,7 +14,7 @@ class ModuleManagerController : public VeinEvent::EventSystem
   Q_OBJECT
 public:
   explicit ModuleManagerController(QObject *t_parent = 0);
-  int getEntityId() const;
+  static constexpr int getEntityId();
   VeinEvent::StorageSystem *getStorageSystem() const;
   void setStorage(VeinEvent::StorageSystem *t_storageSystem);
 
@@ -27,22 +27,21 @@ signals:
   void sigModulesPausedChanged(bool t_paused);
 
 public slots:
-  void initializeEntities(QString t_sessionPath);
+  void initializeEntity(QString t_sessionPath);
   void initOnce();
   void setModulesPaused(bool t_paused);
 
 private:
-
   void handleNotificationMessage(QJsonObject t_message);
 
   static constexpr int s_entityId = 0;
-  static constexpr char const *s_entityName = "_System";
-  static constexpr char const *s_entityNameComponentName = "EntityName";
-  static constexpr char const *s_entitiesComponentName = "Entities";
-  static constexpr char const *s_sessionComponentName = "Session";
-  static constexpr char const *s_notificationMessagesComponentName = "Error_Messages";
-  static constexpr char const *s_loggedComponentsComponentName = "LoggedComponents";
-  static constexpr char const *s_modulesPausedComponentName = "ModulesPaused";
+  static constexpr QLatin1String s_entityName = QLatin1String("_System");
+  static constexpr QLatin1String s_entityNameComponentName = QLatin1String("EntityName");
+  static constexpr QLatin1String s_entitiesComponentName = QLatin1String("Entities");
+  static constexpr QLatin1String s_sessionComponentName = QLatin1String("Session");
+  static constexpr QLatin1String s_notificationMessagesComponentName = QLatin1String("Error_Messages");
+  static constexpr QLatin1String s_loggedComponentsComponentName = QLatin1String("LoggedComponents");
+  static constexpr QLatin1String s_modulesPausedComponentName = QLatin1String("ModulesPaused");
 
 
   VeinEvent::StorageSystem *m_storageSystem = 0;
