@@ -69,7 +69,7 @@ VeinLogger {
     dftModuleEntries.push("ACT_DFTPP3");
     logValues["1050"] = dftModuleEntries;
 
-    if(session !== "1_ref-session.json")
+    if(session !== "com5003-ref-session.json")
     {
       //RMS module 1040
       var rmsModuleEntries = [];

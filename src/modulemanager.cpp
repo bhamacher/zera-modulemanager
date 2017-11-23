@@ -113,7 +113,7 @@ namespace ZeraModules
 
   void ModuleManager::loadDefaultSession()
   {
-    onChangeSession(QVariant("0_default-session.json"));///< @todo remove hardcoded and add code for lastsession
+    onChangeSession(QVariant("com5003-meas-session.json"));///< @todo remove hardcoded and add code for lastsession
   }
 
   void ModuleManager::loadScripts(VeinScript::ScriptSystem *t_scriptSystem)

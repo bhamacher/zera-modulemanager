@@ -26,9 +26,9 @@ DEFINES += SESSION_PATH=\\\"/etc/zera/modules/sessions/\\\"
 DEFINES += MODMAN_MODULE_PATH=\\\"/usr/lib/zera-modules/\\\"
 DEFINES += MODMAN_CUSTOMERDATA_PATH=\\\"/home/operator/customerdata/\\\"
 
-MODMAN_CONFIG_FILES = target/0_default-session.json \
-target/1_ref-session.json \
-target/2_ced-session.json
+MODMAN_CONFIG_FILES = target/com5003-meas-session.json \
+target/com5003-ref-session.json \
+target/com5003-ced-session.json
 
 config_files.files = $$MODMAN_CONFIG_FILES
 config_files.path = /etc/zera/modules/sessions

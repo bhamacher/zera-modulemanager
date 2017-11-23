@@ -1,11 +1,11 @@
 <RCC>
     <qresource prefix="/">
-        <file>0_default-session.json</file>
-        <file>1_ref-session.json</file>
-        <file>target/1_ref-session.json</file>
-        <file>target/0_default-session.json</file>
-        <file>2_ced-session.json</file>
-        <file>target/2_ced-session.json</file>
+        <file>com5003-meas-session.json</file>
+        <file>com5003-ref-session.json</file>
+        <file>target/com5003-ref-session.json</file>
+        <file>target/com5003-meas-session.json</file>
+        <file>com5003-ced-session.json</file>
+        <file>target/com5003-ced-session.json</file>
         <file>scripts/data_logger.qml</file>
     </qresource>
 </RCC>
