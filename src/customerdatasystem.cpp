@@ -167,7 +167,7 @@ bool CustomerDataSystem::processEvent(QEvent *t_event)
              && m_remoteProcedures.contains(rpcData->procedureName()))
           {
             retVal = true;
-            const QUuid callId = rpcData->invokationData().value(VeinComponent::RemoteProcedureData::s_callIdText).toUuid();
+            const QUuid callId = rpcData->invokationData().value(VeinComponent::RemoteProcedureData::s_callIdString).toUuid();
             Q_ASSERT(callId.isNull() == false);
             Q_ASSERT(m_pendingRpcHash.contains(callId) == false);
             m_pendingRpcHash.insert(callId, cEvent->peerId());

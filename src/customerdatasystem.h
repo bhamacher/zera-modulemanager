@@ -10,22 +10,7 @@
 #include <QFutureWatcher>
 #include <functional>
 
-/// helper to save time with defining component metadata
-#define VF_COMPONENT(componentIdentifier, componentNameString, componentDescriptionString) \
-  static constexpr QLatin1String s_##componentIdentifier##ComponentName = QLatin1String(componentNameString); \
-  static constexpr QLatin1String s_##componentIdentifier##ComponentDescription = QLatin1String(componentDescriptionString);
-
-/// helper to save time with defining rpc function metadata
-#define VF_RPC(rpcIdentifier, procedureNameString, procedureDescriptionString) \
-  static constexpr QLatin1String s_##rpcIdentifier##ProcedureName = QLatin1String(procedureNameString); \
-  static constexpr QLatin1String s_##rpcIdentifier##ProcedureDescription = QLatin1String(procedureDescriptionString);
-
-/// helper to set up a map or hash of the remote procedures, mainly because qt creator breaks the indentation :(
-#define VF_RPC_BIND(rpcIdentifier, rpcBind) \
-{ \
-s_##rpcIdentifier##ProcedureName, \
-rpcBind \
-}
+#include "modman_util.h"
 
 namespace VeinEvent
 {
@@ -134,7 +119,7 @@ private:
 
   QFileSystemWatcher m_fileWatcher;
   QTimer m_dataWriteDelay;
-  QHash<QUuid, int> m_pendingRpcHash;
+  QHash<QUuid, QUuid> m_pendingRpcHash;
   QHash<QUuid, QFutureWatcher<QString> *> m_pendingSearchResultWatchers;
 };
 
