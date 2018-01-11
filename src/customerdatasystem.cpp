@@ -68,11 +68,9 @@ const QSet<QString> CustomerDataSystem::s_writeProtectedComponents = {
 
 CustomerDataSystem::CustomerDataSystem(QObject *t_parent) :
   VeinEvent::EventSystem(t_parent),
-  m_remoteProcedures({
-                     VF_RPC_BIND(customerDataAdd, std::bind(&CustomerDataSystem::customerDataAdd, this, std::placeholders::_1, std::placeholders::_2)),
+  m_remoteProcedures{VF_RPC_BIND(customerDataAdd, std::bind(&CustomerDataSystem::customerDataAdd, this, std::placeholders::_1, std::placeholders::_2)),
                      VF_RPC_BIND(customerDataRemove, std::bind(&CustomerDataSystem::customerDataRemove, this, std::placeholders::_1, std::placeholders::_2)),
-                     VF_RPC_BIND(customerDataSearch, std::bind(&CustomerDataSystem::customerDataSearch, this, std::placeholders::_1, std::placeholders::_2))
-                     })
+                     VF_RPC_BIND(customerDataSearch, std::bind(&CustomerDataSystem::customerDataSearch, this, std::placeholders::_1, std::placeholders::_2))}
 {
   m_dataWriteDelay.setInterval(50);
   m_dataWriteDelay.setSingleShot(true);
@@ -102,7 +100,7 @@ bool CustomerDataSystem::processEvent(QEvent *t_event)
           VeinComponent::ComponentData *cData=nullptr;
           cData = static_cast<VeinComponent::ComponentData *>(cEvent->eventData());
           Q_ASSERT(cData != nullptr);
-          if(cData->eventCommand() == VeinComponent::ComponentData::Command::CCMD_SET) //validate set event for _System.Session
+          if(cData->eventCommand() == VeinComponent::ComponentData::Command::CCMD_SET)
           {
             bool validated = false;
             if(cData->componentName() == CustomerDataSystem::s_fileSelectedComponentName)
@@ -591,6 +589,7 @@ void CustomerDataSystem::customerDataSearch(const QUuid &t_callId, const QVarian
         retVal.insert(VeinComponent::RemoteProcedureData::s_resultCodeString, RPCResultCodes::CDS_SUCCESS);
         rpcFinished(t_callId, s_customerDataSearchProcedureName, retVal);
       });
+      ///@todo make cancel accessible via rpc
       connect(tmpWatcher, &QFutureWatcher<QString>::canceled, [this, t_callId, t_parameters](){
         m_pendingSearchResultWatchers.remove(t_callId);
         QVariantMap retVal = t_parameters; //writable copy

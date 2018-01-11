@@ -3,6 +3,7 @@
 #include "modulemanagercontroller.h"
 #include "moduleeventhandler.h"
 #include "customerdatasystem.h"
+#include "priorityarbitrationsystem.h"
 
 #include <QCoreApplication>
 
@@ -48,6 +49,11 @@ int main(int argc, char *argv[])
 
   ModuleEventHandler *evHandler = new ModuleEventHandler(&a);
 
+#ifdef DEVICE_ARBITRATION
+  //priority based arbitration
+  PriorityArbitrationSystem *arbitrationSystem = new PriorityArbitrationSystem(&a);
+  evHandler->setArbitrationSystem(arbitrationSystem);
+#endif
   ModuleManagerController *mmController = new ModuleManagerController(&a);
   CustomerDataSystem *customerDataSystem = new CustomerDataSystem(&a);
   VeinNet::IntrospectionSystem *introspectionSystem = new VeinNet::IntrospectionSystem(&a);
@@ -86,6 +92,7 @@ int main(int argc, char *argv[])
 
   QObject::connect(customerDataSystem, &CustomerDataSystem::sigCustomerDataError, errorReportFunction);
   QObject::connect(dataLoggerSystem, &VeinLogger::DatabaseLogger::sigDatabaseError, errorReportFunction);
+
 
   QList<VeinEvent::EventSystem*> subSystems;
   //do not reorder

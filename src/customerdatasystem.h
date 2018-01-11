@@ -114,6 +114,9 @@ private:
 
   QFileSystemWatcher m_fileWatcher;
   QTimer m_dataWriteDelay;
+  /**
+   * @brief call id, peer id
+   */
   QHash<QUuid, QUuid> m_pendingRpcHash;
   QHash<QUuid, QFutureWatcher<QString> *> m_pendingSearchResultWatchers;
 };
