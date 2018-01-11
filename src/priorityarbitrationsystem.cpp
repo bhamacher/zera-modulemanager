@@ -6,6 +6,8 @@
 #include <vcmp_errordata.h>
 #include <vcmp_remoteproceduredata.h>
 
+#include <functional>
+
 PriorityArbitrationSystem::PriorityArbitrationSystem(QObject *t_parent) :
   VeinEvent::EventSystem(t_parent),
   m_remoteProcedures({

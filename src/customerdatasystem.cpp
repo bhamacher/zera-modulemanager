@@ -16,6 +16,8 @@
 #include <QFile>
 #include <QtConcurrent>
 
+#include <functional>
+
 using namespace VeinComponent;
 
 const QHash<QString, QString> CustomerDataSystem::s_componentIntrospection = {

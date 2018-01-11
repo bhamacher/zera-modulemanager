@@ -1,6 +1,8 @@
 #ifndef MODMAN_UTIL_H
 #define MODMAN_UTIL_H
 
+#include <functional>
+
 /// helper to save time with defining component metadata
 #define VF_COMPONENT(componentIdentifier, componentNameString, componentDescriptionString) \
   static constexpr QLatin1String s_##componentIdentifier##ComponentName = QLatin1String(componentNameString); \
