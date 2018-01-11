@@ -10,6 +10,7 @@ TEMPLATE = app
 VEIN_DEP_EVENT = 1
 VEIN_DEP_COMP = 1
 VEIN_DEP_HASH = 1
+VEIN_DEP_TCP = 1 #required by libzeraproxy
 VEIN_DEP_TCP2 = 1
 VEIN_DEP_NET2 = 1
 VEIN_DEP_HELPER = 1
@@ -70,7 +71,7 @@ SOURCES += src/main.cpp \
     src/modulemanagercontroller.cpp \
     src/moduleeventhandler.cpp \
     src/customerdatasystem.cpp \
-    src/priorityarbitration.cpp
+    src/priorityarbitrationsystem.cpp
 
 QMAKE_CXXFLAGS += -Wall -Wshadow
 
@@ -89,8 +90,8 @@ HEADERS += src/modulemanager.h \
     src/modulemanagercontroller.h \
     src/moduleeventhandler.h \
     src/customerdatasystem.h \
-    src/priorityarbitration.h \
-    src/modman_util.h
+    src/modman_util.h \
+    src/priorityarbitrationsystem.h
 
 target.path = /usr/bin
 INSTALLS += target
