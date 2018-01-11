@@ -12,11 +12,6 @@
 
 #include "modman_util.h"
 
-namespace VeinEvent
-{
-  using RemoteProcedureAtlas = QHash<QString, std::function<void(const QUuid&, QVariantMap)> >;
-}
-
 namespace VeinComponent
 {
   class RemoteProcedureData;
