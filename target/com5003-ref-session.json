@@ -21,6 +21,11 @@
         "id": 1050
       },
       {
+        "name" : "power1module",
+        "configPath" : "/etc/zera/modules/power1moduleREF.xml",
+        "id": 1070
+      },
+      {
         "name" : "statusmodule",
         "configPath" : "/etc/zera/modules/statusmodule.xml",
         "id": 1150

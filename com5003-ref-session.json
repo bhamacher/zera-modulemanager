@@ -21,6 +21,11 @@
         "id": 1050
       },
       {
+        "name" : "power1module",
+        "configPath" : "/home/peter/C++/zera-classes/zera-modules/power1module/src/power1moduleREF.xml",
+        "id": 1070
+      },
+      {
         "name" : "statusmodule",
         "configPath" : "/home/peter/C++/zera-classes/zera-modules/statusmodule/src/statusmodule.xml",
         "id": 1150
