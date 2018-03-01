@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
   evHandler->setArbitrationSystem(arbitrationSystem);
 #endif
   ModuleManagerController *mmController = new ModuleManagerController(&a);
-  CustomerDataSystem *customerDataSystem = new CustomerDataSystem(&a);
+  //CustomerDataSystem *customerDataSystem = new CustomerDataSystem(&a);
   VeinNet::IntrospectionSystem *introspectionSystem = new VeinNet::IntrospectionSystem(&a);
   VeinStorage::VeinHash *storSystem = new VeinStorage::VeinHash(&a);
   VeinNet::NetworkSystem *netSystem = new VeinNet::NetworkSystem(&a);
@@ -90,14 +90,14 @@ int main(int argc, char *argv[])
     emit dataLoggerSystem->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::TRANSACTION, cData));
   };
 
-  QObject::connect(customerDataSystem, &CustomerDataSystem::sigCustomerDataError, errorReportFunction);
+  //QObject::connect(customerDataSystem, &CustomerDataSystem::sigCustomerDataError, errorReportFunction);
   QObject::connect(dataLoggerSystem, &VeinLogger::DatabaseLogger::sigDatabaseError, errorReportFunction);
 
 
   QList<VeinEvent::EventSystem*> subSystems;
   //do not reorder
   subSystems.append(mmController);
-  subSystems.append(customerDataSystem);
+  //subSystems.append(customerDataSystem);
   subSystems.append(introspectionSystem);
   subSystems.append(storSystem);
   subSystems.append(netSystem);
