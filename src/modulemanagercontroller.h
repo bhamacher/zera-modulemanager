@@ -18,16 +18,18 @@ public:
   VeinEvent::StorageSystem *getStorageSystem() const;
   void setStorage(VeinEvent::StorageSystem *t_storageSystem);
 
+  static constexpr QLatin1String s_notificationMessagesComponentName = QLatin1String("Error_Messages");
+
   // EventSystem interface
 public:
   bool processEvent(QEvent *t_event) override;
 
 signals:
-  void sigChangeSession(QVariant newSessionPath);
+  void sigChangeSession(const QString &t_newSession);
   void sigModulesPausedChanged(bool t_paused);
 
 public slots:
-  void initializeEntity(QString t_sessionPath);
+  void initializeEntity(const QString &t_sessionPath);
   void initOnce();
   void setModulesPaused(bool t_paused);
 
@@ -39,7 +41,6 @@ private:
   static constexpr QLatin1String s_entityNameComponentName = QLatin1String("EntityName");
   static constexpr QLatin1String s_entitiesComponentName = QLatin1String("Entities");
   static constexpr QLatin1String s_sessionComponentName = QLatin1String("Session");
-  static constexpr QLatin1String s_notificationMessagesComponentName = QLatin1String("Error_Messages");
   static constexpr QLatin1String s_loggedComponentsComponentName = QLatin1String("LoggedComponents");
   static constexpr QLatin1String s_modulesPausedComponentName = QLatin1String("ModulesPaused");
 

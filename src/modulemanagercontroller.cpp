@@ -86,7 +86,7 @@ bool ModuleManagerController::processEvent(QEvent *t_event)
             //m_currentSession=cData->newValue().toString();
             if(m_sessionReady == true)
             {
-              emit sigChangeSession(cData->newValue());
+              emit sigChangeSession(cData->newValue().toString());
               m_sessionReady = false;
             }
             t_event->accept();
@@ -124,7 +124,7 @@ bool ModuleManagerController::processEvent(QEvent *t_event)
 
 
 
-void ModuleManagerController::initializeEntity(QString t_sessionPath)
+void ModuleManagerController::initializeEntity(const QString &t_sessionPath)
 {
   if(m_storageSystem!=0)
   {

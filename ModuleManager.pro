@@ -24,24 +24,29 @@ VEIN_BASEDIR = /work/qt_projects/vein-framework
 
 contains(DEFINES, OE_BUILD) {
   message(Openembedded build)
-DEFINES += SESSION_PATH=\\\"/etc/zera/modules/sessions/\\\"
+DEFINES += MODMAN_SESSION_PATH=\\\"/etc/zera/modules/sessions/\\\"
 DEFINES += MODMAN_MODULE_PATH=\\\"/usr/lib/zera-modules/\\\"
 DEFINES += MODMAN_CUSTOMERDATA_PATH=\\\"/home/operator/customerdata/\\\"
+DEFINES += MODMAN_CONFIG_FILE=\\\"/etc/zera/modules/modulemanager_config.json\\\"
 
-MODMAN_CONFIG_FILES = target/com5003-meas-session.json \
+MODMAN_SESSION_FILES = target/com5003-meas-session.json \
 target/com5003-ref-session.json \
 target/com5003-ced-session.json
 
-config_files.files = $$MODMAN_CONFIG_FILES
-config_files.path = /etc/zera/modules/sessions
-INSTALLS += config_files
+session_files.files = $$MODMAN_SESSION_FILES
+session_files.path = /etc/zera/modules/sessions
+
+config_files = modulemanager_config.json
+config_files.path = /etc/zera/modules
+
+INSTALLS += session_files config_files
 
   exists(../oe-build.pri) {
     include(../oe-build.pri)
   }
 }
 else {
-DEFINES += SESSION_PATH=\\\"$$PWD/\\\"
+DEFINES += MODMAN_SESSION_PATH=\\\"$$PWD/\\\"
 # DEFINE your own MODMAN_MODULE_PATH in your .pri file
 
   exists(modulemanager.user.pri) {

@@ -10,6 +10,9 @@
 #include <abstractmodulefactory.h>
 #include <QDir>
 #include <QSaveFile>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QCoreApplication>
 #include <QDebug>
 
 
@@ -55,7 +58,7 @@ namespace ZeraModules
     m_moduleStartLock(false)
   {
     QStringList sessionExtension("*.json");
-    QDir directory(SESSION_PATH);
+    QDir directory(MODMAN_SESSION_PATH);
     m_sessionsAvailable = directory.entryList(sessionExtension);
     qDebug() << "sessions available:" << m_sessionsAvailable;
   }
@@ -96,7 +99,7 @@ namespace ZeraModules
     {
       qDebug() << "File is a library?" << QLibrary::isLibrary(moduleDir.absoluteFilePath(fileName));
       QPluginLoader loader(moduleDir.absoluteFilePath(fileName));
-     MeasurementModuleFactory *module = qobject_cast<MeasurementModuleFactory *>(loader.instance());
+      MeasurementModuleFactory *module = qobject_cast<MeasurementModuleFactory *>(loader.instance());
       qDebug() << "Analyzing:" << loader.fileName() << "loaded:" << loader.isLoaded();
       if (module)
       {
@@ -113,7 +116,19 @@ namespace ZeraModules
 
   void ModuleManager::loadDefaultSession()
   {
-    onChangeSession(QVariant("com5003-meas-session.json"));///< @todo remove hardcoded and add code for lastsession
+    QFile configFile(MODMAN_CONFIG_FILE);
+    if(configFile.exists() && configFile.open(QFile::ReadOnly))
+    {
+      const QJsonDocument configDoc = QJsonDocument::fromJson(configFile.readAll());
+      const QString defaultSession = configDoc.object().value("defaultSession").toString();
+      Q_ASSERT(defaultSession.isEmpty() == false);
+      onChangeSession(defaultSession);
+    }
+    else
+    {
+      qCritical() << "Error loading config file from path:" << MODMAN_CONFIG_FILE;
+      QCoreApplication::exit(-ENOENT);
+    }
   }
 
   void ModuleManager::loadScripts(VeinScript::ScriptSystem *t_scriptSystem)
@@ -201,21 +216,29 @@ namespace ZeraModules
     }
   }
 
-  void ModuleManager::onChangeSession(QVariant t_newSessionPath)
+  void ModuleManager::onChangeSession(const QString &t_newSessionPath)
   {
-    if(m_sessionPath != t_newSessionPath.toString())
+    if(m_sessionPath != t_newSessionPath)
     {
-      m_sessionPath = t_newSessionPath.toString();
-      QString finalSessionPath = QString("%1").arg(SESSION_PATH) + m_sessionPath;
-      if(m_moduleStartLock==false && QFile::exists(finalSessionPath)) // do not mess up with state machines
+      const QString finalSessionPath = QString("%1%2").arg(MODMAN_SESSION_PATH).arg(t_newSessionPath);
+      if(QFile::exists(finalSessionPath))
       {
-        m_eventHandler->clearSystems();
-        stopModules();
-        emit sigSessionSwitched(finalSessionPath);
+        if(m_moduleStartLock == false) // do not mess up the state machines
+        {
+          m_sessionPath = t_newSessionPath;
+          m_eventHandler->clearSystems();
+          stopModules();
+          emit sigSessionSwitched(finalSessionPath);
+        }
+        else
+        {
+          qWarning() << "Cannot switch sessions while session change already is in progress";
+          Q_ASSERT(false);
+        }
       }
       else
       {
-        qWarning() << "Session file not found:" << finalSessionPath << "Search path:" << SESSION_PATH;
+        qWarning() << "Session file not found:" << finalSessionPath << "Search path:" << MODMAN_SESSION_PATH;
       }
     }
   }

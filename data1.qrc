@@ -7,5 +7,6 @@
         <file>com5003-ced-session.json</file>
         <file>target/com5003-ced-session.json</file>
         <file>scripts/data_logger.qml</file>
+        <file>modulemanager_config.json</file>
     </qresource>
 </RCC>

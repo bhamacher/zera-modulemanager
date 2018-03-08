@@ -55,7 +55,7 @@ namespace ZeraModules
   public slots:
     void startModule(const QString &t_uniqueName, const QString &t_xmlConfigPath, const QByteArray &t_xmlConfigData, int t_moduleId);
     void stopModules();
-    void onChangeSession(QVariant t_newSessionPath);
+    void onChangeSession(const QString &t_newSessionPath);
 
     void setModulesPaused(bool t_paused);
 
