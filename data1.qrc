@@ -8,5 +8,7 @@
         <file>target/com5003-ced-session.json</file>
         <file>scripts/data_logger.qml</file>
         <file>modulemanager_config.json</file>
+        <file>mt310s2-meas-session.json</file>
+        <file>target/mt310s2-meas-session.json</file>
     </qresource>
 </RCC>

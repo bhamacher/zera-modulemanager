@@ -2,82 +2,82 @@
   "modules" : [
     {
       "name" : "modemodule",
-      "configPath" : "/home/peter/C++/zera-classes/zera-modules/modemodule/src/modemoduleAC.xml",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/modemodule/src/com5003-modemoduleAC.xml",
       "id": 1000
     },
     {
       "name" : "rangemodule",
-      "configPath" : "/home/peter/C++/zera-classes/zera-modules/rangemodule/src/rangemodule.xml",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/rangemodule/src/com5003-rangemodule.xml",
       "id": 1020
     },
     {
       "name" : "samplemodule",
-      "configPath" : "/home/peter/C++/zera-classes/zera-modules/samplemodule/src/samplemodule.xml",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/samplemodule/src/com5003-samplemodule.xml",
       "id": 1030
     },
     {
       "name" : "rmsmodule",
-      "configPath" : "/home/peter/C++/zera-classes/zera-modules/rmsmodule/src/rmsmodule.xml",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/rmsmodule/src/com5003-rmsmodule.xml",
       "id": 1040
     },
     {
       "name" : "dftmodule",
-      "configPath" : "/home/peter/C++/zera-classes/zera-modules/dftmodule/src/dftmodule.xml",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/dftmodule/src/com5003-dftmodule.xml",
       "id": 1050
     },
     {
       "name" : "fftmodule",
-      "configPath" : "/home/peter/C++/zera-classes/zera-modules/fftmodule/src/fftmodule.xml",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/fftmodule/src/com5003-fftmodule.xml",
       "id": 1060
     },
     {
       "name" : "power1module",
-      "configPath" : "/home/peter/C++/zera-classes/zera-modules/power1module/src/power1module.xml",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/power1module/src/com5003-power1module.xml",
       "id": 1070
     },
     {
       "name" : "power1module",
-      "configPath" : "/home/peter/C++/zera-classes/zera-modules/power1module/src/power1module2.xml",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/power1module/src/com5003-power1module2.xml",
       "id": 1071
     },
     {
       "name" : "power1module",
-      "configPath" : "/home/peter/C++/zera-classes/zera-modules/power1module/src/power1module3.xml",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/power1module/src/com5003-power1module3.xml",
       "id": 1072
     },
     {
       "name" : "power1module",
-      "configPath" : "/home/peter/C++/zera-classes/zera-modules/power1module/src/power1module4.xml",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/power1module/src/com5003-power1module4.xml",
       "id": 1073
     },
     {
       "name" : "power3module",
-      "configPath" : "/home/peter/C++/zera-classes/zera-modules/power3module/src/power3module.xml",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/power3module/src/com5003-power3module.xml",
       "id": 1100
     },
     {
       "name" : "thdnmodule",
-      "configPath" : "/home/peter/C++/zera-classes/zera-modules/thdnmodule/src/thdnmodule.xml",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/thdnmodule/src/com5003-thdnmodule.xml",
       "id": 1110
     },
     {
       "name" : "oscimodule",
-      "configPath" : "/home/peter/C++/zera-classes/zera-modules/oscimodule/src/oscimodule.xml",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/oscimodule/src/com5003-oscimodule.xml",
       "id": 1120
     },
     {
       "name" : "sec1module",
-      "configPath" : "/home/peter/C++/zera-classes/zera-modules/sec1module/src/sec1module.xml",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/sec1module/src/com5003-sec1module.xml",
       "id": 1130
     },
     {
       "name" : "lambdamodule",
-      "configPath" : "/home/peter/C++/zera-classes/zera-modules/lambdamodule/src/lambdamodule.xml",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/lambdamodule/src/com5003-lambdamodule.xml",
       "id": 1140
     },
     {
       "name" : "statusmodule",
-      "configPath" : "/home/peter/C++/zera-classes/zera-modules/statusmodule/src/statusmodule.xml",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/statusmodule/src/com5003-statusmodule.xml",
       "id": 1150
     },
     {

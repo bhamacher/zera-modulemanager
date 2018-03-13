@@ -1,0 +1,104 @@
+{
+    "modules" : [
+      {
+        "name" : "modemodule",
+        "configPath" : "/etc/zera/modules/mt310s2-modemoduleAC.xml",
+        "id": 1000
+      },
+      {
+        "name" : "rangemodule",
+        "configPath" : "/etc/zera/modules/mt310s2-rangemodule.xml",
+        "id": 1020
+      },
+      {
+        "name" : "samplemodule",
+        "configPath" : "/etc/zera/modules/mt310s2-samplemodule.xml",
+        "id": 1030
+      },
+      {
+        "name" : "rmsmodule",
+        "configPath" : "/etc/zera/modules/mt310s2-rmsmodule.xml",
+        "id": 1040
+      },
+      {
+        "name" : "dftmodule",
+        "configPath" : "/etc/zera/modules/mt310s2-dftmodule.xml",
+        "id": 1050
+      },
+      {
+        "name" : "fftmodule",
+        "configPath" : "/etc/zera/modules/mt310s2-fftmodule.xml",
+        "id": 1060
+      },
+      {
+        "name" : "power1module",
+        "configPath" : "/etc/zera/modules/mt310s2-power1module.xml",
+        "id": 1070
+      },
+      {
+        "name" : "power1module",
+        "configPath" : "/etc/zera/modules/mt310s2-power1module2.xml",
+        "id": 1071
+      },
+      {
+        "name" : "power1module",
+        "configPath" : "/etc/zera/modules/mt310s2-power1module3.xml",
+        "id": 1072
+      },
+      {
+        "name" : "power3module",
+        "configPath" : "/etc/zera/modules/mt310s2-power3module.xml",
+        "id": 1100
+      },
+      {
+        "name" : "thdnmodule",
+        "configPath" : "/etc/zera/modules/mt310s2-thdnmodule.xml",
+        "id": 1110
+      },
+      {
+        "name" : "oscimodule",
+        "configPath" : "/etc/zera/modules/mt310s2-oscimodule.xml",
+        "id": 1120
+      },
+      {
+        "name" : "sec1module",
+        "configPath" : "/etc/zera/modules/mt310s2-sec1module.xml",
+        "id": 1130
+      },
+      {
+        "name" : "lambdamodule",
+        "configPath" : "/etc/zera/modules/mt310s2-lambdamodule.xml",
+        "id": 1140
+      },
+      {
+        "name" : "statusmodule",
+        "configPath" : "/etc/zera/modules/mt310s2-statusmodule.xml",
+        "id": 1150
+      },
+      {
+        "name" : "burden1module",
+        "configPath" : "/etc/zera/modules/mt310s2-burden1module.xml",
+        "id": 1160
+      },
+      {
+        "name" : "burden1module",
+        "configPath" : "/etc/zera/modules/mt310s2-burden1module2.xml",
+        "id": 1161
+      },
+      {
+        "name" : "transformer1module",
+        "configPath" : "/etc/zera/modules/mt310s2-transformer1module.xml",
+        "id": 1170
+      },
+      {
+        "name" : "adjustmentmodule",
+        "configPath" : "/etc/zera/modules/mt310s2-adjustmentmodule.xml",
+        "id": 1190
+      },
+      {
+        "name" : "scpimodule",
+        "configPath" : "/etc/zera/modules/scpimodule.xml",
+        "id": 9999
+      }
+    ]
+}

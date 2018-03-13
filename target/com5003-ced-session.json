@@ -2,73 +2,73 @@
     "modules" : [
       {
         "name" : "modemodule",
-        "configPath" : "/etc/zera/modules/modemoduleAC.xml",
+        "configPath" : "/etc/zera/modules/com5003-modemoduleAC.xml",
         "id": 1000
       },
       {
         "name" : "rangemodule",
-        "configPath" : "/etc/zera/modules/rangemodule.xml",
+        "configPath" : "/etc/zera/modules/com5003-rangemodule.xml",
         "id": 1020
       },
       {
         "name" : "samplemodule",
-        "configPath" : "/etc/zera/modules/samplemodule.xml",
+        "configPath" : "/etc/zera/modules/com5003-samplemodule.xml",
         "id": 1030
       },
       {
         "name" : "rmsmodule",
-        "configPath" : "/etc/zera/modules/rmsmoduleCED.xml",
+        "configPath" : "/etc/zera/modules/com5003-rmsmoduleCED.xml",
         "id": 1040
       },
       {
         "name" : "dftmodule",
-        "configPath" : "/etc/zera/modules/dftmodule.xml",
+        "configPath" : "/etc/zera/modules/com5003-dftmodule.xml",
         "id": 1050
       },
       {
         "name" : "fftmodule",
-        "configPath" : "/etc/zera/modules/fftmodule.xml",
+        "configPath" : "/etc/zera/modules/com5003-fftmodule.xml",
         "id": 1060
       },
       {
         "name" : "power1module",
-        "configPath" : "/etc/zera/modules/power1moduleCED.xml",
+        "configPath" : "/etc/zera/modules/com5003-power1moduleCED.xml",
         "id": 1070
       },
       {
         "name" : "power1module",
-        "configPath" : "/etc/zera/modules/power1module2CED.xml",
+        "configPath" : "/etc/zera/modules/com5003-power1module2CED.xml",
         "id": 1071
       },
       {
         "name" : "power1module",
-        "configPath" : "/etc/zera/modules/power1module3CED.xml",
+        "configPath" : "/etc/zera/modules/com5003-power1module3CED.xml",
         "id": 1072
       },
       {
         "name" : "power2module",
-        "configPath" : "/etc/zera/modules/power2moduleCED.xml",
+        "configPath" : "/etc/zera/modules/com5003-power2moduleCED.xml",
         "id": 1090
       },
       {
         "name" : "thdnmodule",
-        "configPath" : "/etc/zera/modules/thdnmodule.xml",
+        "configPath" : "/etc/zera/modules/com5003-thdnmodule.xml",
         "id": 1110
       },
       {
         "name" : "oscimodule",
-        "configPath" : "/etc/zera/modules/oscimodule.xml",
+        "configPath" : "/etc/zera/modules/com5003-oscimodule.xml",
         "id": 1120
       },
 
       {
         "name" : "sec1module",
-        "configPath" : "/etc/zera/modules/sec1module.xml",
+        "configPath" : "/etc/zera/modules/com5003-sec1module.xml",
         "id": 1130
       },
       {
         "name" : "statusmodule",
-        "configPath" : "/etc/zera/modules/statusmodule.xml",
+        "configPath" : "/etc/zera/modules/com5003-statusmodule.xml",
         "id": 1150
       } ,
       {

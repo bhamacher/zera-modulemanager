@@ -2,22 +2,22 @@
     "modules" : [
       {
         "name" : "modemodule",
-        "configPath" : "/home/peter/C++/zera-classes/zera-modules/modemodule/src/modemoduleREF.xml",
+        "configPath" : "/home/peter/C++/zera-classes/zera-modules/modemodule/src/com5003-modemoduleREF.xml",
         "id": 1000
       },
       {
         "name" : "referencemodule",
-        "configPath" : "/home/peter/C++/zera-classes/zera-modules/referencemodule/src/referencemodule.xml",
+        "configPath" : "/home/peter/C++/zera-classes/zera-modules/referencemodule/src/com5003-referencemodule.xml",
         "id": 1001
       },
       {
         "name" : "rangemodule",
-        "configPath" : "/home/peter/C++/zera-classes/zera-modules/rangemodule/src/rangemoduleREF.xml",
+        "configPath" : "/home/peter/C++/zera-classes/zera-modules/rangemodule/src/com5003-rangemoduleREF.xml",
         "id": 1020
       },
       {
         "name" : "dftmodule",
-        "configPath" : "/home/peter/C++/zera-classes/zera-modules/dftmodule/src/dftmoduleREF.xml",
+        "configPath" : "/home/peter/C++/zera-classes/zera-modules/dftmodule/src/com5003-dftmoduleREF.xml",
         "id": 1050
       },
       {
@@ -27,7 +27,7 @@
       },
       {
         "name" : "statusmodule",
-        "configPath" : "/home/peter/C++/zera-classes/zera-modules/statusmodule/src/statusmodule.xml",
+        "configPath" : "/home/peter/C++/zera-classes/zera-modules/statusmodule/src/com5003-statusmodule.xml",
         "id": 1150
       } ,
       {

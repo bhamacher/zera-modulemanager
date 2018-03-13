@@ -31,7 +31,8 @@ DEFINES += MODMAN_CONFIG_FILE=\\\"/etc/zera/modules/modulemanager_config.json\\\
 
 MODMAN_SESSION_FILES = target/com5003-meas-session.json \
 target/com5003-ref-session.json \
-target/com5003-ced-session.json
+target/com5003-ced-session.json \
+target/mt310s2-meas-session.json
 
 session_files.files = $$MODMAN_SESSION_FILES
 session_files.path = /etc/zera/modules/sessions
@@ -105,3 +106,6 @@ INSTALLS += target
 
 RESOURCES += \
     data1.qrc
+
+
+
