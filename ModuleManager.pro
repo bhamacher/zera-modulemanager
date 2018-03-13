@@ -37,7 +37,7 @@ target/mt310s2-meas-session.json
 session_files.files = $$MODMAN_SESSION_FILES
 session_files.path = /etc/zera/modules/sessions
 
-config_files = modulemanager_config.json
+config_files.files = modulemanager_config.json
 config_files.path = /etc/zera/modules
 
 INSTALLS += session_files config_files
