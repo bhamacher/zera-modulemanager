@@ -17,7 +17,6 @@ public:
   static constexpr int getEntityId();
   VeinEvent::StorageSystem *getStorageSystem() const;
   void setStorage(VeinEvent::StorageSystem *t_storageSystem);
-
   static constexpr QLatin1String s_notificationMessagesComponentName = QLatin1String("Error_Messages");
 
   // EventSystem interface
@@ -29,7 +28,7 @@ signals:
   void sigModulesPausedChanged(bool t_paused);
 
 public slots:
-  void initializeEntity(const QString &t_sessionPath);
+  void initializeEntity(const QString &t_sessionPath, const QStringList &t_sessionList);
   void initOnce();
   void setModulesPaused(bool t_paused);
 
@@ -41,6 +40,7 @@ private:
   static constexpr QLatin1String s_entityNameComponentName = QLatin1String("EntityName");
   static constexpr QLatin1String s_entitiesComponentName = QLatin1String("Entities");
   static constexpr QLatin1String s_sessionComponentName = QLatin1String("Session");
+  static constexpr QLatin1String s_sessionsAvailableComponentName = QLatin1String("SessionsAvailable");
   static constexpr QLatin1String s_loggedComponentsComponentName = QLatin1String("LoggedComponents");
   static constexpr QLatin1String s_modulesPausedComponentName = QLatin1String("ModulesPaused");
 
@@ -48,6 +48,7 @@ private:
   VeinEvent::StorageSystem *m_storageSystem = 0;
   QJsonDocument m_notificationMessages;
   QString m_currentSession;
+  QStringList m_availableSessions;
   bool m_initDone=false;
   bool m_sessionReady=false;
   bool m_modulesPaused=false;

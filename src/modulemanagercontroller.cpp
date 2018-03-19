@@ -15,6 +15,7 @@ constexpr QLatin1String ModuleManagerController::s_entityName;
 constexpr QLatin1String ModuleManagerController::s_entityNameComponentName;
 constexpr QLatin1String ModuleManagerController::s_entitiesComponentName;
 constexpr QLatin1String ModuleManagerController::s_sessionComponentName;
+constexpr QLatin1String ModuleManagerController::s_sessionsAvailableComponentName;
 constexpr QLatin1String ModuleManagerController::s_notificationMessagesComponentName;
 constexpr QLatin1String ModuleManagerController::s_loggedComponentsComponentName;
 constexpr QLatin1String ModuleManagerController::s_modulesPausedComponentName;
@@ -124,12 +125,13 @@ bool ModuleManagerController::processEvent(QEvent *t_event)
 
 
 
-void ModuleManagerController::initializeEntity(const QString &t_sessionPath)
+void ModuleManagerController::initializeEntity(const QString &t_sessionPath, const QStringList &t_sessionList)
 {
   if(m_storageSystem!=0)
   {
     m_sessionReady=true;
     m_currentSession=t_sessionPath;
+    m_availableSessions=t_sessionList;
 
     VeinComponent::ComponentData *initData=0;
     VeinEvent::CommandEvent *initEvent = 0;
@@ -158,6 +160,18 @@ void ModuleManagerController::initializeEntity(const QString &t_sessionPath)
     initData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
     initEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, initData);
     emit sigSendEvent(initEvent);
+    initEvent=0;
+
+
+    initData = new VeinComponent::ComponentData();
+    initData->setEntityId(s_entityId);
+    initData->setCommand(VeinComponent::ComponentData::Command::CCMD_SET);
+    initData->setComponentName(ModuleManagerController::s_sessionsAvailableComponentName);
+    initData->setNewValue(QVariant(m_availableSessions));
+    initData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
+    initData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
+    initEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, initData);
+    emit sigSendEvent(initEvent);
   }
   else
   {
@@ -179,6 +193,7 @@ void ModuleManagerController::initOnce()
     componentData.insert(ModuleManagerController::s_entityNameComponentName, ModuleManagerController::s_entityName);
     componentData.insert(ModuleManagerController::s_entitiesComponentName, QVariant());
     componentData.insert(ModuleManagerController::s_sessionComponentName, QVariant(m_currentSession));
+    componentData.insert(ModuleManagerController::s_sessionsAvailableComponentName, QVariant(m_availableSessions));
     componentData.insert(ModuleManagerController::s_notificationMessagesComponentName, QVariant(m_notificationMessages.toJson()));
     componentData.insert(ModuleManagerController::s_loggedComponentsComponentName, QVariantMap());
     componentData.insert(ModuleManagerController::s_modulesPausedComponentName, QVariant(false));

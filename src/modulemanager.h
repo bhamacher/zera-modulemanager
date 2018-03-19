@@ -39,23 +39,22 @@ namespace ZeraModules
   {
     Q_OBJECT
   public:
-    explicit ModuleManager(QObject *t_parent = 0);
+    explicit ModuleManager(const QStringList &t_sessionList, QObject *t_parent = 0);
     ~ModuleManager();
     bool isModuleLicensed(VirtualModule *t_module) const;
     bool loadModules();
-    void loadDefaultSession();
     void loadScripts(VeinScript::ScriptSystem *t_scriptSystem);
     void setStorage(VeinEvent::StorageSystem *t_storage);
     void setEventHandler(ModuleEventHandler *t_eventHandler);
 
   signals:
     void sigSessionSwitched(const QString &t_newSessionPath);
-    void sigModulesLoaded(const QString &t_sessionPath);
+    void sigModulesLoaded(const QString &t_sessionPath, const QStringList &t_sessionsAvailable);
 
   public slots:
     void startModule(const QString &t_uniqueName, const QString &t_xmlConfigPath, const QByteArray &t_xmlConfigData, int t_moduleId);
     void stopModules();
-    void onChangeSession(const QString &t_newSessionPath);
+    void changeSessionFile(const QString &t_newSessionPath);
 
     void setModulesPaused(bool t_paused);
 

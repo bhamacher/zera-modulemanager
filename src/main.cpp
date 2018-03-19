@@ -28,9 +28,38 @@
 #include <QStringList>
 #include <QDataStream>
 
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+
+namespace ZeraModulemanager
+{
+  QJsonDocument getDefaultConfig()
+  {
+    QJsonDocument retVal;
+    QFile configFile(MODMAN_CONFIG_FILE);
+    if(configFile.exists() && configFile.open(QFile::ReadOnly))
+    {
+      retVal = QJsonDocument::fromJson(configFile.readAll());
+    }
+    return retVal;
+  }
+}
+
 int main(int argc, char *argv[])
 {
   QCoreApplication a(argc, argv);
+
+  const QJsonDocument defaultConfig = ZeraModulemanager::getDefaultConfig();
+  if(defaultConfig.isEmpty() || defaultConfig.isObject() == false)
+  {
+    qCritical() << "Error loading config file from path:" << MODMAN_CONFIG_FILE;
+    return -ENOENT;
+  }
+  const QString deviceName = defaultConfig.object().value("deviceName").toString();
+  const bool customerdataSystemEnabled = defaultConfig.object().value(deviceName).toObject().value("customerdataSystemEnabled").toBool(false);
+  const QVariant tmpAvailList = defaultConfig.object().value(deviceName).toObject().value("availableSessions").toArray().toVariantList();
+  const QStringList availableSessionList = tmpAvailList.toStringList();
 
   QStringList loggingFilters = QStringList() << QString("%1.debug=false").arg(VEIN_EVENT().categoryName()) <<
                                                 QString("%1.debug=false").arg(VEIN_NET_VERBOSE().categoryName()) <<
@@ -38,7 +67,7 @@ int main(int argc, char *argv[])
                                                 QString("%1.debug=false").arg(VEIN_NET_TCP_VERBOSE().categoryName()) <<
                                                 QString("%1.debug=false").arg(VEIN_API_QML().categoryName()) <<
                                                 QString("%1.debug=false").arg(VEIN_API_QML_VERBOSE().categoryName()) <<
-//                                                QString("%1.debug=false").arg(VEIN_LOGGER().categoryName()) <<
+                                                //                                                QString("%1.debug=false").arg(VEIN_LOGGER().categoryName()) <<
                                                 QString("%1.debug=false").arg(VEIN_STORAGE_HASH_VERBOSE().categoryName());
 
   const VeinLogger::DBFactory sqliteFactory = [](){
@@ -55,7 +84,6 @@ int main(int argc, char *argv[])
   evHandler->setArbitrationSystem(arbitrationSystem);
 #endif
   ModuleManagerController *mmController = new ModuleManagerController(&a);
-  //CustomerDataSystem *customerDataSystem = new CustomerDataSystem(&a);
   VeinNet::IntrospectionSystem *introspectionSystem = new VeinNet::IntrospectionSystem(&a);
   VeinStorage::VeinHash *storSystem = new VeinStorage::VeinHash(&a);
   VeinNet::NetworkSystem *netSystem = new VeinNet::NetworkSystem(&a);
@@ -63,11 +91,17 @@ int main(int argc, char *argv[])
   VeinScript::ScriptSystem *scriptSystem = new VeinScript::ScriptSystem(&a);
   VeinApiQml::VeinQml *qmlSystem = new VeinApiQml::VeinQml(&a);
   VeinLogger::DatabaseLogger *dataLoggerSystem = new VeinLogger::DatabaseLogger(new VeinLogger::DataSource(storSystem, &a), sqliteFactory, &a);
+  CustomerDataSystem *customerDataSystem = 0;
+  if(customerdataSystemEnabled)
+  {
+    qDebug() << "CustomerDataSystem is enabled";
+    customerDataSystem = new CustomerDataSystem(&a);
+  }
 
   VeinApiQml::VeinQml::setStaticInstance(qmlSystem);
   VeinLogger::QmlLogger::setStaticLogger(dataLoggerSystem);
 
-  ZeraModules::ModuleManager *modMan = new ZeraModules::ModuleManager(&a);
+  ZeraModules::ModuleManager *modMan = new ZeraModules::ModuleManager(availableSessionList, &a);
   JsonSessionLoader *sessionLoader = new JsonSessionLoader(&a);
 
   netSystem->setOperationMode(VeinNet::NetworkSystem::VNOM_SUBSCRIPTION);
@@ -90,14 +124,20 @@ int main(int argc, char *argv[])
     emit dataLoggerSystem->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::TRANSACTION, cData));
   };
 
-  //QObject::connect(customerDataSystem, &CustomerDataSystem::sigCustomerDataError, errorReportFunction);
+  if(customerdataSystemEnabled)
+  {
+    QObject::connect(customerDataSystem, &CustomerDataSystem::sigCustomerDataError, errorReportFunction);
+  }
   QObject::connect(dataLoggerSystem, &VeinLogger::DatabaseLogger::sigDatabaseError, errorReportFunction);
 
 
   QList<VeinEvent::EventSystem*> subSystems;
   //do not reorder
   subSystems.append(mmController);
-  //subSystems.append(customerDataSystem);
+  if(customerdataSystemEnabled)
+  {
+    subSystems.append(customerDataSystem);
+  }
   subSystems.append(introspectionSystem);
   subSystems.append(storSystem);
   subSystems.append(netSystem);
@@ -136,12 +176,13 @@ int main(int argc, char *argv[])
   }
   else
   {
-    modMan->loadDefaultSession();
+    const QString defaultSessionFile = defaultConfig.object().value(deviceName).toObject().value("defaultSession").toString();
+    modMan->changeSessionFile(defaultSessionFile);
     mmController->initOnce();
     tcpSystem->startServer(12000);
   }
   QObject::connect(modMan, &ZeraModules::ModuleManager::sigModulesLoaded, mmController, &ModuleManagerController::initializeEntity);
-  QObject::connect(mmController, &ModuleManagerController::sigChangeSession, modMan, &ZeraModules::ModuleManager::onChangeSession);
+  QObject::connect(mmController, &ModuleManagerController::sigChangeSession, modMan, &ZeraModules::ModuleManager::changeSessionFile);
   QObject::connect(mmController, &ModuleManagerController::sigModulesPausedChanged, modMan, &ZeraModules::ModuleManager::setModulesPaused);
 
   //0 = ModuleManagerController, 2 = VeinLogger::DatabaseLogger

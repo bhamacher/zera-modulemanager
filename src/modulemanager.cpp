@@ -52,14 +52,26 @@ namespace ZeraModules
   };
 
 
-  ModuleManager::ModuleManager(QObject *t_parent) :
+  ModuleManager::ModuleManager(const QStringList &t_sessionList, QObject *t_parent) :
     QObject(t_parent),
     m_proxyInstance(Zera::Proxy::cProxy::getInstance()),
     m_moduleStartLock(false)
   {
     QStringList sessionExtension("*.json");
     QDir directory(MODMAN_SESSION_PATH);
-    m_sessionsAvailable = directory.entryList(sessionExtension);
+    QSet<QString> fileSet, expectedSet;
+    fileSet = directory.entryList(sessionExtension).toSet();
+    expectedSet = t_sessionList.toSet();
+    if(fileSet.contains(expectedSet))
+    {
+      m_sessionsAvailable = t_sessionList;
+    }
+    else
+    {
+      QSet<QString> missingSessions = expectedSet;
+      missingSessions.subtract(fileSet);
+      qCritical() << "Missing session file(s)" << missingSessions;
+    }
     qDebug() << "sessions available:" << m_sessionsAvailable;
   }
 
@@ -112,23 +124,6 @@ namespace ZeraModules
       }
     }
     return retVal;
-  }
-
-  void ModuleManager::loadDefaultSession()
-  {
-    QFile configFile(MODMAN_CONFIG_FILE);
-    if(configFile.exists() && configFile.open(QFile::ReadOnly))
-    {
-      const QJsonDocument configDoc = QJsonDocument::fromJson(configFile.readAll());
-      const QString defaultSession = configDoc.object().value("defaultSession").toString();
-      Q_ASSERT(defaultSession.isEmpty() == false);
-      onChangeSession(defaultSession);
-    }
-    else
-    {
-      qCritical() << "Error loading config file from path:" << MODMAN_CONFIG_FILE;
-      QCoreApplication::exit(-ENOENT);
-    }
   }
 
   void ModuleManager::loadScripts(VeinScript::ScriptSystem *t_scriptSystem)
@@ -216,7 +211,7 @@ namespace ZeraModules
     }
   }
 
-  void ModuleManager::onChangeSession(const QString &t_newSessionPath)
+  void ModuleManager::changeSessionFile(const QString &t_newSessionPath)
   {
     if(m_sessionPath != t_newSessionPath)
     {
@@ -294,7 +289,7 @@ namespace ZeraModules
     }
     else
     {
-      emit sigModulesLoaded(m_sessionPath);
+      emit sigModulesLoaded(m_sessionPath, m_sessionsAvailable);
     }
   }
 
