@@ -74,6 +74,22 @@ CustomerDataSystem::CustomerDataSystem(QObject *t_parent) :
                      VF_RPC_BIND(customerDataRemove, std::bind(&CustomerDataSystem::customerDataRemove, this, std::placeholders::_1, std::placeholders::_2)),
                      VF_RPC_BIND(customerDataSearch, std::bind(&CustomerDataSystem::customerDataSearch, this, std::placeholders::_1, std::placeholders::_2))}
 {
+  Q_ASSERT(QString(MODMAN_CUSTOMERDATA_PATH).isEmpty() == false);
+  QFileInfo cDataFileInfo(MODMAN_CUSTOMERDATA_PATH);
+  if(cDataFileInfo.exists() && cDataFileInfo.isDir() == false)
+  {
+     qWarning() << "Invalid path to customer data, file is not a directory:" << MODMAN_CUSTOMERDATA_PATH;
+  }
+  else if(cDataFileInfo.exists() == false)
+  {
+    QDir customerdataDir;
+    qWarning() << "Customer data directory does not exist:" << MODMAN_CUSTOMERDATA_PATH;
+    if(customerdataDir.mkdir(MODMAN_CUSTOMERDATA_PATH) == false)
+    {
+      qWarning() << "Could not create customerdata direcory:" << MODMAN_CUSTOMERDATA_PATH;
+    }
+  }
+
   m_dataWriteDelay.setInterval(50);
   m_dataWriteDelay.setSingleShot(true);
   connect(&m_dataWriteDelay, &QTimer::timeout, this, &CustomerDataSystem::writeCustomerdata);
@@ -200,6 +216,7 @@ bool CustomerDataSystem::processEvent(QEvent *t_event)
 
 void CustomerDataSystem::writeCustomerdata()
 {
+  Q_ASSERT(QString(MODMAN_CUSTOMERDATA_PATH).isEmpty() == false);
   QSaveFile customerDataFile(QString("%1%2").arg(MODMAN_CUSTOMERDATA_PATH).arg(m_currentCustomerFileName));
   customerDataFile.open(QIODevice::WriteOnly);
   customerDataFile.write(m_currentCustomerDocument.toJson(QJsonDocument::Indented));
@@ -344,6 +361,7 @@ void CustomerDataSystem::updateDataFile(QString t_componentName, QString t_newVa
 
 bool CustomerDataSystem::parseCustomerDataFile(const QString &t_fileName)
 {
+  Q_ASSERT(QString(MODMAN_CUSTOMERDATA_PATH).isEmpty() == false);
   bool retVal = false;
   QFile customerDataFile(QString("%1%2").arg(MODMAN_CUSTOMERDATA_PATH).arg(t_fileName));
   QJsonParseError parseError;
