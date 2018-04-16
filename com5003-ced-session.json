@@ -60,11 +60,15 @@
         "configPath" : "/home/peter/C++/zera-classes/zera-modules/oscimodule/src/com5003-oscimodule.xml",
         "id": 1120
       },
-
       {
         "name" : "sec1module",
         "configPath" : "/home/peter/C++/zera-classes/zera-modules/sec1module/src/com5003-sec1module.xml",
         "id": 1130
+      },
+      {
+        "name" : "lambdamodule",
+        "configPath" : "/home/peter/C++/zera-classes/zera-modules/lambdamodule/src/com5003-lambdamodule.xml",
+        "id": 1140
       },
       {
         "name" : "statusmodule",
