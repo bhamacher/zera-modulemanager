@@ -97,7 +97,7 @@
       },
       {
         "name" : "scpimodule",
-        "configPath" : "/etc/zera/modules/scpimodule.xml",
+        "configPath" : "/etc/zera/modules/mt310s2-scpimodule.xml",
         "id": 9999
       }
     ]

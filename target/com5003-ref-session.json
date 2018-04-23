@@ -32,7 +32,7 @@
       } ,
       {
         "name" : "scpimodule",
-        "configPath" : "/etc/zera/modules/scpimodule.xml",
+        "configPath" : "/etc/zera/modules/com5003-scpimodule.xml",
         "id": 9999
       }
   ]

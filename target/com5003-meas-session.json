@@ -82,12 +82,12 @@
       },
       {
         "name" : "adjustmentmodule",
-        "configPath" : "/etc/zera/modules/adjustmentmodule.xml",
+        "configPath" : "/etc/zera/modules/com5003-adjustmentmodule.xml",
         "id": 1190
       },
       {
         "name" : "scpimodule",
-        "configPath" : "/etc/zera/modules/scpimodule.xml",
+        "configPath" : "/etc/zera/modules/com5003-scpimodule.xml",
         "id": 9999
       }
     ]

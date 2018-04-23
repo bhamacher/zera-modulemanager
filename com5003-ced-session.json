@@ -77,7 +77,7 @@
       } ,
       {
         "name" : "scpimodule",
-        "configPath" : "/home/peter/C++/zera-classes/zera-modules/scpimodule/src/scpimodule.xml",
+        "configPath" : "/home/peter/C++/zera-classes/zera-modules/scpimodule/src/com5003-scpimodule.xml",
         "id": 9999
       }
     ]
