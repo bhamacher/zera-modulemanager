@@ -43,6 +43,7 @@ private:
   static constexpr QLatin1String s_sessionsAvailableComponentName = QLatin1String("SessionsAvailable");
   static constexpr QLatin1String s_loggedComponentsComponentName = QLatin1String("LoggedComponents");
   static constexpr QLatin1String s_modulesPausedComponentName = QLatin1String("ModulesPaused");
+  static constexpr QLatin1String s_serverIpComponentName = QLatin1String("ServerAddressList");
 
 
   VeinEvent::StorageSystem *m_storageSystem = 0;
