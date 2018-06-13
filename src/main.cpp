@@ -185,8 +185,9 @@ int main(int argc, char *argv[])
   QObject::connect(mmController, &ModuleManagerController::sigChangeSession, modMan, &ZeraModules::ModuleManager::changeSessionFile);
   QObject::connect(mmController, &ModuleManagerController::sigModulesPausedChanged, modMan, &ZeraModules::ModuleManager::setModulesPaused);
 
-  //0 = ModuleManagerController, 2 = VeinLogger::DatabaseLogger
-  qmlSystem->setRequiredIds(QList<int>()<<0<<2);
+
+  qmlSystem->entitySubscribeById(0); //0 = ModuleManagerController
+  qmlSystem->entitySubscribeById(2); //2 = VeinLogger::DatabaseLogger
   bool initOnce = false;
 
   QObject::connect(qmlSystem, &VeinApiQml::VeinQml::sigStateChanged, [&](VeinApiQml::VeinQml::ConnectionState t_state){
