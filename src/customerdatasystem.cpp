@@ -324,8 +324,7 @@ void CustomerDataSystem::updateCustomerDataFileList()
     fileListData->setNewValue(m_fileList);
     emit sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, fileListData));
 
-    if(m_fileList.isEmpty() == false
-       && m_fileList.contains(m_currentCustomerFileName) == false) //set sane default value
+    if(m_fileList.contains(m_currentCustomerFileName) == false) //set sane default value
     {
       VeinComponent::ComponentData *selectedFileData = new VeinComponent::ComponentData();
       selectedFileData->setEntityId(CustomerDataSystem::s_entityId);
@@ -333,8 +332,16 @@ void CustomerDataSystem::updateCustomerDataFileList()
       selectedFileData->setComponentName(CustomerDataSystem::s_fileSelectedComponentName);
       selectedFileData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
       selectedFileData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
-      selectedFileData->setNewValue(m_fileList.first());//default value
-      parseCustomerDataFile(m_fileList.first());
+      if(m_fileList.isEmpty() == false)
+      {
+        selectedFileData->setNewValue(m_fileList.first());//default value
+        parseCustomerDataFile(m_fileList.first());
+      }
+      else
+      {
+        selectedFileData->setNewValue(QString());//unset value
+        parseCustomerDataFile(QString());
+      }
       emit sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, selectedFileData));
     }
   }
@@ -412,6 +419,24 @@ bool CustomerDataSystem::parseCustomerDataFile(const QString &t_fileName)
       QString errorMessage = QString("Invalid JSON data in customer data file: %1 error: %2").arg(t_fileName).arg(parseError.errorString());
       qWarning() << errorMessage;
       emit sigCustomerDataError(errorMessage);
+    }
+  }
+  else
+  {
+    QSet<QString> componentNames = s_componentIntrospection.keys().toSet();
+    componentNames.remove(CustomerDataSystem::s_entityNameComponentName);
+    componentNames.remove(CustomerDataSystem::s_fileListComponentName);
+    componentNames.remove(CustomerDataSystem::s_fileSelectedComponentName);
+    for(QString compName : qAsConst(componentNames))//unset all components
+    {
+      VeinComponent::ComponentData *customerDataClearData = new VeinComponent::ComponentData();
+      customerDataClearData->setEntityId(CustomerDataSystem::s_entityId);
+      customerDataClearData->setCommand(VeinComponent::ComponentData::Command::CCMD_SET);
+      customerDataClearData->setComponentName(compName);
+      customerDataClearData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
+      customerDataClearData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
+      customerDataClearData->setNewValue(QString());
+      emit sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, customerDataClearData));
     }
   }
   return retVal;
