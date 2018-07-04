@@ -44,7 +44,7 @@ private:
   static constexpr int s_entityId = 201;
 
   //functions need an instance so no static variable
-  const VeinEvent::RemoteProcedureAtlas m_remoteProcedures;
+  const VeinEvent::RoutedRemoteProcedureAtlas m_remoteProcedures;
 
   /**
    * @brief call id, peer id

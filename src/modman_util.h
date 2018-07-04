@@ -22,7 +22,7 @@ rpcBind \
 
 namespace VeinEvent
 {
-  using RemoteProcedureAtlas = QHash<QString, std::function<void(const QUuid&, QVariantMap)> >;
+  using RoutedRemoteProcedureAtlas = QHash<QString, std::function<void(const QUuid&, QVariantMap)> >;
 }
 
 #endif // MODMAN_UTIL_H

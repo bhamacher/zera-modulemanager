@@ -110,7 +110,7 @@ private:
   static const QHash<QString, QString> s_remoteProcedureIntrospection;
   static const QSet<QString> s_writeProtectedComponents;
   //functions need an instance so no static variable
-  const VeinEvent::RemoteProcedureAtlas m_remoteProcedures;
+  const VeinEvent::RoutedRemoteProcedureAtlas m_remoteProcedures;
 
   QFileSystemWatcher m_fileWatcher;
   QTimer m_dataWriteDelay;
