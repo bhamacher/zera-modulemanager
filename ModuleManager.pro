@@ -79,7 +79,8 @@ SOURCES += src/main.cpp \
     src/modulemanagercontroller.cpp \
     src/moduleeventhandler.cpp \
     src/customerdatasystem.cpp \
-    src/priorityarbitrationsystem.cpp
+    src/priorityarbitrationsystem.cpp \
+    src/zeradblogger.cpp
 
 QMAKE_CXXFLAGS += -Wall -Wshadow
 
@@ -99,7 +100,8 @@ HEADERS += src/modulemanager.h \
     src/moduleeventhandler.h \
     src/customerdatasystem.h \
     src/modman_util.h \
-    src/priorityarbitrationsystem.h
+    src/priorityarbitrationsystem.h \
+    src/zeradblogger.h
 
 target.path = /usr/bin
 INSTALLS += target

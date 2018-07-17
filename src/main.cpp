@@ -4,6 +4,7 @@
 #include "moduleeventhandler.h"
 #include "customerdatasystem.h"
 #include "priorityarbitrationsystem.h"
+#include "zeradblogger.h"
 
 #include <QCoreApplication>
 
@@ -90,7 +91,7 @@ int main(int argc, char *argv[])
   VeinNet::TcpSystem *tcpSystem = new VeinNet::TcpSystem(&a);
   VeinScript::ScriptSystem *scriptSystem = new VeinScript::ScriptSystem(&a);
   VeinApiQml::VeinQml *qmlSystem = new VeinApiQml::VeinQml(&a);
-  VeinLogger::DatabaseLogger *dataLoggerSystem = new VeinLogger::DatabaseLogger(new VeinLogger::DataSource(storSystem, &a), sqliteFactory, &a);
+  ZeraDBLogger *dataLoggerSystem = new ZeraDBLogger(new VeinLogger::DataSource(storSystem, &a), sqliteFactory, &a); //takes ownership of DataSource
   CustomerDataSystem *customerDataSystem = 0;
 
   VeinApiQml::VeinQml::setStaticInstance(qmlSystem);
