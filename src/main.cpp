@@ -92,11 +92,6 @@ int main(int argc, char *argv[])
   VeinApiQml::VeinQml *qmlSystem = new VeinApiQml::VeinQml(&a);
   VeinLogger::DatabaseLogger *dataLoggerSystem = new VeinLogger::DatabaseLogger(new VeinLogger::DataSource(storSystem, &a), sqliteFactory, &a);
   CustomerDataSystem *customerDataSystem = 0;
-  if(customerdataSystemEnabled)
-  {
-    qDebug() << "CustomerDataSystem is enabled";
-    customerDataSystem = new CustomerDataSystem(&a);
-  }
 
   VeinApiQml::VeinQml::setStaticInstance(qmlSystem);
   VeinLogger::QmlLogger::setStaticLogger(dataLoggerSystem);
@@ -123,11 +118,6 @@ int main(int argc, char *argv[])
 
     emit dataLoggerSystem->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::TRANSACTION, cData));
   };
-
-  if(customerdataSystemEnabled)
-  {
-    QObject::connect(customerDataSystem, &CustomerDataSystem::sigCustomerDataError, errorReportFunction);
-  }
   QObject::connect(dataLoggerSystem, &VeinLogger::DatabaseLogger::sigDatabaseError, errorReportFunction);
 
 
@@ -136,6 +126,9 @@ int main(int argc, char *argv[])
   subSystems.append(mmController);
   if(customerdataSystemEnabled)
   {
+    qDebug() << "CustomerDataSystem is enabled";
+    customerDataSystem = new CustomerDataSystem(&a);
+    QObject::connect(customerDataSystem, &CustomerDataSystem::sigCustomerDataError, errorReportFunction);
     subSystems.append(customerDataSystem);
   }
   subSystems.append(introspectionSystem);
