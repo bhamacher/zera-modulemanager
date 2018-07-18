@@ -16,6 +16,22 @@ class ZeraDBLoggerPrivate
 
   }
 
+  void initEntity()
+  {
+    const QList<QString> tmpRemoteProcedureList = m_remoteProcedures.keys();
+    for(const QString &tmpRemoteProcedureName : qAsConst(tmpRemoteProcedureList))
+    {
+      VeinComponent::RemoteProcedureData *rpcData = new VeinComponent::RemoteProcedureData();
+      rpcData->setEntityId(m_qPtr->entityId());
+      rpcData->setCommand(VeinComponent::RemoteProcedureData::Command::RPCMD_REGISTER);
+      rpcData->setProcedureName(tmpRemoteProcedureName);
+      rpcData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
+      rpcData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
+
+      emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, rpcData));
+    }
+  }
+
   /**
    * @brief Policy is to not store the database on the OS partition due to sdcard / flash wear
    * @param t_dbFilePath
@@ -137,13 +153,12 @@ constexpr QLatin1String ZeraDBLoggerPrivate::s_listStoragesProcedureName;
 constexpr QLatin1String ZeraDBLoggerPrivate::s_listStoragesProcedureDescription;
 constexpr QLatin1String ZeraDBLoggerPrivate::s_listStoragesReturnValueName;
 
-
-
 ZeraDBLogger::ZeraDBLogger(VeinLogger::DataSource *t_dataSource, VeinLogger::DBFactory t_factoryFunction, QObject *t_parent) :
   VeinLogger::DatabaseLogger(t_dataSource, t_factoryFunction, t_parent),
   m_dPtr(new ZeraDBLoggerPrivate(this))
 {
-
+  //init rpc after attaching to the EventHandler
+  connect(this, &ZeraDBLogger::sigAttached, [this](){ m_dPtr->initEntity(); });
 }
 
 ZeraDBLogger::~ZeraDBLogger()
