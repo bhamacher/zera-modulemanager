@@ -183,11 +183,12 @@ namespace ZeraModules
       else
       {
         qWarning() << "Skipping module:" << t_uniqueModuleName << "No license found!";
+        onModuleStartNext();
       }
     }
     else
     {
-      m_deferedStartList.enqueue(new ModuleData(0, t_uniqueModuleName, t_xmlConfigPath, t_xmlConfigData, t_moduleId));
+      m_deferredStartList.enqueue(new ModuleData(0, t_uniqueModuleName, t_xmlConfigPath, t_xmlConfigData, t_moduleId));
     }
   }
 
@@ -280,10 +281,10 @@ namespace ZeraModules
   void ModuleManager::onModuleStartNext()
   {
     m_moduleStartLock = false;
-    if(m_deferedStartList.length()>0)
+    if(m_deferredStartList.length()>0)
     {
-      ModuleData *tmpData = m_deferedStartList.dequeue();
-      qDebug() << "###Defered module start for" << tmpData->m_uniqueName;
+      ModuleData *tmpData = m_deferredStartList.dequeue();
+      qDebug() << "###deferred module start for" << tmpData->m_uniqueName;
       startModule(tmpData->m_uniqueName, tmpData->m_configPath, tmpData->m_configData, tmpData->m_moduleId);
       delete tmpData;
     }

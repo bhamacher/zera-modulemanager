@@ -71,7 +71,7 @@ namespace ZeraModules
 
     QHash<QString, MeasurementModuleFactory*> m_factoryTable;
     QList<ModuleData *> m_moduleList;
-    QQueue<ModuleData *> m_deferedStartList;
+    QQueue<ModuleData *> m_deferredStartList;
     Zera::Proxy::cProxy * m_proxyInstance;
 
     VeinEvent::StorageSystem *m_storage=nullptr;
