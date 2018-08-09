@@ -10,5 +10,6 @@
         <file>modulemanager_config.json</file>
         <file>mt310s2-meas-session.json</file>
         <file>target/mt310s2-meas-session.json</file>
+        <file alias="license_cert.pem">test_cert.pem</file>
     </qresource>
 </RCC>
