@@ -5,6 +5,7 @@
 #include "customerdatasystem.h"
 #include "priorityarbitrationsystem.h"
 #include "zeradblogger.h"
+#include "licensesystem.h"
 
 #include <QCoreApplication>
 
@@ -93,6 +94,7 @@ int main(int argc, char *argv[])
   VeinApiQml::VeinQml *qmlSystem = new VeinApiQml::VeinQml(&a);
   ZeraDBLogger *dataLoggerSystem = new ZeraDBLogger(new VeinLogger::DataSource(storSystem, &a), sqliteFactory, &a); //takes ownership of DataSource
   CustomerDataSystem *customerDataSystem = 0;
+  LicenseSystem *licenseSystem = new LicenseSystem({QUrl("file:///home/operator/license-keys")}, &a);
 
   VeinApiQml::VeinQml::setStaticInstance(qmlSystem);
   VeinLogger::QmlLogger::setStaticLogger(dataLoggerSystem);
@@ -139,10 +141,12 @@ int main(int argc, char *argv[])
   subSystems.append(qmlSystem);
   subSystems.append(scriptSystem);
   subSystems.append(dataLoggerSystem);
+  subSystems.append(licenseSystem);
 
   evHandler->setSubsystems(subSystems);
 
   modMan->setStorage(storSystem);
+  modMan->setLicenseSystem(licenseSystem);
   modMan->setEventHandler(evHandler);
   mmController->setStorage(storSystem);
 

@@ -1,6 +1,7 @@
 #include "modulemanager.h"
 
 #include "moduleeventhandler.h"
+#include "licensesystem.h"
 #include <proxy.h>
 
 #include <ve_eventsystem.h>
@@ -86,15 +87,6 @@ namespace ZeraModules
     m_proxyInstance->deleteLater();
   }
 
-  bool ModuleManager::isModuleLicensed(VirtualModule *t_module) const
-  {
-    Q_UNUSED(t_module)
-    /**
-     * @todo implement function later
-     */
-    return true;
-  }
-
   bool ModuleManager::loadModules()
   {
     bool retVal = false;
@@ -109,10 +101,9 @@ namespace ZeraModules
 
     foreach (QString fileName, moduleDir.entryList(QDir::Files))
     {
-      qDebug() << "File is a library?" << QLibrary::isLibrary(moduleDir.absoluteFilePath(fileName));
       QPluginLoader loader(moduleDir.absoluteFilePath(fileName));
       MeasurementModuleFactory *module = qobject_cast<MeasurementModuleFactory *>(loader.instance());
-      qDebug() << "Analyzing:" << loader.fileName() << "loaded:" << loader.isLoaded();
+      qDebug() << "Analyzing:" << loader.fileName() << "\nfile is a library?" << QLibrary::isLibrary(moduleDir.absoluteFilePath(fileName)) << "loaded:" << loader.isLoaded();
       if (module)
       {
         retVal=true;
@@ -147,6 +138,11 @@ namespace ZeraModules
     m_storage = t_storage;
   }
 
+  void ModuleManager::setLicenseSystem(LicenseSystem *t_licenseSystem)
+  {
+    m_licenseSystem = t_licenseSystem;
+  }
+
   void ModuleManager::setEventHandler(ModuleEventHandler *t_eventHandler)
   {
     m_eventHandler = t_eventHandler;
@@ -157,10 +153,10 @@ namespace ZeraModules
     // do not allow starting until all modules are shut down
     if(m_moduleStartLock == false)
     {
-      MeasurementModuleFactory *tmpFactory=0;
+      MeasurementModuleFactory *tmpFactory=nullptr;
 
       tmpFactory=m_factoryTable.value(t_uniqueModuleName);
-      if(tmpFactory)
+      if(tmpFactory && m_licenseSystem->isModuleLicensed(t_uniqueModuleName))
       {
         //qDebug()<<"Creating module instance:"<<tmpPeer->getName(); //<< "with config" << xmlConfigData;
         VirtualModule *tmpModule = tmpFactory->createModule(m_proxyInstance, t_moduleId, m_storage, this);
@@ -183,6 +179,10 @@ namespace ZeraModules
           });
           m_moduleList.append(moduleData);
         }
+      }
+      else
+      {
+        qWarning() << "Skipping module:" << t_uniqueModuleName << "No license found!";
       }
     }
     else

@@ -9,8 +9,6 @@
 #include <QTimer>
 
 
-class MeasurementModuleFactory;
-
 namespace Zera
 {
   namespace Proxy
@@ -30,6 +28,8 @@ namespace VeinScript
 }
 
 class ModuleEventHandler;
+class MeasurementModuleFactory;
+class LicenseSystem;
 
 namespace ZeraModules
 {
@@ -39,12 +39,12 @@ namespace ZeraModules
   {
     Q_OBJECT
   public:
-    explicit ModuleManager(const QStringList &t_sessionList, QObject *t_parent = 0);
+    explicit ModuleManager(const QStringList &t_sessionList, QObject *t_parent = nullptr);
     ~ModuleManager();
-    bool isModuleLicensed(VirtualModule *t_module) const;
     bool loadModules();
     void loadScripts(VeinScript::ScriptSystem *t_scriptSystem);
     void setStorage(VeinEvent::StorageSystem *t_storage);
+    void setLicenseSystem(LicenseSystem *t_licenseSystem);
     void setEventHandler(ModuleEventHandler *t_eventHandler);
 
   signals:
@@ -74,8 +74,9 @@ namespace ZeraModules
     QQueue<ModuleData *> m_deferedStartList;
     Zera::Proxy::cProxy * m_proxyInstance;
 
-    VeinEvent::StorageSystem *m_storage=0;
-    ModuleEventHandler *m_eventHandler=0;
+    VeinEvent::StorageSystem *m_storage=nullptr;
+    ModuleEventHandler *m_eventHandler=nullptr;
+    LicenseSystem *m_licenseSystem=nullptr;
 
     QString m_sessionPath;
     QList<QString> m_sessionsAvailable;

@@ -39,3 +39,5 @@ doc/
 # per user project includes
 *.user.pri
 
+#never add private keys to the git repo
+*.key
