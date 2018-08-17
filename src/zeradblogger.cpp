@@ -1,5 +1,6 @@
 #include "zeradblogger.h"
 
+#include <vcmp_componentdata.h>
 #include <vcmp_remoteproceduredata.h>
 #include <vcmp_errordata.h>
 #include <ve_commandevent.h>
@@ -18,6 +19,16 @@ class ZeraDBLoggerPrivate
 
   void initEntity()
   {
+    VeinComponent::ComponentData *recordNameData = new VeinComponent::ComponentData();
+    recordNameData->setEntityId(m_qPtr->entityId());
+    recordNameData->setCommand(VeinComponent::ComponentData::Command::CCMD_ADD);
+    recordNameData->setComponentName(s_recordNameEntityName);
+    recordNameData->setNewValue(QString());
+    recordNameData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
+    recordNameData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
+
+    emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, recordNameData));
+
     const QList<QString> tmpRemoteProcedureList = m_remoteProcedures.keys();
     for(const QString &tmpRemoteProcedureName : qAsConst(tmpRemoteProcedureList))
     {
@@ -33,9 +44,10 @@ class ZeraDBLoggerPrivate
   }
 
   /**
-   * @brief Policy is to not store the database on the OS partition due to sdcard / flash wear
+   * @brief
    * @param t_dbFilePath
    * @return
+   * @note policy was to not store the database on the OS partition due to sdcard / flash wear, but removable storage filesystem formats do not allow group permission based access (FAT32/NTFS)
    */
   bool checkStorageLocation(const QString &t_dbFilePath) const
   {
@@ -44,7 +56,7 @@ class ZeraDBLoggerPrivate
     for(const auto storDevice : storages)
     {
       if(storDevice.fileSystemType().contains("tmpfs") == false
-         && storDevice.isRoot() == false
+         //&& storDevice.isRoot() == false
          && t_dbFilePath.contains(storDevice.rootPath()))
       {
         retVal = true;
@@ -58,8 +70,33 @@ class ZeraDBLoggerPrivate
   bool processCommandEvent(VeinEvent::CommandEvent *t_cEvent)
   {
     bool retVal = false;
+    if(t_cEvent->eventData()->type() == VeinComponent::ComponentData::dataType())
+    {
+      VeinComponent::ComponentData *componentData=nullptr;
+      componentData = static_cast<VeinComponent::ComponentData *>(t_cEvent->eventData());
+      Q_ASSERT(componentData != nullptr);
+      if(componentData->componentName() == s_recordNameEntityName)
+      {
+        if(componentData->eventOrigin() == VeinComponent::ComponentData::EventOrigin::EO_FOREIGN
+           && componentData->eventCommand() == VeinComponent::ComponentData::Command::CCMD_SET
+           && t_cEvent->eventSubtype() == VeinEvent::CommandEvent::EventSubtype::TRANSACTION)
+        {
+          VeinComponent::ComponentData *recordNameData = new VeinComponent::ComponentData();
+          recordNameData->setEntityId(m_qPtr->entityId());
+          recordNameData->setCommand(VeinComponent::ComponentData::Command::CCMD_SET);
+          recordNameData->setComponentName(s_recordNameEntityName);
+          recordNameData->setNewValue(componentData->newValue());
+          recordNameData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
+          recordNameData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
 
-    if(t_cEvent->eventData()->type() == VeinComponent::RemoteProcedureData::dataType())
+          emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, recordNameData));
+
+          retVal = true;
+          t_cEvent->accept();
+        }
+      }
+    }
+    else if(t_cEvent->eventData()->type() == VeinComponent::RemoteProcedureData::dataType())
     {
       VeinComponent::RemoteProcedureData *rpcData=nullptr;
       rpcData = static_cast<VeinComponent::RemoteProcedureData *>(t_cEvent->eventData());
@@ -120,6 +157,7 @@ class ZeraDBLoggerPrivate
   void listStorages(const QUuid &t_callId, const QVariantMap &t_parameters)
   {
     QVariantMap retVal = t_parameters;
+    const QFileInfo defaultPath("/home/operator/logger/");
 
     const auto storages = QStorageInfo::mountedVolumes();
     QStringList storageList;
@@ -130,6 +168,11 @@ class ZeraDBLoggerPrivate
       {
         storageList.append(storDevice.rootPath());
       }
+    }
+    //add default path
+    if(defaultPath.exists() && defaultPath.isWritable())
+    {
+      storageList.append(defaultPath.absoluteFilePath());
     }
     retVal.insert(s_listStoragesReturnValueName, storageList);
     retVal.insert(VeinComponent::RemoteProcedureData::s_resultCodeString, 0); //success
@@ -144,14 +187,16 @@ class ZeraDBLoggerPrivate
   //functions need an instance so no static variable
   const VeinEvent::RoutedRemoteProcedureAtlas m_remoteProcedures;
   static constexpr QLatin1String s_listStoragesReturnValueName=QLatin1String("ZeraDBLogger::storageList");
+  static constexpr QLatin1String s_recordNameEntityName=QLatin1String("recordName");
 
   friend class ZeraDBLogger;
 };
 
 //constexpr definition, see: https://stackoverflow.com/questions/8016780/undefined-reference-to-static-constexpr-char
-constexpr QLatin1String ZeraDBLoggerPrivate::s_listStoragesProcedureName;
-constexpr QLatin1String ZeraDBLoggerPrivate::s_listStoragesProcedureDescription;
+constexpr QLatin1String ZeraDBLoggerPrivate::s_listStoragesProcedureName; //from VF_RPC(listStorages...
+constexpr QLatin1String ZeraDBLoggerPrivate::s_listStoragesProcedureDescription; //from VF_RPC(listStorages...
 constexpr QLatin1String ZeraDBLoggerPrivate::s_listStoragesReturnValueName;
+constexpr QLatin1String ZeraDBLoggerPrivate::s_recordNameEntityName;
 
 ZeraDBLogger::ZeraDBLogger(VeinLogger::DataSource *t_dataSource, VeinLogger::DBFactory t_factoryFunction, QObject *t_parent) :
   VeinLogger::DatabaseLogger(t_dataSource, t_factoryFunction, t_parent),
@@ -178,7 +223,7 @@ bool ZeraDBLogger::openDatabase(const QString &t_filePath)
 
 bool ZeraDBLogger::processEvent(QEvent *t_event)
 {
-  bool retVal = VeinLogger::DatabaseLogger::processEvent(t_event);
+  bool retVal = false;
   if(t_event->type()==VeinEvent::CommandEvent::eventType())
   {
     VeinEvent::CommandEvent *cEvent = nullptr;
@@ -191,9 +236,11 @@ bool ZeraDBLogger::processEvent(QEvent *t_event)
 
     if(evData->entityId() == entityId())
     {
-      const bool intermediate = m_dPtr->processCommandEvent(cEvent);
-      retVal = retVal || intermediate;
+      retVal = m_dPtr->processCommandEvent(cEvent);
     }
   }
+
+  ///@note if both implementations need to handle the same event types in the future then the or will get in the way
+  retVal = retVal || VeinLogger::DatabaseLogger::processEvent(t_event);
   return retVal;
 }

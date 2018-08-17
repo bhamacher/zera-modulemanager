@@ -3,10 +3,11 @@ import VeinEntity 1.0
 import VeinLogger 1.0
 
 VeinLogger {
-  recordName: "default";
   initializeValues: true;
+  recordName: loggerEntity.recordName;
 
   readonly property QtObject systemEntity: VeinEntity.getEntity("_System");
+  readonly property QtObject loggerEntity: VeinEntity.getEntity("_LoggingSystem");
   readonly property string session: systemEntity.Session
   onSessionChanged: {
     if(session.indexOf("mt310s2")===-1)
