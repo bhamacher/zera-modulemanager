@@ -11,7 +11,7 @@ class LicenseSystem : public VeinEvent::EventSystem
 {
   Q_OBJECT
 public:
-  LicenseSystem(const QList<QUrl> &t_licenseURLs, QObject *t_parent = nullptr);
+  LicenseSystem(const QSet<QUrl> &t_licenseURLs, QObject *t_parent = nullptr);
 
   bool isModuleLicensed(const QString &t_uniqueModuleName) const;
   QVariantMap systemLicenseConfiguration(int t_entityId) const;
@@ -21,8 +21,10 @@ private:
   QByteArray loadLicenseFile(const QString &t_filePath) const;
   QHash<QString, QByteArray> getLicenseFilesFromPath(const QString &t_path) const;
 
+  QString getDeviceSerial() const;
+
   //allows multiple paths to load licenses from (e.g. file:///etc/zera/licenses, file:///home/$USER/licenses and http://$LICENSE_SERVER:8080/licenses)
-  const QList<QUrl> m_licenseURLs;
+  const QSet<QUrl> m_licenseURLs;
 
   //modules currently don't support configurable licensing
   QList<QString> m_licensedModules;

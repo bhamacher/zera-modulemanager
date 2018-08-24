@@ -11,10 +11,11 @@ QT_BEGIN_NAMESPACE
 #include <QJsonObject>
 QT_END_NAMESPACE
 
-LicenseSystem::LicenseSystem(const QList<QUrl> &t_licenseURLs, QObject *t_parent) : VeinEvent::EventSystem(t_parent),
+LicenseSystem::LicenseSystem(const QSet<QUrl> &t_licenseURLs, QObject *t_parent) : VeinEvent::EventSystem(t_parent),
   m_licenseURLs(t_licenseURLs),
   m_certData(loadCertData())
 {
+  VeinCryptoBridge::OpenSSLSignatureHandler sigHandler;
   for(const QUrl &licenseUrl : m_licenseURLs)
   {
     ///@todo implement network requests for license files when required
@@ -27,7 +28,7 @@ LicenseSystem::LicenseSystem(const QList<QUrl> &t_licenseURLs, QObject *t_parent
       const QByteArray licenseFileData = licenseTable.value(licenseFilePath);
       bool isVerified = false;
       QByteArray licenseJsonData;
-      licenseJsonData = VeinCryptoBridge::OpenSSLSignatureHandler::verifyCMSSignature(m_certData, licenseFileData, &isVerified);
+      licenseJsonData = sigHandler.verifyCMSSignature(m_certData, licenseFileData, &isVerified);
       if(isVerified)
       {
         QJsonParseError parseError;
@@ -37,8 +38,11 @@ LicenseSystem::LicenseSystem(const QList<QUrl> &t_licenseURLs, QObject *t_parent
           const QJsonObject rootObj = licenseDocument.object();
           Q_ASSERT(rootObj.contains("entityId"));
           Q_ASSERT(rootObj.contains("expires"));
+          Q_ASSERT(rootObj.contains("deviceSerial"));
 
 
+          //if(rootObj.value("deviceSerial").toString() == getDeviceSerial())
+          //{
           if(rootObj.value("expires").toString() == "never") ///@todo add expiry dates check
           {
             m_systemConfigurationTable.insert(rootObj.value("entityId").toInt(), rootObj.toVariantMap());
@@ -54,12 +58,17 @@ LicenseSystem::LicenseSystem(const QList<QUrl> &t_licenseURLs, QObject *t_parent
           }
           else
           {
-            qWarning() << "License expired:" << licenseFilePath << "date:" << rootObj.value("expires").toString();
+            qWarning() << "License expired:" << licenseFilePath << "\n" << "date:" << rootObj.value("expires").toString();
           }
+          //}
+          //else
+          //{
+          //  qWarning() << "License serial number is invalid:" << licenseFilePath << "\n" << "license serial:" <<  rootObj.value("deviceSerial").toString() << "expected serial:" << getDeviceSerial();
+          //}
         }
         else
         {
-          qWarning() << "Error parsing license document:" << licenseFilePath << "\nParse error:" << parseError.errorString();
+          qWarning() << "Error parsing license document:" << licenseFilePath << "\n" << "parse error:" << parseError.errorString();
         }
       }
     }
