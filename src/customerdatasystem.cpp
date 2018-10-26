@@ -627,21 +627,23 @@ void CustomerDataSystem::customerDataSearch(const QUuid &t_callId, const QVarian
       m_pendingSearchResultWatchers.insert(t_callId, tmpWatcher);
       connect(tmpWatcher, &QFutureWatcher<QString>::resultReadyAt, [this, t_callId, t_parameters, tmpWatcher](int t_resultPos){
         QVariantMap tmpData = t_parameters;//writable copy
-        tmpData.insert(s_cusomerDataSearchResultText, tmpWatcher->future().resultAt(t_resultPos));
+        tmpData.insert(s_customerDataSearchResultText, tmpWatcher->future().resultAt(t_resultPos));
         rpcProgress(t_callId, s_customerDataSearchProcedureName, tmpData);
       });
-      connect(tmpWatcher, &QFutureWatcher<QString>::finished, [this, t_callId, t_parameters](){
+      connect(tmpWatcher, &QFutureWatcher<QString>::finished, [this, t_callId, t_parameters, tmpWatcher](){
         m_pendingSearchResultWatchers.remove(t_callId);
         QVariantMap retVal = t_parameters; //writable copy
         retVal.insert(VeinComponent::RemoteProcedureData::s_resultCodeString, RPCResultCodes::CDS_SUCCESS);
         rpcFinished(t_callId, s_customerDataSearchProcedureName, retVal);
+        tmpWatcher->deleteLater();
       });
       ///@todo make cancel accessible via rpc
-      connect(tmpWatcher, &QFutureWatcher<QString>::canceled, [this, t_callId, t_parameters](){
+      connect(tmpWatcher, &QFutureWatcher<QString>::canceled, [this, t_callId, t_parameters, tmpWatcher](){
         m_pendingSearchResultWatchers.remove(t_callId);
         QVariantMap retVal = t_parameters; //writable copy
         retVal.insert(VeinComponent::RemoteProcedureData::s_resultCodeString, RPCResultCodes::CDS_CANCELED);
         rpcFinished(t_callId, s_customerDataSearchProcedureName, retVal);
+        tmpWatcher->deleteLater();
       });
       QFuture<QString> searchResultStream = QtConcurrent::filtered(qAsConst(m_fileList), [searchParamMap](const QString &t_fileName){
         bool retVal = true;
@@ -703,7 +705,7 @@ constexpr QLatin1String CustomerDataSystem::s_customerDataRemoveProcedureName;
 constexpr QLatin1String CustomerDataSystem::s_customerDataRemoveProcedureDescription;
 constexpr QLatin1String CustomerDataSystem::s_customerDataSearchProcedureName;
 constexpr QLatin1String CustomerDataSystem::s_customerDataSearchProcedureDescription;
-constexpr QLatin1String CustomerDataSystem::s_cusomerDataSearchResultText;
+constexpr QLatin1String CustomerDataSystem::s_customerDataSearchResultText;
 constexpr QLatin1String CustomerDataSystem::s_cusomerDataRpcProgress;
 //base
 constexpr QLatin1String CustomerDataSystem::s_baseIdentifierComponentName;

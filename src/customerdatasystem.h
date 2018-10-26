@@ -69,7 +69,7 @@ private:
   void customerDataRemove(const QUuid &t_callId, const QVariantMap &t_parameters);
   VF_RPC(customerDataSearch, "customerDataSearch(QVariantMap searchMap)", "searchMap: regular expression values in the map are tested against all files")
   void customerDataSearch(const QUuid &t_callId, const QVariantMap &t_parameters);
-  static constexpr QLatin1String s_cusomerDataSearchResultText = QLatin1String("CustomerDataSystem::searchResult");
+  static constexpr QLatin1String s_customerDataSearchResultText = QLatin1String("CustomerDataSystem::searchResult");
   static constexpr QLatin1String s_cusomerDataRpcProgress = QLatin1String("CustomerDataSystem::progress");
   //base
   VF_COMPONENT(baseIdentifier, "PAR_DatasetIdentifier", "Unique identifier")
