@@ -1,4 +1,5 @@
 #include "zeradblogger.h"
+#include "diriteratorworker.h"
 
 #include <vcmp_componentdata.h>
 #include <vcmp_remoteproceduredata.h>
@@ -6,9 +7,21 @@
 #include <ve_commandevent.h>
 
 #include <QStorageInfo>
+#include <QtConcurrent>
+#include <QDir>
+#include <QDirIterator>
+#include <QThread>
+
+#include <functional>
 
 class ZeraDBLoggerPrivate
 {
+
+  enum RPCResultCodes {
+    RPC_CANCELED = -64,
+    RPC_EINVAL = -EINVAL, //invalid parameters
+    RPC_SUCCESS = 0
+  };
 
   ZeraDBLoggerPrivate(ZeraDBLogger *t_qPtr) :
     m_qPtr(t_qPtr),
@@ -135,23 +148,6 @@ class ZeraDBLoggerPrivate
     return retVal;
   }
 
-  void rpcFinished(QUuid t_callId, const QString &t_procedureName, const QVariantMap &t_data)
-  {
-    Q_ASSERT(m_pendingRpcHash.contains(t_callId));
-    VeinComponent::RemoteProcedureData *resultData = new VeinComponent::RemoteProcedureData();
-    resultData->setEntityId(m_qPtr->entityId());
-    resultData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
-    resultData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
-    resultData->setCommand(VeinComponent::RemoteProcedureData::Command::RPCMD_RESULT);
-    resultData->setProcedureName(t_procedureName);
-    resultData->setInvokationData(t_data);
-
-    VeinEvent::CommandEvent *rpcResultEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, resultData);
-    rpcResultEvent->setPeerId(m_pendingRpcHash.value(t_callId));
-    emit m_qPtr->sigSendEvent(rpcResultEvent);
-    m_pendingRpcHash.remove(t_callId);
-  }
-
   //rpc
   VF_RPC(listStorages, "listStorages()", "returns ZeraDBLogger::storgeList: A lists of available storages for writing the database")
   void listStorages(const QUuid &t_callId, const QVariantMap &t_parameters)
@@ -176,7 +172,72 @@ class ZeraDBLoggerPrivate
     }
     retVal.insert(s_listStoragesReturnValueName, storageList);
     retVal.insert(VeinComponent::RemoteProcedureData::s_resultCodeString, 0); //success
-    rpcFinished(t_callId, s_listStoragesProcedureName, retVal);
+    m_qPtr->rpcFinished(t_callId, s_listStoragesProcedureName, retVal);
+  }
+
+  VF_RPC(findDbFile, "findDbFile(QString searchPath, QString searchPattern)", "returns ZeraDBLogger::searchResults: A lists of available database files on the currently selected storage")
+  void findDbFile(const QUuid &t_callId, const QVariantMap &t_parameters)
+  {
+    QSet<QString> requiredParamKeys = { "searchPath", "searchPattern" };
+    const QVariantMap parameters = t_parameters.value(VeinComponent::RemoteProcedureData::s_parameterString).toMap();
+    QVariantMap retVal = t_parameters; //copy parameters and other data, the client could attach tracking
+    requiredParamKeys.subtract(parameters.keys().toSet());
+
+    if(requiredParamKeys.isEmpty())
+    {
+      const QString searchPath = t_parameters.value("searchPath").toString();
+      const QStringList searchPattern = t_parameters.value("searchPattern").toStringList();
+      DirIteratorWorker *worker = new DirIteratorWorker(searchPath, searchPattern, QDir::Files, QDirIterator::Subdirectories);
+      QThread *thread = new QThread();
+      //implementation specific filter function that tests the database files for the required schema
+      DirIteratorWorker::FilterFunction validationFunction = m_validationDB->getDatabaseValidationFunction();
+      worker->setFilterFunction(validationFunction);
+      worker->moveToThread(thread);
+
+      //executed in thread context
+      QObject::connect(worker, &DirIteratorWorker::sigPartialResultReady, worker, [&](QString t_partialResult){
+        QVariantMap tempData = t_parameters;
+        tempData.insert(s_findDbReturnValueName, t_partialResult);
+        //would be so much easier when QDirIterator would just work with QtConcurrent::filtered
+        QMetaObject::invokeMethod(m_qPtr, "rpcProgress", Qt::QueuedConnection,
+                                  Q_ARG(QUuid, t_callId),
+                                  Q_ARG(QString, s_findDbFileProcedureName),
+                                  Q_ARG(QVariantMap, tempData));
+      });
+      //executed in thread context
+      QObject::connect(worker, &DirIteratorWorker::sigFinished, worker, [&](){
+        QVariantMap tempData = t_parameters;
+        tempData.insert(VeinComponent::RemoteProcedureData::s_resultCodeString, 0); //success
+        //would be so much easier when QDirIterator would just work with QtConcurrent::filtered
+        QMetaObject::invokeMethod(m_qPtr, "rpcResult", Qt::QueuedConnection,
+                                  Q_ARG(QUuid, t_callId),
+                                  Q_ARG(QString, s_findDbFileProcedureName),
+                                  Q_ARG(QVariantMap, tempData));
+        worker->deleteLater();
+      });
+      //executed in thread context
+      QObject::connect(worker, &DirIteratorWorker::sigInterrupted, worker, [&](){
+        QVariantMap tempData = t_parameters;
+        tempData.insert(VeinComponent::RemoteProcedureData::s_resultCodeString, EINTR); //interrupted
+        //would be so much easier when QDirIterator would just work with QtConcurrent::filtered
+        QMetaObject::invokeMethod(m_qPtr, "rpcResult", Qt::QueuedConnection,
+                                  Q_ARG(QUuid, t_callId),
+                                  Q_ARG(QString, s_findDbFileProcedureName),
+                                  Q_ARG(QVariantMap, tempData));
+      });
+      //executed in thread context
+      QObject::connect(thread, &QThread::started, worker, &DirIteratorWorker::startSearch, Qt::QueuedConnection);
+      QObject::connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+      QObject::connect(thread, &QThread::finished, worker, &DirIteratorWorker::deleteLater);
+
+      thread->start();
+    }
+    else
+    {
+      retVal.insert(VeinComponent::RemoteProcedureData::s_resultCodeString, RPCResultCodes::RPC_EINVAL);
+      retVal.insert(VeinComponent::RemoteProcedureData::s_errorMessageString, QString("Missing required parameters: [%1]").arg(requiredParamKeys.toList().join(',')));
+      m_qPtr->rpcFinished(t_callId, s_findDbFileProcedureName, retVal);
+    }
   }
 
   ZeraDBLogger *m_qPtr=nullptr;
@@ -184,10 +245,14 @@ class ZeraDBLoggerPrivate
    * @brief call id, peer id
    */
   QHash<QUuid, QUuid> m_pendingRpcHash;
+  //need an instance to call VeinLogger::AbstractLoggerDB::isValidDatabase
+  VeinLogger::AbstractLoggerDB *m_validationDB;
   //functions need an instance so no static variable
   const VeinEvent::RoutedRemoteProcedureAtlas m_remoteProcedures;
   static constexpr QLatin1String s_listStoragesReturnValueName=QLatin1String("ZeraDBLogger::storageList");
+  static constexpr QLatin1String s_findDbReturnValueName=QLatin1String("ZeraDBLogger::searchResultList");
   static constexpr QLatin1String s_recordNameEntityName=QLatin1String("recordName");
+
 
   friend class ZeraDBLogger;
 };
@@ -195,19 +260,25 @@ class ZeraDBLoggerPrivate
 //constexpr definition, see: https://stackoverflow.com/questions/8016780/undefined-reference-to-static-constexpr-char
 constexpr QLatin1String ZeraDBLoggerPrivate::s_listStoragesProcedureName; //from VF_RPC(listStorages...
 constexpr QLatin1String ZeraDBLoggerPrivate::s_listStoragesProcedureDescription; //from VF_RPC(listStorages...
-constexpr QLatin1String ZeraDBLoggerPrivate::s_listStoragesReturnValueName;
+constexpr QLatin1String ZeraDBLoggerPrivate::s_listStoragesReturnValueName; //from VF_RPC(listStorages...
+constexpr QLatin1String ZeraDBLoggerPrivate::s_findDbFileProcedureName; //from VF_RPC(findDbFile...
+constexpr QLatin1String ZeraDBLoggerPrivate::s_findDbFileProcedureDescription; //from VF_RPC(findDbFile...
+constexpr QLatin1String ZeraDBLoggerPrivate::s_findDbReturnValueName; //from VF_RPC(findDbFile...
 constexpr QLatin1String ZeraDBLoggerPrivate::s_recordNameEntityName;
 
 ZeraDBLogger::ZeraDBLogger(VeinLogger::DataSource *t_dataSource, VeinLogger::DBFactory t_factoryFunction, QObject *t_parent) :
   VeinLogger::DatabaseLogger(t_dataSource, t_factoryFunction, t_parent),
   m_dPtr(new ZeraDBLoggerPrivate(this))
 {
+  //create a database for validation
+  m_dPtr->m_validationDB = t_factoryFunction(); //this class takes ownership
   //init rpc after attaching to the EventHandler
   connect(this, &ZeraDBLogger::sigAttached, [this](){ m_dPtr->initEntity(); });
 }
 
 ZeraDBLogger::~ZeraDBLogger()
 {
+  delete m_dPtr->m_validationDB;
   delete m_dPtr;
 }
 
@@ -243,4 +314,37 @@ bool ZeraDBLogger::processEvent(QEvent *t_event)
   ///@note if both implementations need to handle the same event types in the future then the or will get in the way
   retVal = retVal || VeinLogger::DatabaseLogger::processEvent(t_event);
   return retVal;
+}
+
+void ZeraDBLogger::rpcFinished(QUuid t_callId, const QString &t_procedureName, const QVariantMap &t_data)
+{
+  Q_ASSERT(m_dPtr->m_pendingRpcHash.contains(t_callId));
+  VeinComponent::RemoteProcedureData *resultData = new VeinComponent::RemoteProcedureData();
+  resultData->setEntityId(entityId());
+  resultData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
+  resultData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
+  resultData->setCommand(VeinComponent::RemoteProcedureData::Command::RPCMD_RESULT);
+  resultData->setProcedureName(t_procedureName);
+  resultData->setInvokationData(t_data);
+
+  VeinEvent::CommandEvent *rpcResultEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, resultData);
+  rpcResultEvent->setPeerId(m_dPtr->m_pendingRpcHash.value(t_callId));
+  emit sigSendEvent(rpcResultEvent);
+  m_dPtr->m_pendingRpcHash.remove(t_callId);
+}
+
+void ZeraDBLogger::rpcProgress(QUuid t_callId, const QString &t_procedureName, const QVariantMap &t_data)
+{
+  Q_ASSERT(m_dPtr->m_pendingRpcHash.contains(t_callId));
+  VeinComponent::RemoteProcedureData *progressData = new VeinComponent::RemoteProcedureData();
+  progressData->setEntityId(entityId());
+  progressData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
+  progressData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
+  progressData->setCommand(VeinComponent::RemoteProcedureData::Command::RPCMD_PROGRESS);
+  progressData->setProcedureName(t_procedureName);
+  progressData->setInvokationData(t_data);
+
+  VeinEvent::CommandEvent *rpcResultEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, progressData);
+  rpcResultEvent->setPeerId(m_dPtr->m_pendingRpcHash.value(t_callId));
+  emit sigSendEvent(rpcResultEvent);
 }

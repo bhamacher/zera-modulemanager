@@ -30,8 +30,13 @@ public slots:
   bool openDatabase(const QString &t_filePath) override;
   bool processEvent(QEvent *t_event) override;
 
+private slots:
+  void rpcFinished(QUuid t_callId, const QString &t_procedureName, const QVariantMap &t_data);
+  void rpcProgress(QUuid t_callId, const QString &t_procedureName, const QVariantMap &t_data);
+
 private:
   ZeraDBLoggerPrivate *m_dPtr=nullptr;
+  friend class ZeraDBLoggerPrivate;
 };
 
 #endif // ZERADBLOGGER_H
