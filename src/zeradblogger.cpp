@@ -25,7 +25,9 @@ class ZeraDBLoggerPrivate
 
   ZeraDBLoggerPrivate(ZeraDBLogger *t_qPtr) :
     m_qPtr(t_qPtr),
-    m_remoteProcedures{VF_RPC_BIND(listStorages, std::bind(&ZeraDBLoggerPrivate::listStorages, this, std::placeholders::_1, std::placeholders::_2))}
+    m_remoteProcedures{
+      VF_RPC_BIND(listStorages, std::bind(&ZeraDBLoggerPrivate::listStorages, this, std::placeholders::_1, std::placeholders::_2)),
+      VF_RPC_BIND(findDBFile, std::bind(&ZeraDBLoggerPrivate::findDBFile, this, std::placeholders::_1, std::placeholders::_2))}
   {
 
   }
@@ -175,8 +177,8 @@ class ZeraDBLoggerPrivate
     m_qPtr->rpcFinished(t_callId, s_listStoragesProcedureName, retVal);
   }
 
-  VF_RPC(findDbFile, "findDbFile(QString searchPath, QString searchPattern)", "returns ZeraDBLogger::searchResults: A lists of available database files on the currently selected storage")
-  void findDbFile(const QUuid &t_callId, const QVariantMap &t_parameters)
+  VF_RPC(findDBFile, "findDBFile(QString searchPath, QString searchPattern)", "returns ZeraDBLogger::searchResults: A lists of available database files on the currently selected storage")
+  void findDBFile(const QUuid &t_callId, const QVariantMap &t_parameters)
   {
     QSet<QString> requiredParamKeys = { "searchPath", "searchPattern" };
     const QVariantMap parameters = t_parameters.value(VeinComponent::RemoteProcedureData::s_parameterString).toMap();
@@ -201,7 +203,7 @@ class ZeraDBLoggerPrivate
         //would be so much easier when QDirIterator would just work with QtConcurrent::filtered
         QMetaObject::invokeMethod(m_qPtr, "rpcProgress", Qt::QueuedConnection,
                                   Q_ARG(QUuid, t_callId),
-                                  Q_ARG(QString, s_findDbFileProcedureName),
+                                  Q_ARG(QString, s_findDBFileProcedureName),
                                   Q_ARG(QVariantMap, tempData));
       });
       //executed in thread context
@@ -211,7 +213,7 @@ class ZeraDBLoggerPrivate
         //would be so much easier when QDirIterator would just work with QtConcurrent::filtered
         QMetaObject::invokeMethod(m_qPtr, "rpcResult", Qt::QueuedConnection,
                                   Q_ARG(QUuid, t_callId),
-                                  Q_ARG(QString, s_findDbFileProcedureName),
+                                  Q_ARG(QString, s_findDBFileProcedureName),
                                   Q_ARG(QVariantMap, tempData));
         worker->deleteLater();
       });
@@ -222,7 +224,7 @@ class ZeraDBLoggerPrivate
         //would be so much easier when QDirIterator would just work with QtConcurrent::filtered
         QMetaObject::invokeMethod(m_qPtr, "rpcResult", Qt::QueuedConnection,
                                   Q_ARG(QUuid, t_callId),
-                                  Q_ARG(QString, s_findDbFileProcedureName),
+                                  Q_ARG(QString, s_findDBFileProcedureName),
                                   Q_ARG(QVariantMap, tempData));
       });
       //executed in thread context
@@ -236,7 +238,7 @@ class ZeraDBLoggerPrivate
     {
       retVal.insert(VeinComponent::RemoteProcedureData::s_resultCodeString, RPCResultCodes::RPC_EINVAL);
       retVal.insert(VeinComponent::RemoteProcedureData::s_errorMessageString, QString("Missing required parameters: [%1]").arg(requiredParamKeys.toList().join(',')));
-      m_qPtr->rpcFinished(t_callId, s_findDbFileProcedureName, retVal);
+      m_qPtr->rpcFinished(t_callId, s_findDBFileProcedureName, retVal);
     }
   }
 
@@ -261,9 +263,9 @@ class ZeraDBLoggerPrivate
 constexpr QLatin1String ZeraDBLoggerPrivate::s_listStoragesProcedureName; //from VF_RPC(listStorages...
 constexpr QLatin1String ZeraDBLoggerPrivate::s_listStoragesProcedureDescription; //from VF_RPC(listStorages...
 constexpr QLatin1String ZeraDBLoggerPrivate::s_listStoragesReturnValueName; //from VF_RPC(listStorages...
-constexpr QLatin1String ZeraDBLoggerPrivate::s_findDbFileProcedureName; //from VF_RPC(findDbFile...
-constexpr QLatin1String ZeraDBLoggerPrivate::s_findDbFileProcedureDescription; //from VF_RPC(findDbFile...
-constexpr QLatin1String ZeraDBLoggerPrivate::s_findDbReturnValueName; //from VF_RPC(findDbFile...
+constexpr QLatin1String ZeraDBLoggerPrivate::s_findDBFileProcedureName; //from VF_RPC(findDBFile...
+constexpr QLatin1String ZeraDBLoggerPrivate::s_findDBFileProcedureDescription; //from VF_RPC(findDBFile...
+constexpr QLatin1String ZeraDBLoggerPrivate::s_findDbReturnValueName; //from VF_RPC(findDBFile...
 constexpr QLatin1String ZeraDBLoggerPrivate::s_recordNameEntityName;
 
 ZeraDBLogger::ZeraDBLogger(VeinLogger::DataSource *t_dataSource, VeinLogger::DBFactory t_factoryFunction, QObject *t_parent) :
@@ -311,7 +313,7 @@ bool ZeraDBLogger::processEvent(QEvent *t_event)
     }
   }
 
-  ///@note if both implementations need to handle the same event types in the future then the or will get in the way
+  ///@note if both implementations need to handle the same event types in the future then the OR will get in the way
   retVal = retVal || VeinLogger::DatabaseLogger::processEvent(t_event);
   return retVal;
 }
