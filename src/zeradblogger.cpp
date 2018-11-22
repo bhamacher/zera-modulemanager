@@ -196,7 +196,7 @@ class ZeraDBLoggerPrivate
       worker->moveToThread(thread);
 
       //executed in thread context
-      QObject::connect(worker, &DirIteratorWorker::sigPartialResultReady, worker, [&](QString t_partialResult){
+      QObject::connect(worker, &DirIteratorWorker::sigPartialResultReady, worker, [=](QString t_partialResult){
         QVariantMap tempData = t_parameters;
         tempData.insert(s_findDbReturnValueName, t_partialResult);
         //would be so much easier if QDirIterator would just work with QtConcurrent::filtered
@@ -206,7 +206,7 @@ class ZeraDBLoggerPrivate
                                   Q_ARG(QVariantMap, tempData));
       });
       //executed in thread context
-      QObject::connect(worker, &DirIteratorWorker::sigFinished, worker, [&](){
+      QObject::connect(worker, &DirIteratorWorker::sigFinished, worker, [=](){
         QVariantMap tempData = t_parameters;
         tempData.insert(VeinComponent::RemoteProcedureData::s_resultCodeString, 0); //success
         //would be so much easier if QDirIterator would just work with QtConcurrent::filtered
@@ -217,7 +217,7 @@ class ZeraDBLoggerPrivate
         worker->deleteLater();
       });
       //executed in thread context
-      QObject::connect(worker, &DirIteratorWorker::sigInterrupted, worker, [&](){
+      QObject::connect(worker, &DirIteratorWorker::sigInterrupted, worker, [=](){
         QVariantMap tempData = t_parameters;
         tempData.insert(VeinComponent::RemoteProcedureData::s_resultCodeString, EINTR); //interrupted
         //would be so much easier if QDirIterator would just work with QtConcurrent::filtered
