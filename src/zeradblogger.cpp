@@ -210,7 +210,7 @@ class ZeraDBLoggerPrivate
         QVariantMap tempData = t_parameters;
         tempData.insert(VeinComponent::RemoteProcedureData::s_resultCodeString, 0); //success
         //would be so much easier if QDirIterator would just work with QtConcurrent::filtered
-        QMetaObject::invokeMethod(m_qPtr, "rpcResult", Qt::QueuedConnection,
+        QMetaObject::invokeMethod(m_qPtr, "rpcFinished", Qt::QueuedConnection,
                                   Q_ARG(QUuid, t_callId),
                                   Q_ARG(QString, s_findDBFileProcedureName),
                                   Q_ARG(QVariantMap, tempData));
@@ -221,7 +221,7 @@ class ZeraDBLoggerPrivate
         QVariantMap tempData = t_parameters;
         tempData.insert(VeinComponent::RemoteProcedureData::s_resultCodeString, EINTR); //interrupted
         //would be so much easier if QDirIterator would just work with QtConcurrent::filtered
-        QMetaObject::invokeMethod(m_qPtr, "rpcResult", Qt::QueuedConnection,
+        QMetaObject::invokeMethod(m_qPtr, "rpcFinished", Qt::QueuedConnection,
                                   Q_ARG(QUuid, t_callId),
                                   Q_ARG(QString, s_findDBFileProcedureName),
                                   Q_ARG(QVariantMap, tempData));
