@@ -177,17 +177,16 @@ class ZeraDBLoggerPrivate
   }
 
   VF_RPC(findDBFile, "findDBFile(QString searchPath, QString searchPatternList)", "returns ZeraDBLogger::searchResult: A streamed list of available database files on the currently selected storage")
-  void findDBFile(const QUuid &t_callId, const QVariantMap &t_parameters)
+  void findDBFile(const QUuid &t_callId, const QVariantMap &t_rpcParameters)
   {
     QSet<QString> requiredParamKeys = { "searchPath", "searchPatternList" };
-    const QVariantMap parameters = t_parameters.value(VeinComponent::RemoteProcedureData::s_parameterString).toMap();
-    QVariantMap retVal = t_parameters; //copy parameters and other data, the client could attach tracking
-    requiredParamKeys.subtract(parameters.keys().toSet());
+    const QVariantMap searchParameters = t_rpcParameters.value(VeinComponent::RemoteProcedureData::s_parameterString).toMap();
+    requiredParamKeys.subtract(searchParameters.keys().toSet());
 
     if(requiredParamKeys.isEmpty())
     {
-      const QString searchPath = t_parameters.value("searchPath").toString();
-      const QStringList searchPatternList = t_parameters.value("searchPatternList").toStringList();
+      const QString searchPath = searchParameters.value("searchPath").toString();
+      const QStringList searchPatternList = searchParameters.value("searchPatternList").toStringList();
       DirIteratorWorker *worker = new DirIteratorWorker(searchPath, searchPatternList, QDir::Files, QDirIterator::Subdirectories);
       QThread *thread = new QThread(m_qPtr);
       //implementation specific filter function that tests the database files for the required schema
@@ -197,7 +196,7 @@ class ZeraDBLoggerPrivate
 
       //executed in thread context
       QObject::connect(worker, &DirIteratorWorker::sigPartialResultReady, worker, [=](QString t_partialResult){
-        QVariantMap tempData = t_parameters;
+        QVariantMap tempData = t_rpcParameters;
         tempData.insert(s_findDbReturnValueName, t_partialResult);
         //would be so much easier if QDirIterator would just work with QtConcurrent::filtered
         QMetaObject::invokeMethod(m_qPtr, "rpcProgress", Qt::QueuedConnection,
@@ -207,7 +206,7 @@ class ZeraDBLoggerPrivate
       });
       //executed in thread context
       QObject::connect(worker, &DirIteratorWorker::sigFinished, worker, [=](){
-        QVariantMap tempData = t_parameters;
+        QVariantMap tempData = t_rpcParameters;
         tempData.insert(VeinComponent::RemoteProcedureData::s_resultCodeString, 0); //success
         //would be so much easier if QDirIterator would just work with QtConcurrent::filtered
         QMetaObject::invokeMethod(m_qPtr, "rpcFinished", Qt::QueuedConnection,
@@ -218,7 +217,7 @@ class ZeraDBLoggerPrivate
       });
       //executed in thread context
       QObject::connect(worker, &DirIteratorWorker::sigInterrupted, worker, [=](){
-        QVariantMap tempData = t_parameters;
+        QVariantMap tempData = t_rpcParameters;
         tempData.insert(VeinComponent::RemoteProcedureData::s_resultCodeString, EINTR); //interrupted
         //would be so much easier if QDirIterator would just work with QtConcurrent::filtered
         QMetaObject::invokeMethod(m_qPtr, "rpcFinished", Qt::QueuedConnection,
@@ -237,6 +236,7 @@ class ZeraDBLoggerPrivate
     }
     else
     {
+      QVariantMap retVal = t_rpcParameters; //copy parameters and other data, the client could attach tracking
       retVal.insert(VeinComponent::RemoteProcedureData::s_resultCodeString, RPCResultCodes::RPC_EINVAL);
       retVal.insert(VeinComponent::RemoteProcedureData::s_errorMessageString, QString("Missing required parameters: [%1]").arg(requiredParamKeys.toList().join(',')));
       m_qPtr->rpcFinished(t_callId, s_findDBFileProcedureName, retVal);
