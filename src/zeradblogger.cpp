@@ -253,7 +253,7 @@ class ZeraDBLoggerPrivate
   //functions need an instance so no static variable
   const VeinEvent::RoutedRemoteProcedureAtlas m_remoteProcedures;
   static constexpr QLatin1String s_listStoragesReturnValueName=QLatin1String("ZeraDBLogger::storageList");
-  static constexpr QLatin1String s_findDbReturnValueName=QLatin1String("ZeraDBLogger::searchResultList");
+  static constexpr QLatin1String s_findDbReturnValueName=QLatin1String("ZeraDBLogger::searchResultEntry");
   static constexpr QLatin1String s_recordNameEntityName=QLatin1String("recordName");
 
 
