@@ -176,7 +176,7 @@ class ZeraDBLoggerPrivate
     m_qPtr->rpcFinished(t_callId, s_listStoragesProcedureName, retVal);
   }
 
-  VF_RPC(findDBFile, "findDBFile(QString searchPath, QString searchPatternList)", "returns ZeraDBLogger::searchResult: A streamed list of available database files on the currently selected storage")
+  VF_RPC(findDBFile, "findDBFile(QString searchPath, QStringList searchPatternList)", "returns ZeraDBLogger::searchResultEntry A streamed list of available database files on the currently selected storage")
   void findDBFile(const QUuid &t_callId, const QVariantMap &t_rpcParameters)
   {
     QSet<QString> requiredParamKeys = { "searchPath", "searchPatternList" };
