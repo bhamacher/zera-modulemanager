@@ -21,8 +21,6 @@ VEIN_DEP_QML = 1
 VEIN_DEP_LOGGER = 1
 VEIN_DEP_CRYPTOBRIDGE = 1
 
-VEIN_BASEDIR = /work/qt_projects/vein-framework
-
 contains(DEFINES, OE_BUILD) {
   message(Openembedded build)
 DEFINES += MODMAN_SESSION_PATH=\\\"/etc/zera/modules/sessions/\\\"
@@ -53,14 +51,14 @@ DEFINES += MODMAN_SESSION_PATH=\\\"$$PWD/\\\"
 
   exists(modulemanager.user.pri) {
     include(modulemanager.user.pri)
-  }
-
-  exists(../../include/project-paths.pri) {
-    include(../../include/project-paths.pri)
+  } else {
+    message("No user build configuration found, continuing")
   }
 
   exists($$VEIN_BASEDIR/vein-framework.pri) {
     include($$VEIN_BASEDIR/vein-framework.pri)
+  } else {
+    error("Dependency vein-framework.pri not found")
   }
 }
 
@@ -91,8 +89,7 @@ INCLUDEPATH += $$VIRTUALMODULE_INCLUDEDIR
 INCLUDEPATH += $$PROXY_INCLUDEDIR
 INCLUDEPATH += $$VEIN_QML_INCLUDEDIR
 
-LIBS += $$VIRTUALMODULE_LIBDIR
-LIBS += $$PROXY_LIBDIR
+LIBS += $$ZERA_CLASSES_LIBDIR
 LIBS += $$RESOURCE_PROTOBUF_LIBDIR
 LIBS += $$SCPI_LIBDIR
 LIBS += -lzera-proxy -lzera-resourcemanager-protobuf -lMeasurementModuleInterface
