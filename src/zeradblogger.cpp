@@ -252,9 +252,9 @@ class ZeraDBLoggerPrivate
   VeinLogger::AbstractLoggerDB *m_validationDB;
   //functions need an instance so no static variable
   const VeinEvent::RoutedRemoteProcedureAtlas m_remoteProcedures;
-  static constexpr QLatin1String s_listStoragesReturnValueName=QLatin1String("ZeraDBLogger::storageList");
-  static constexpr QLatin1String s_findDbReturnValueName=QLatin1String("ZeraDBLogger::searchResultEntry");
-  static constexpr QLatin1String s_recordNameEntityName=QLatin1String("recordName");
+  static constexpr QLatin1String s_listStoragesReturnValueName = modman_util::to_latin1("ZeraDBLogger::storageList");
+  static constexpr QLatin1String s_findDbReturnValueName = modman_util::to_latin1("ZeraDBLogger::searchResultEntry");
+  static constexpr QLatin1String s_recordNameEntityName = modman_util::to_latin1("recordName");
 
 
   friend class ZeraDBLogger;

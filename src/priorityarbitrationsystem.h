@@ -31,7 +31,7 @@ private:
   void rpcFinished(QUuid t_callId, const QString &t_procedureName, const QVariantMap &t_data);
 
   VF_COMPONENT(entityName, "EntityName", "Entity name")
-  static constexpr QLatin1String s_entityName = QLatin1String("_ArbitrationSystem");
+  static constexpr QLatin1String s_entityName = modman_util::to_latin1("_ArbitrationSystem");
 
   VF_COMPONENT(clientPriorityList, "ClientPriorityList", "List of clients with descending priority order")
 

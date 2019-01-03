@@ -1,6 +1,9 @@
 #ifndef MODULEMANAGERSETTINGS_H
 #define MODULEMANAGERSETTINGS_H
 
+
+#include "modman_util.h"
+
 #include <ve_eventsystem.h>
 
 #include <QJsonDocument>
@@ -17,7 +20,7 @@ public:
   static constexpr int getEntityId();
   VeinEvent::StorageSystem *getStorageSystem() const;
   void setStorage(VeinEvent::StorageSystem *t_storageSystem);
-  static constexpr QLatin1String s_notificationMessagesComponentName = QLatin1String("Error_Messages");
+  static constexpr QLatin1String s_notificationMessagesComponentName = modman_util::to_latin1("Error_Messages");
 
   // EventSystem interface
 public:
@@ -36,14 +39,14 @@ private:
   void handleNotificationMessage(QJsonObject t_message);
 
   static constexpr int s_entityId = 0;
-  static constexpr QLatin1String s_entityName = QLatin1String("_System");
-  static constexpr QLatin1String s_entityNameComponentName = QLatin1String("EntityName");
-  static constexpr QLatin1String s_entitiesComponentName = QLatin1String("Entities");
-  static constexpr QLatin1String s_sessionComponentName = QLatin1String("Session");
-  static constexpr QLatin1String s_sessionsAvailableComponentName = QLatin1String("SessionsAvailable");
-  static constexpr QLatin1String s_loggedComponentsComponentName = QLatin1String("LoggedComponents");
-  static constexpr QLatin1String s_modulesPausedComponentName = QLatin1String("ModulesPaused");
-  static constexpr QLatin1String s_serverIpComponentName = QLatin1String("ServerAddressList");
+  static constexpr QLatin1String s_entityName = modman_util::to_latin1("_System");
+  static constexpr QLatin1String s_entityNameComponentName = modman_util::to_latin1("EntityName");
+  static constexpr QLatin1String s_entitiesComponentName = modman_util::to_latin1("Entities");
+  static constexpr QLatin1String s_sessionComponentName = modman_util::to_latin1("Session");
+  static constexpr QLatin1String s_sessionsAvailableComponentName = modman_util::to_latin1("SessionsAvailable");
+  static constexpr QLatin1String s_loggedComponentsComponentName = modman_util::to_latin1("LoggedComponents");
+  static constexpr QLatin1String s_modulesPausedComponentName = modman_util::to_latin1("ModulesPaused");
+  static constexpr QLatin1String s_serverIpComponentName = modman_util::to_latin1("ServerAddressList");
 
 
   VeinEvent::StorageSystem *m_storageSystem = 0;
