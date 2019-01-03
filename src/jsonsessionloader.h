@@ -7,7 +7,7 @@ class JsonSessionLoader : public QObject
 {
   Q_OBJECT
 public:
-  explicit JsonSessionLoader(QObject *t_Parent = 0);
+  explicit JsonSessionLoader(QObject *t_Parent = nullptr);
 
   const QString &getSessionFilePath() const;
 

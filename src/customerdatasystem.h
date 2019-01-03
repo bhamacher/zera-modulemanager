@@ -30,7 +30,7 @@ public:
     CDS_QFILEDEVICE_FILEERROR_BEGIN = QFileDevice::ReadError //if the resultCode is >= CDS_QFILEDEVICE_FILEERROR_BEGIN then it is a QFileDevice::FileError
   };
 
-  CustomerDataSystem(QObject *t_parent = 0);
+  CustomerDataSystem(QObject *t_parent = nullptr);
 
   // EventSystem interface
 public:

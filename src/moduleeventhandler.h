@@ -9,7 +9,7 @@ class ModuleEventHandler : public VeinEvent::EventHandler
 {
   Q_OBJECT
 public:
-  explicit ModuleEventHandler(QObject *t_parent = 0);
+  explicit ModuleEventHandler(QObject *t_parent = nullptr);
   void setArbitrationSystem(VeinEvent::EventSystem *t_arbitrationSystem);
 signals:
 

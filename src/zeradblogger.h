@@ -22,7 +22,7 @@ class ZeraDBLogger : public VeinLogger::DatabaseLogger
   Q_OBJECT
 public:
   ZeraDBLogger(VeinLogger::DataSource *t_dataSource, VeinLogger::DBFactory t_factoryFunction, QObject *t_parent=nullptr);
-  ~ZeraDBLogger();
+  ~ZeraDBLogger() override;
 signals:
 
   // DatabaseLogger interface

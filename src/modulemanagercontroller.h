@@ -16,7 +16,7 @@ class ModuleManagerController : public VeinEvent::EventSystem
 {
   Q_OBJECT
 public:
-  explicit ModuleManagerController(QObject *t_parent = 0);
+  explicit ModuleManagerController(QObject *t_parent = nullptr);
   static constexpr int getEntityId();
   VeinEvent::StorageSystem *getStorageSystem() const;
   void setStorage(VeinEvent::StorageSystem *t_storageSystem);
@@ -49,7 +49,7 @@ private:
   static constexpr QLatin1String s_serverIpComponentName = modman_util::to_latin1("ServerAddressList");
 
 
-  VeinEvent::StorageSystem *m_storageSystem = 0;
+  VeinEvent::StorageSystem *m_storageSystem = nullptr;
   QJsonDocument m_notificationMessages;
   QString m_currentSession;
   QStringList m_availableSessions;

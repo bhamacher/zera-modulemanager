@@ -40,7 +40,7 @@ namespace ZeraModules
     Q_OBJECT
   public:
     explicit ModuleManager(const QStringList &t_sessionList, QObject *t_parent = nullptr);
-    ~ModuleManager();
+    ~ModuleManager() override;
     bool loadModules();
     void loadScripts(VeinScript::ScriptSystem *t_scriptSystem);
     void setStorage(VeinEvent::StorageSystem *t_storage);
