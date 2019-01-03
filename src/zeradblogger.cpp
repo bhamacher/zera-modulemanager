@@ -67,7 +67,7 @@ class ZeraDBLoggerPrivate
   {
     bool retVal = false;
     const auto storages = QStorageInfo::mountedVolumes();
-    for(const auto storDevice : storages)
+    for(const auto &storDevice : storages)
     {
       if(storDevice.fileSystemType().contains("tmpfs") == false
          //&& storDevice.isRoot() == false
@@ -159,7 +159,7 @@ class ZeraDBLoggerPrivate
     const auto storages = QStorageInfo::mountedVolumes();
     QStringList storageList;
 
-    for(const auto storDevice : storages)
+    for(const auto &storDevice : storages)
     {
       if(storDevice.isRoot() == false && storDevice.fileSystemType().contains("tmpfs") == false)
       {
