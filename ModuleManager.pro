@@ -83,7 +83,15 @@ SOURCES += src/main.cpp \
     src/licensesystem.cpp \
     src/diriteratorworker.cpp
 
-QMAKE_CXXFLAGS += -Wall -Wshadow
+#enable usefull warnings
+QMAKE_CXXFLAGS += -Wall -Wextra -Wparentheses -Wsuggest-attribute=const -Wold-style-cast
+QMAKE_CXXFLAGS += -Wformat -Wformat-security -Wdeprecated -Wcast-align -Woverloaded-virtual -Wshadow
+
+#give errors on nasty mistakes
+QMAKE_CXXFLAGS += -Werror=ignored-qualifiers -Werror=return-type -Werror=return-local-addr -Werror=empty-body -Werror=non-virtual-dtor -Werror=cast-qual
+
+#gcc refuses to optimize BBOM code, so warn about any such cases
+QMAKE_CXXFLAGS += -Wdisabled-optimization
 
 INCLUDEPATH += $$VIRTUALMODULE_INCLUDEDIR
 INCLUDEPATH += $$PROXY_INCLUDEDIR
