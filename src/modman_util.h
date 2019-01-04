@@ -6,24 +6,25 @@
 #include <QString>
 #include <QUuid>
 #include <QVariantMap>
-#include <QStringLiteral>
 
-namespace modman_util {
-  ///@note used to avoid non constexpr strlen use from QLatin1String(const char[]) constructor
+namespace modman_util
+{
+  /// @b used to avoid non constexpr strlen use from QLatin1String(const char[]) constructor
+  /// @warning do not use \0 in the string literal, strlen("A\0BC") != string_literal_length("A\0BC")
   template< size_t N >
-  constexpr size_t string_length( char const (&)[N] )
+  constexpr size_t string_literal_length( char const (&)[N] )
   {
     return N-1;
   }
 
   template < typename T>
-  constexpr QLatin1String to_latin1(T t_str) = delete;
-  //for copies of other constexpr QLatin1String variables
+  constexpr QLatin1String to_latin1(T t_string) = delete;
+  //specialization to copy from other constexpr QLatin1String
   template<>
-  constexpr QLatin1String to_latin1(const QLatin1String t_str) { return t_str; }
-  //for const char[] with compile time size checking
+  constexpr QLatin1String to_latin1(const QLatin1String t_string) { return t_string; }
+  //overload for string literals
   template<size_t N>
-  constexpr QLatin1String to_latin1(const char(&t_str)[N]) { return QLatin1String(t_str, string_length(t_str)); }
+  constexpr QLatin1String to_latin1(const char(&t_string)[N]) { return QLatin1String(t_string, string_literal_length(t_string)); }
 }
 
 /// helper to save time with defining component metadata
