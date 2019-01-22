@@ -140,7 +140,11 @@ namespace ZeraModules
 
   void ModuleManager::setLicenseSystem(LicenseSystem *t_licenseSystem)
   {
+    ///@todo move to constructor as the ModuleManager depends on the LicenseSystem
+    Q_ASSERT(t_licenseSystem != nullptr);
     m_licenseSystem = t_licenseSystem;
+    //start the next module as soon as the INF_SerialNr component is avaiable
+    connect(m_licenseSystem, &LicenseSystem::sigSerialNumberInitialized, this, &ModuleManager::delayedModuleStartNext);
   }
 
   void ModuleManager::setEventHandler(ModuleEventHandler *t_eventHandler)
@@ -156,7 +160,7 @@ namespace ZeraModules
       MeasurementModuleFactory *tmpFactory=nullptr;
 
       tmpFactory=m_factoryTable.value(t_uniqueModuleName);
-      if(tmpFactory && m_licenseSystem->isModuleLicensed(t_uniqueModuleName))
+      if(tmpFactory && m_licenseSystem->isSystemLicensed(t_uniqueModuleName))
       {
         //qDebug()<<"Creating module instance:"<<tmpPeer->getName(); //<< "with config" << xmlConfigData;
         VirtualModule *tmpModule = tmpFactory->createModule(m_proxyInstance, t_moduleId, m_storage, this);
@@ -168,7 +172,10 @@ namespace ZeraModules
             tmpModule->setConfiguration(t_xmlConfigData);
           }
           connect(tmpModule, SIGNAL(moduleDeactivated()), this, SLOT(onModuleDelete()));
-          connect(tmpModule, &VirtualModule::moduleActivated, this, &ModuleManager::onModuleStartNext);
+          connect(tmpModule, &VirtualModule::moduleActivated, this, [this](){
+            m_moduleStartLock=false;
+            delayedModuleStartNext();
+          });
           connect(tmpModule, &VirtualModule::moduleError, this, &ModuleManager::onModuleError);
 
           m_moduleStartLock = true;
@@ -180,10 +187,14 @@ namespace ZeraModules
           m_moduleList.append(moduleData);
         }
       }
-      else
+      else if(m_licenseSystem->serialNumberIsInitialized())
       {
         qWarning() << "Skipping module:" << t_uniqueModuleName << "No license found!";
         onModuleStartNext();
+      }
+      else //wait for serial number initialization
+      {
+        m_deferredStartList.enqueue(new ModuleData(nullptr, t_uniqueModuleName, t_xmlConfigPath, t_xmlConfigData, t_moduleId));
       }
     }
     else
@@ -276,6 +287,14 @@ namespace ZeraModules
       }
     }
     checkModuleList();
+  }
+
+  void ModuleManager::delayedModuleStartNext()
+  {
+    if(m_licenseSystem->serialNumberIsInitialized() == true && m_moduleStartLock == false)
+    {
+      onModuleStartNext();
+    }
   }
 
   void ModuleManager::onModuleStartNext()

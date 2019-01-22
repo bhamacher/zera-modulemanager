@@ -96,7 +96,6 @@ CustomerDataSystem::CustomerDataSystem(QObject *t_parent) :
 
   m_fileWatcher.addPath(MODMAN_CUSTOMERDATA_PATH);
   connect(&m_fileWatcher, &QFileSystemWatcher::directoryChanged, this, &CustomerDataSystem::updateCustomerDataFileList);
-  connect(this, &CustomerDataSystem::sigAttached, this, &CustomerDataSystem::intializeEntity);
   connect(this, &CustomerDataSystem::sigDataValueChanged, this, &CustomerDataSystem::updateDataFile);
 }
 
@@ -216,20 +215,6 @@ bool CustomerDataSystem::processEvent(QEvent *t_event)
   return retVal;
 }
 
-void CustomerDataSystem::writeCustomerdata()
-{
-  Q_ASSERT(QString(MODMAN_CUSTOMERDATA_PATH).isEmpty() == false);
-  QSaveFile customerDataFile(QString("%1%2").arg(MODMAN_CUSTOMERDATA_PATH).arg(m_currentCustomerFileName));
-  customerDataFile.open(QIODevice::WriteOnly);
-  customerDataFile.write(m_currentCustomerDocument.toJson(QJsonDocument::Indented));
-  if(customerDataFile.commit() == false)
-  {
-    qCritical() << "Error writing customerdata json file:" << m_currentCustomerFileName;
-  }
-}
-
-
-
 void CustomerDataSystem::intializeEntity()
 {
   QJsonDocument introspectionDoc;
@@ -307,6 +292,18 @@ void CustomerDataSystem::intializeEntity()
   initData->setNewValue(introspectionDoc.toJson());
   emit sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, initData));
   initData = nullptr;
+}
+
+void CustomerDataSystem::writeCustomerdata()
+{
+  Q_ASSERT(QString(MODMAN_CUSTOMERDATA_PATH).isEmpty() == false);
+  QSaveFile customerDataFile(QString("%1%2").arg(MODMAN_CUSTOMERDATA_PATH).arg(m_currentCustomerFileName));
+  customerDataFile.open(QIODevice::WriteOnly);
+  customerDataFile.write(m_currentCustomerDocument.toJson(QJsonDocument::Indented));
+  if(customerDataFile.commit() == false)
+  {
+    qCritical() << "Error writing customerdata json file:" << m_currentCustomerFileName;
+  }
 }
 
 void CustomerDataSystem::updateCustomerDataFileList()

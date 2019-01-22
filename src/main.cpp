@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
   VeinScript::ScriptSystem *scriptSystem = new VeinScript::ScriptSystem(&a);
   VeinApiQml::VeinQml *qmlSystem = new VeinApiQml::VeinQml(&a);
   ZeraDBLogger *dataLoggerSystem = new ZeraDBLogger(new VeinLogger::DataSource(storSystem, &a), sqliteFactory, &a); //takes ownership of DataSource
-  CustomerDataSystem *customerDataSystem = 0;
+  CustomerDataSystem *customerDataSystem = nullptr;
   LicenseSystem *licenseSystem = new LicenseSystem({QUrl("file:///home/operator/license-keys")}, &a);
 
   VeinApiQml::VeinQml::setStaticInstance(qmlSystem);
@@ -132,6 +132,12 @@ int main(int argc, char *argv[])
     qDebug() << "CustomerDataSystem is enabled";
     customerDataSystem = new CustomerDataSystem(&a);
     QObject::connect(customerDataSystem, &CustomerDataSystem::sigCustomerDataError, errorReportFunction);
+    QObject::connect(licenseSystem, &LicenseSystem::sigSerialNumberInitialized, [&]() {
+      if(licenseSystem->isSystemLicensed(CustomerDataSystem::s_entityName))
+      {
+        customerDataSystem->intializeEntity();
+      }
+    });
     subSystems.append(customerDataSystem);
   }
   subSystems.append(introspectionSystem);
@@ -140,7 +146,10 @@ int main(int argc, char *argv[])
   subSystems.append(tcpSystem);
   subSystems.append(qmlSystem);
   subSystems.append(scriptSystem);
-  subSystems.append(dataLoggerSystem);
+  QObject::connect(licenseSystem, &LicenseSystem::sigSerialNumberInitialized, [&](){
+    qDebug() << "DataLoggerSystem is enabled";
+    evHandler->addSubsystem(dataLoggerSystem);
+  });
   subSystems.append(licenseSystem);
 
   evHandler->setSubsystems(subSystems);

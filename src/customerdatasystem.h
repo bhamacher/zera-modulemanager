@@ -32,9 +32,13 @@ public:
 
   CustomerDataSystem(QObject *t_parent = nullptr);
 
+  VF_COMPONENT(entityName, "EntityName", "Entity name")
+  static constexpr QLatin1String s_entityName = modman_util::to_latin1("CustomerData");
+
   // EventSystem interface
 public:
   bool processEvent(QEvent *t_event) override;
+  void intializeEntity();
 
 public slots:
   void writeCustomerdata();
@@ -44,7 +48,6 @@ signals:
   void sigDataValueChanged(QString t_componentName, QString t_newValue);
 
 private:
-  void intializeEntity();
   void updateCustomerDataFileList();
   void updateDataFile(QString t_componentName, QString t_newValue);
   bool parseCustomerDataFile(const QString &t_fileName);
@@ -53,8 +56,6 @@ private:
 
   static constexpr int s_entityId = 200;
 
-  VF_COMPONENT(entityName, "EntityName", "Entity name")
-  static constexpr QLatin1String s_entityName = modman_util::to_latin1("CustomerData");
   VF_COMPONENT(introspection, "INF_ModuleInterface", "Introspection data")
   VF_COMPONENT(fileList, "FileList", "Customer data files available")
   QStringList m_fileList;

@@ -1,6 +1,8 @@
 #ifndef LICENSESYSTEM_H
 #define LICENSESYSTEM_H
 
+#include "modman_util.h"
+
 #include <ve_eventsystem.h>
 
 #include <QMap>
@@ -13,29 +15,47 @@ class LicenseSystem : public VeinEvent::EventSystem
 public:
   LicenseSystem(const QSet<QUrl> &t_licenseURLs, QObject *t_parent = nullptr);
 
-  bool isModuleLicensed(const QString &t_uniqueModuleName) const;
-  QVariantMap systemLicenseConfiguration(int t_entityId) const;
+  bool isSystemLicensed(const QString &t_uniqueModuleName);
+  QVariantMap systemLicenseConfiguration(const QString &t_systemName) const;
+
+  void setDeviceSerial(const QString &t_serialNumber);
+  bool serialNumberIsInitialized() const;
+
+signals:
+  void sigSerialNumberInitialized();
 
 private:
   QByteArray loadCertData() const;
   QByteArray loadLicenseFile(const QString &t_filePath) const;
   QHash<QString, QByteArray> getLicenseFilesFromPath(const QString &t_path) const;
 
-  QString getDeviceSerial() const;
+  bool isValidLicenseExpiryDate(const QString t_dateString) const;
+  bool isValidLicenseDeviceSerial(const QString t_deviceSerial) const;
 
-  //allows multiple paths to load licenses from (e.g. file:///etc/zera/licenses, file:///home/$USER/licenses and http://$LICENSE_SERVER:8080/licenses)
+  ///@todo allows multiple paths to load licenses from, but lacks implementations for them (e.g. http://$LICENSE_SERVER:8080/licenses/$SERIALNO)
   const QSet<QUrl> m_licenseURLs;
 
   //modules currently don't support configurable licensing
-  QList<QString> m_licensedModules;
+  QList<QString> m_licensedSystems;
 
   //use QVariantMap for support of QML type conversion
-  QHash<int, QVariantMap> m_systemConfigurationTable;
+  ///@note verified only means that the file and signature is valid, not that the license has correct expiry date and serial number
+  QHash<QString, QVariantMap> m_verifiedLicenseDataTable;
 
-  //pubkey
+  //signer x509 certificate
   QByteArray m_certData;
 
+  QString m_deviceSerial;
+
   bool m_universalLicenseFound=false;
+  bool m_serialNumberInitialized=false;
+
+  static constexpr QLatin1String s_systemNameDescriptor = modman_util::to_latin1("uniqueSystemName");
+  static constexpr QLatin1String s_expiresDescriptor = modman_util::to_latin1("expires");
+  static constexpr QLatin1String s_expiresNeverDescriptor = modman_util::to_latin1("never");
+  static constexpr QLatin1String s_deviceSerialDescriptor = modman_util::to_latin1("deviceSerial");
+  static constexpr QLatin1String s_universalLicenseDescriptor = modman_util::to_latin1("universalLicense");
+  static constexpr QLatin1String s_universalSerialDescriptor = modman_util::to_latin1("universalSerial");
 
   // EventSystem interface
 public:
