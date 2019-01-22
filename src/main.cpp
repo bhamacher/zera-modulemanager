@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
   VeinScript::ScriptSystem *scriptSystem = new VeinScript::ScriptSystem(&a);
   VeinApiQml::VeinQml *qmlSystem = new VeinApiQml::VeinQml(&a);
   ZeraDBLogger *dataLoggerSystem = new ZeraDBLogger(new VeinLogger::DataSource(storSystem, &a), sqliteFactory, &a); //takes ownership of DataSource
-  CustomerDataSystem *customerDataSystem = 0;
+  CustomerDataSystem *customerDataSystem = nullptr;
   LicenseSystem *licenseSystem = new LicenseSystem({QUrl("file:///home/operator/license-keys")}, &a);
 
   VeinApiQml::VeinQml::setStaticInstance(qmlSystem);
@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
   QList<VeinEvent::EventSystem*> subSystems;
   //do not reorder
   subSystems.append(mmController);
-  if(customerdataSystemEnabled)
+  if(customerdataSystemEnabled && licenseSystem->isSystemLicensed(CustomerDataSystem::s_entityName))
   {
     qDebug() << "CustomerDataSystem is enabled";
     customerDataSystem = new CustomerDataSystem(&a);
@@ -140,7 +140,11 @@ int main(int argc, char *argv[])
   subSystems.append(tcpSystem);
   subSystems.append(qmlSystem);
   subSystems.append(scriptSystem);
-  subSystems.append(dataLoggerSystem);
+  if(licenseSystem->isSystemLicensed(dataLoggerSystem->entityName()))
+  {
+    qDebug() << "DataLoggerSystem is enabled";
+    subSystems.append(dataLoggerSystem);
+  }
   subSystems.append(licenseSystem);
 
   evHandler->setSubsystems(subSystems);

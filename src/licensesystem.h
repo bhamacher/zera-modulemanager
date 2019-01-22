@@ -1,6 +1,8 @@
 #ifndef LICENSESYSTEM_H
 #define LICENSESYSTEM_H
 
+#include "modman_util.h"
+
 #include <ve_eventsystem.h>
 
 #include <QMap>
@@ -13,7 +15,7 @@ class LicenseSystem : public VeinEvent::EventSystem
 public:
   LicenseSystem(const QSet<QUrl> &t_licenseURLs, QObject *t_parent = nullptr);
 
-  bool isModuleLicensed(const QString &t_uniqueModuleName) const;
+  bool isSystemLicensed(const QString &t_uniqueModuleName) const;
   QVariantMap systemLicenseConfiguration(int t_entityId) const;
 
 private:
@@ -27,7 +29,7 @@ private:
   const QSet<QUrl> m_licenseURLs;
 
   //modules currently don't support configurable licensing
-  QList<QString> m_licensedModules;
+  QList<QString> m_licensedSystems;
 
   //use QVariantMap for support of QML type conversion
   QHash<int, QVariantMap> m_systemConfigurationTable;
@@ -36,6 +38,13 @@ private:
   QByteArray m_certData;
 
   bool m_universalLicenseFound=false;
+
+  static constexpr QLatin1String s_systemNameDescriptor = modman_util::to_latin1("uniqueSystemName");
+  static constexpr QLatin1String s_entityIdDescriptor = modman_util::to_latin1("entityId");
+  static constexpr QLatin1String s_expiresDescriptor = modman_util::to_latin1("expires");
+  static constexpr QLatin1String s_expiresNeverDescriptor = modman_util::to_latin1("never");
+  static constexpr QLatin1String s_deviceSerialDescriptor = modman_util::to_latin1("deviceSerial");
+  static constexpr QLatin1String s_universalLicenseDescriptor = modman_util::to_latin1("universalLicense");
 
   // EventSystem interface
 public:

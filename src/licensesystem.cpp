@@ -36,34 +36,33 @@ LicenseSystem::LicenseSystem(const QSet<QUrl> &t_licenseURLs, QObject *t_parent)
         if(parseError.error == QJsonParseError::NoError)
         {
           const QJsonObject rootObj = licenseDocument.object();
-          Q_ASSERT(rootObj.contains("entityId"));
-          Q_ASSERT(rootObj.contains("expires"));
-          Q_ASSERT(rootObj.contains("deviceSerial"));
+          const bool isUniversalLicense = (rootObj.contains(s_universalLicenseDescriptor) && rootObj.value(s_universalLicenseDescriptor).toInt(0) == 1);
+          Q_ASSERT(rootObj.contains(s_expiresDescriptor));
+          Q_ASSERT(rootObj.contains(s_deviceSerialDescriptor));
+          //entityId and systemName are required if not an "universal license"
+          Q_ASSERT(isUniversalLicense || (rootObj.contains(s_entityIdDescriptor) && rootObj.contains(s_systemNameDescriptor)));
 
 
-          //if(rootObj.value("deviceSerial").toString() == getDeviceSerial())
+          //if(rootObj.value(s_deviceSerialDescriptor).toString() == getDeviceSerial())
           //{
-          if(rootObj.value("expires").toString() == "never") ///@todo add expiry dates check
+          if(rootObj.value(s_expiresDescriptor).toString() == s_expiresNeverDescriptor) ///@todo add expiry dates check
           {
-            m_systemConfigurationTable.insert(rootObj.value("entityId").toInt(), rootObj.toVariantMap());
-
-            if(rootObj.contains("uniqueModuleName"))
-            {
-              m_licensedModules.append(rootObj.value("uniqueModuleName").toString());
-            }
-            if(rootObj.contains("universalKey") && rootObj.value("universalKey").toInt(0) == 1)
+            m_systemConfigurationTable.insert(rootObj.value(s_entityIdDescriptor).toInt(), rootObj.toVariantMap());
+            m_licensedSystems.append(rootObj.value(s_systemNameDescriptor).toString());
+            if(isUniversalLicense)
             {
               m_universalLicenseFound = true;
+              //break;
             }
           }
           else
           {
-            qWarning() << "License expired:" << licenseFilePath << "\n" << "date:" << rootObj.value("expires").toString();
+            qWarning() << "License expired:" << licenseFilePath << "\n" << "date:" << rootObj.value(s_expiresDescriptor).toString();
           }
           //}
           //else
           //{
-          //  qWarning() << "License serial number is invalid:" << licenseFilePath << "\n" << "license serial:" <<  rootObj.value("deviceSerial").toString() << "expected serial:" << getDeviceSerial();
+          //  qWarning() << "License serial number is invalid:" << licenseFilePath << "\n" << "license serial:" <<  rootObj.value(s_deviceSerialDescriptor).toString() << "expected serial:" << getDeviceSerial();
           //}
         }
         else
@@ -75,9 +74,9 @@ LicenseSystem::LicenseSystem(const QSet<QUrl> &t_licenseURLs, QObject *t_parent)
   }
 }
 
-bool LicenseSystem::isModuleLicensed(const QString &t_uniqueModuleName) const
+bool LicenseSystem::isSystemLicensed(const QString &t_uniqueModuleName) const
 {
-  return m_universalLicenseFound || m_licensedModules.contains(t_uniqueModuleName);
+  return m_universalLicenseFound || m_licensedSystems.contains(t_uniqueModuleName);
 }
 
 QVariantMap LicenseSystem::systemLicenseConfiguration(int t_entityId) const
@@ -88,7 +87,7 @@ QVariantMap LicenseSystem::systemLicenseConfiguration(int t_entityId) const
 QByteArray LicenseSystem::loadCertData() const
 {
   QByteArray retVal;
-  QFile certFile(":/license_cert.pem"); //do not use paths from the regular filesystem, with a custom license_cert licenses could be forged
+  QFile certFile(":/license_cert.pem"); //do not use paths from the regular filesystem, with a replaced custom license_cert.pem licenses could be forged
   Q_ASSERT(certFile.exists());
 
   certFile.open(QFile::ReadOnly);
@@ -164,4 +163,11 @@ bool LicenseSystem::processEvent(QEvent *t_event)
   return false;
 }
 
+//constexpr definition, see: https://stackoverflow.com/questions/8016780/undefined-reference-to-static-constexpr-char
+constexpr QLatin1String LicenseSystem::s_systemNameDescriptor;
+constexpr QLatin1String LicenseSystem::s_entityIdDescriptor;
+constexpr QLatin1String LicenseSystem::s_expiresDescriptor;
+constexpr QLatin1String LicenseSystem::s_expiresNeverDescriptor;
+constexpr QLatin1String LicenseSystem::s_deviceSerialDescriptor;
+constexpr QLatin1String LicenseSystem::s_universalLicenseDescriptor;
 

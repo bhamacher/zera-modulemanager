@@ -156,7 +156,7 @@ namespace ZeraModules
       MeasurementModuleFactory *tmpFactory=nullptr;
 
       tmpFactory=m_factoryTable.value(t_uniqueModuleName);
-      if(tmpFactory && m_licenseSystem->isModuleLicensed(t_uniqueModuleName))
+      if(tmpFactory && m_licenseSystem->isSystemLicensed(t_uniqueModuleName))
       {
         //qDebug()<<"Creating module instance:"<<tmpPeer->getName(); //<< "with config" << xmlConfigData;
         VirtualModule *tmpModule = tmpFactory->createModule(m_proxyInstance, t_moduleId, m_storage, this);
