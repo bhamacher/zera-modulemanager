@@ -9,6 +9,7 @@ QT_BEGIN_NAMESPACE
 #include <QFileInfo>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QDateTime>
 QT_END_NAMESPACE
 
 LicenseSystem::LicenseSystem(const QSet<QUrl> &t_licenseURLs, QObject *t_parent) : VeinEvent::EventSystem(t_parent),
@@ -39,15 +40,16 @@ LicenseSystem::LicenseSystem(const QSet<QUrl> &t_licenseURLs, QObject *t_parent)
           const bool isUniversalLicense = (rootObj.contains(s_universalLicenseDescriptor) && rootObj.value(s_universalLicenseDescriptor).toInt(0) == 1);
           Q_ASSERT(rootObj.contains(s_expiresDescriptor));
           Q_ASSERT(rootObj.contains(s_deviceSerialDescriptor));
-          //entityId and systemName are required if not an "universal license"
-          Q_ASSERT(isUniversalLicense || (rootObj.contains(s_entityIdDescriptor) && rootObj.contains(s_systemNameDescriptor)));
+          Q_ASSERT(isUniversalLicense || rootObj.contains(s_systemNameDescriptor));
 
 
           //if(rootObj.value(s_deviceSerialDescriptor).toString() == getDeviceSerial())
           //{
-          if(rootObj.value(s_expiresDescriptor).toString() == s_expiresNeverDescriptor) ///@todo add expiry dates check
+
+          const QString expiryMonth = rootObj.value(s_expiresDescriptor).toString();
+          if(expiryMonth == s_expiresNeverDescriptor || QDateTime::fromString(expiryMonth, "yyyy/MM") <= QDateTime::currentDateTime().addMonths(1))
           {
-            m_systemConfigurationTable.insert(rootObj.value(s_entityIdDescriptor).toInt(), rootObj.toVariantMap());
+            m_systemConfigurationTable.insert(rootObj.value(s_systemNameDescriptor).toString(), rootObj.toVariantMap());
             m_licensedSystems.append(rootObj.value(s_systemNameDescriptor).toString());
             if(isUniversalLicense)
             {
@@ -79,9 +81,9 @@ bool LicenseSystem::isSystemLicensed(const QString &t_uniqueModuleName) const
   return m_universalLicenseFound || m_licensedSystems.contains(t_uniqueModuleName);
 }
 
-QVariantMap LicenseSystem::systemLicenseConfiguration(int t_entityId) const
+QVariantMap LicenseSystem::systemLicenseConfiguration(const QString &t_systemName) const
 {
-  return m_systemConfigurationTable.value(t_entityId);
+  return m_systemConfigurationTable.value(t_systemName);
 }
 
 QByteArray LicenseSystem::loadCertData() const
@@ -165,7 +167,6 @@ bool LicenseSystem::processEvent(QEvent *t_event)
 
 //constexpr definition, see: https://stackoverflow.com/questions/8016780/undefined-reference-to-static-constexpr-char
 constexpr QLatin1String LicenseSystem::s_systemNameDescriptor;
-constexpr QLatin1String LicenseSystem::s_entityIdDescriptor;
 constexpr QLatin1String LicenseSystem::s_expiresDescriptor;
 constexpr QLatin1String LicenseSystem::s_expiresNeverDescriptor;
 constexpr QLatin1String LicenseSystem::s_deviceSerialDescriptor;
