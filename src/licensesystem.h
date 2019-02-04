@@ -18,12 +18,12 @@ public:
   bool isSystemLicensed(const QString &t_uniqueModuleName) const;
   QVariantMap systemLicenseConfiguration(const QString &t_systemName) const;
 
+  void setDeviceSerial(const QString &t_serialNumber);
+
 private:
   QByteArray loadCertData() const;
   QByteArray loadLicenseFile(const QString &t_filePath) const;
   QHash<QString, QByteArray> getLicenseFilesFromPath(const QString &t_path) const;
-
-  QString getDeviceSerial() const;
 
   //allows multiple paths to load licenses from (e.g. file:///etc/zera/licenses, file:///home/$USER/licenses and http://$LICENSE_SERVER:8080/licenses/$SERIALNO)
   const QSet<QUrl> m_licenseURLs;
@@ -37,6 +37,8 @@ private:
   //signer x509 certificate
   QByteArray m_certData;
 
+  QString m_deviceSerial;
+
   bool m_universalLicenseFound=false;
 
   static constexpr QLatin1String s_systemNameDescriptor = modman_util::to_latin1("uniqueSystemName");
@@ -44,6 +46,7 @@ private:
   static constexpr QLatin1String s_expiresNeverDescriptor = modman_util::to_latin1("never");
   static constexpr QLatin1String s_deviceSerialDescriptor = modman_util::to_latin1("deviceSerial");
   static constexpr QLatin1String s_universalLicenseDescriptor = modman_util::to_latin1("universalLicense");
+  static constexpr QLatin1String s_universalSerialDescriptor = modman_util::to_latin1("universalSerial");
 
   // EventSystem interface
 public:
