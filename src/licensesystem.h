@@ -19,6 +19,10 @@ public:
   QVariantMap systemLicenseConfiguration(const QString &t_systemName) const;
 
   void setDeviceSerial(const QString &t_serialNumber);
+  bool serialNumberIsInitialized() const;
+
+signals:
+  void sigSerialNumberInitialized();
 
 private:
   QByteArray loadCertData() const;
@@ -47,6 +51,7 @@ private:
   QString m_deviceSerial;
 
   bool m_universalLicenseFound=false;
+  bool m_serialNumberInitialized=false;
 
   static constexpr QLatin1String s_systemNameDescriptor = modman_util::to_latin1("uniqueSystemName");
   static constexpr QLatin1String s_expiresDescriptor = modman_util::to_latin1("expires");

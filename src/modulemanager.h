@@ -60,6 +60,7 @@ namespace ZeraModules
 
   private slots:
     void onModuleDelete();
+    void delayedModuleStartNext();
     void onModuleStartNext();
     void onModuleError(const QString &t_error);
     void checkModuleList();

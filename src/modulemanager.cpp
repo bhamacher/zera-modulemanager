@@ -140,7 +140,11 @@ namespace ZeraModules
 
   void ModuleManager::setLicenseSystem(LicenseSystem *t_licenseSystem)
   {
+    ///@todo move to constructor as the ModuleManager depends on the LicenseSystem
+    Q_ASSERT(t_licenseSystem != nullptr);
     m_licenseSystem = t_licenseSystem;
+    //start the next module as soon as the INF_SerialNr component is avaiable
+    connect(m_licenseSystem, &LicenseSystem::sigSerialNumberInitialized, this, &ModuleManager::delayedModuleStartNext);
   }
 
   void ModuleManager::setEventHandler(ModuleEventHandler *t_eventHandler)
@@ -168,7 +172,10 @@ namespace ZeraModules
             tmpModule->setConfiguration(t_xmlConfigData);
           }
           connect(tmpModule, SIGNAL(moduleDeactivated()), this, SLOT(onModuleDelete()));
-          connect(tmpModule, &VirtualModule::moduleActivated, this, &ModuleManager::onModuleStartNext);
+          connect(tmpModule, &VirtualModule::moduleActivated, this, [this](){
+            m_moduleStartLock=false;
+            delayedModuleStartNext();
+          });
           connect(tmpModule, &VirtualModule::moduleError, this, &ModuleManager::onModuleError);
 
           m_moduleStartLock = true;
@@ -276,6 +283,14 @@ namespace ZeraModules
       }
     }
     checkModuleList();
+  }
+
+  void ModuleManager::delayedModuleStartNext()
+  {
+    if(m_licenseSystem->serialNumberIsInitialized() == true && m_deferredStartList.length()>0 && m_moduleStartLock == false)
+    {
+      onModuleStartNext();
+    }
   }
 
   void ModuleManager::onModuleStartNext()

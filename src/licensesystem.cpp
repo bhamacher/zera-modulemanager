@@ -114,7 +114,17 @@ QVariantMap LicenseSystem::systemLicenseConfiguration(const QString &t_systemNam
 
 void LicenseSystem::setDeviceSerial(const QString &t_serialNumber)
 {
-  m_deviceSerial = t_serialNumber;
+  if(t_serialNumber.isEmpty() == false)
+  {
+    m_deviceSerial = t_serialNumber;
+    serialNumberIsInitialized();
+    emit sigSerialNumberInitialized();
+  }
+}
+
+bool LicenseSystem::serialNumberIsInitialized() const
+{
+  return m_serialNumberInitialized;
 }
 
 QByteArray LicenseSystem::loadCertData() const
@@ -237,11 +247,19 @@ bool LicenseSystem::processEvent(QEvent *t_event)
     {
       VeinComponent::ComponentData *cData = static_cast<VeinComponent::ComponentData *>(evData);
 
-      if(cData->componentName() == "INF_SerialNr")
+      if(cData->componentName() == QString("INF_SerialNr"))
       {
-        retVal = true;
-        qWarning() << "Changed device serial from:" << m_deviceSerial << "to:" << cData->newValue().toString();
-        m_deviceSerial = cData->newValue().toString();
+        if(cData->eventCommand() == VeinComponent::ComponentData::Command::CCMD_ADD || cData->eventCommand() == VeinComponent::ComponentData::Command::CCMD_SET)
+        {
+          retVal = true;
+          const QString newSerialNumber = cData->newValue().toString();
+          if(newSerialNumber.isEmpty() == false)
+          {
+            qWarning() << "Changed device serial from:" << m_deviceSerial << "to:" << cData->newValue() << cData->oldValue();
+            m_deviceSerial = newSerialNumber;
+            emit sigSerialNumberInitialized();
+          }
+        }
       }
     }
   }
