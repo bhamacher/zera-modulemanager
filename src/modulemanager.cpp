@@ -187,10 +187,14 @@ namespace ZeraModules
           m_moduleList.append(moduleData);
         }
       }
-      else
+      else if(m_licenseSystem->serialNumberIsInitialized())
       {
         qWarning() << "Skipping module:" << t_uniqueModuleName << "No license found!";
         onModuleStartNext();
+      }
+      else //wait for serial number initialization
+      {
+        m_deferredStartList.enqueue(new ModuleData(nullptr, t_uniqueModuleName, t_xmlConfigPath, t_xmlConfigData, t_moduleId));
       }
     }
     else
