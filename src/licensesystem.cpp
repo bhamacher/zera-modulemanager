@@ -240,6 +240,7 @@ bool LicenseSystem::processEvent(QEvent *t_event)
       if(cData->componentName() == "INF_SerialNr")
       {
         retVal = true;
+        qWarning() << "Changed device serial from:" << m_deviceSerial << "to:" << cData->newValue().toString();
         m_deviceSerial = cData->newValue().toString();
       }
     }
