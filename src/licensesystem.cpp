@@ -78,12 +78,11 @@ bool LicenseSystem::isSystemLicensed(const QString &t_uniqueSystemName)
   {
     retVal = true;
   }
-  else if(m_unlicensedSystems.contains(t_uniqueSystemName) == false) //do not repeat the check if the license vas invalidated previously
+  else
   {
     const QVariantMap licenseRootObject = m_verifiedLicenseDataTable.value(t_uniqueSystemName);
     const QString licenseDeviceSerial = licenseRootObject.value(s_deviceSerialDescriptor).toString();
 
-    qWarning() << "Serial comparison:" << licenseDeviceSerial << m_deviceSerial << (licenseDeviceSerial == m_deviceSerial);
     if(isValidLicenseDeviceSerial(licenseDeviceSerial))
     {
       const QString expiryMonth = licenseRootObject.value(s_expiresDescriptor).toString();
@@ -94,14 +93,8 @@ bool LicenseSystem::isSystemLicensed(const QString &t_uniqueSystemName)
       }
       else
       {
-        m_unlicensedSystems.append(t_uniqueSystemName);
         qWarning() << "License expired for system:" << t_uniqueSystemName << "\n" << "date:" << licenseRootObject.value(s_expiresDescriptor).toString();
       }
-    }
-    else
-    {
-      m_unlicensedSystems.append(t_uniqueSystemName);
-      qWarning() << "License serial number is invalid for system:" << t_uniqueSystemName << "\n" << "license serial:" <<  licenseRootObject.value(s_deviceSerialDescriptor).toString() << "expected serial:" << m_deviceSerial;
     }
   }
   return retVal; //m_universalLicenseFound || m_licensedSystems.contains(t_uniqueModuleName);

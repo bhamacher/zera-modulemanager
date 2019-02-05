@@ -38,9 +38,6 @@ private:
   //modules currently don't support configurable licensing
   QList<QString> m_licensedSystems;
 
-  //store if a system fails the checks
-  QList<QString> m_unlicensedSystems;
-
   //use QVariantMap for support of QML type conversion
   ///@note verified only means that the file and signature is valid, not that the license has correct expiry date and serial number
   QHash<QString, QVariantMap> m_verifiedLicenseDataTable;
