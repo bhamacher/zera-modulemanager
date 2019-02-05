@@ -117,7 +117,7 @@ void LicenseSystem::setDeviceSerial(const QString &t_serialNumber)
   if(t_serialNumber.isEmpty() == false)
   {
     m_deviceSerial = t_serialNumber;
-    serialNumberIsInitialized();
+    m_serialNumberInitialized = true;
     emit sigSerialNumberInitialized();
   }
 }
@@ -256,8 +256,7 @@ bool LicenseSystem::processEvent(QEvent *t_event)
           if(newSerialNumber.isEmpty() == false)
           {
             qWarning() << "Changed device serial from:" << m_deviceSerial << "to:" << cData->newValue() << cData->oldValue();
-            m_deviceSerial = newSerialNumber;
-            emit sigSerialNumberInitialized();
+            setDeviceSerial(newSerialNumber);
           }
         }
       }
