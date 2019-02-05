@@ -15,7 +15,7 @@ class LicenseSystem : public VeinEvent::EventSystem
 public:
   LicenseSystem(const QSet<QUrl> &t_licenseURLs, QObject *t_parent = nullptr);
 
-  bool isSystemLicensed(const QString &t_uniqueModuleName) const;
+  bool isSystemLicensed(const QString &t_uniqueModuleName);
   QVariantMap systemLicenseConfiguration(const QString &t_systemName) const;
 
   void setDeviceSerial(const QString &t_serialNumber);
@@ -25,14 +25,21 @@ private:
   QByteArray loadLicenseFile(const QString &t_filePath) const;
   QHash<QString, QByteArray> getLicenseFilesFromPath(const QString &t_path) const;
 
-  //allows multiple paths to load licenses from (e.g. file:///etc/zera/licenses, file:///home/$USER/licenses and http://$LICENSE_SERVER:8080/licenses/$SERIALNO)
+  bool isValidLicenseExpiryDate(const QString t_dateString) const;
+  bool isValidLicenseDeviceSerial(const QString t_deviceSerial) const;
+
+  ///@todo allows multiple paths to load licenses from, but lacks implementations for them (e.g. http://$LICENSE_SERVER:8080/licenses/$SERIALNO)
   const QSet<QUrl> m_licenseURLs;
 
   //modules currently don't support configurable licensing
   QList<QString> m_licensedSystems;
 
+  //store if a system fails the checks
+  QList<QString> m_unlicensedSystems;
+
   //use QVariantMap for support of QML type conversion
-  QHash<QString, QVariantMap> m_systemConfigurationTable;
+  ///@note verified only means that the file and signature is valid, not that the license has correct expiry date and serial number
+  QHash<QString, QVariantMap> m_verifiedLicenseDataTable;
 
   //signer x509 certificate
   QByteArray m_certData;

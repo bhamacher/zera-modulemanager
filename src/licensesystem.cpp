@@ -23,7 +23,7 @@ LicenseSystem::LicenseSystem(const QSet<QUrl> &t_licenseURLs, QObject *t_parent)
   VeinCryptoBridge::OpenSSLSignatureHandler sigHandler;
   for(const QUrl &licenseUrl : m_licenseURLs)
   {
-    ///@todo implement network requests for license files when required
+    ///@todo implement network requests for license files if required
     Q_ASSERT(licenseUrl.isLocalFile());
 
     const QHash<QString, QByteArray> licenseTable = getLicenseFilesFromPath(licenseUrl.toLocalFile());
@@ -40,35 +40,21 @@ LicenseSystem::LicenseSystem(const QSet<QUrl> &t_licenseURLs, QObject *t_parent)
         QJsonDocument licenseDocument = QJsonDocument::fromJson(licenseJsonData, &parseError);
         if(parseError.error == QJsonParseError::NoError)
         {
-          const QJsonObject rootObj = licenseDocument.object();
-          const bool isUniversalLicense = (rootObj.contains(s_universalLicenseDescriptor) && rootObj.value(s_universalLicenseDescriptor).toInt(0) == 1);
-          Q_ASSERT(rootObj.contains(s_expiresDescriptor));
-          Q_ASSERT(rootObj.contains(s_deviceSerialDescriptor));
-          Q_ASSERT(isUniversalLicense || rootObj.contains(s_systemNameDescriptor));
+          const QJsonObject licenseRootObject = licenseDocument.object();
+          Q_ASSERT(licenseRootObject.contains(s_expiresDescriptor));
+          Q_ASSERT(licenseRootObject.contains(s_deviceSerialDescriptor));
+          const bool isUniversalLicense = (licenseRootObject.contains(s_universalLicenseDescriptor) && licenseRootObject.value(s_universalLicenseDescriptor).toInt(0) == 1);
 
-          const QString licenseDeviceSerial = rootObj.value(s_deviceSerialDescriptor).toString();
-
-          if(licenseDeviceSerial == s_universalSerialDescriptor || licenseDeviceSerial == m_deviceSerial)
+          if(isUniversalLicense
+             && isValidLicenseExpiryDate(licenseRootObject.value(s_expiresDescriptor).toString())
+             && isValidLicenseDeviceSerial(licenseRootObject.value(s_deviceSerialDescriptor).toString()))
           {
-            const QString expiryMonth = rootObj.value(s_expiresDescriptor).toString();
-            if(expiryMonth == s_expiresNeverDescriptor || QDateTime::fromString(expiryMonth, "yyyy/MM") <= QDateTime::currentDateTime().addMonths(1))
-            {
-              m_systemConfigurationTable.insert(rootObj.value(s_systemNameDescriptor).toString(), rootObj.toVariantMap());
-              m_licensedSystems.append(rootObj.value(s_systemNameDescriptor).toString());
-              if(isUniversalLicense)
-              {
-                m_universalLicenseFound = true;
-                //break;
-              }
-            }
-            else
-            {
-              qWarning() << "License expired:" << licenseFilePath << "\n" << "date:" << rootObj.value(s_expiresDescriptor).toString();
-            }
+            m_universalLicenseFound = true;
           }
-          else
+          Q_ASSERT(isUniversalLicense || licenseRootObject.contains(s_systemNameDescriptor));
+          if(licenseRootObject.contains(s_systemNameDescriptor))
           {
-            qWarning() << "License serial number is invalid:" << licenseFilePath << "\n" << "license serial:" <<  rootObj.value(s_deviceSerialDescriptor).toString() << "expected serial:" << m_deviceSerial;
+            m_verifiedLicenseDataTable.insert(licenseRootObject.value(s_systemNameDescriptor).toString(), licenseRootObject.toVariantMap());
           }
         }
         else
@@ -80,14 +66,50 @@ LicenseSystem::LicenseSystem(const QSet<QUrl> &t_licenseURLs, QObject *t_parent)
   }
 }
 
-bool LicenseSystem::isSystemLicensed(const QString &t_uniqueModuleName) const
+bool LicenseSystem::isSystemLicensed(const QString &t_uniqueSystemName)
 {
-  return m_universalLicenseFound || m_licensedSystems.contains(t_uniqueModuleName);
+  bool retVal = false;
+
+  if(m_universalLicenseFound == true)
+  {
+    retVal = true;
+  }
+  else if(m_licensedSystems.contains(t_uniqueSystemName)) //known valid license
+  {
+    retVal = true;
+  }
+  else if(m_unlicensedSystems.contains(t_uniqueSystemName) == false) //do not repeat the check if the license vas invalidated previously
+  {
+    const QVariantMap licenseRootObject = m_verifiedLicenseDataTable.value(t_uniqueSystemName);
+    const QString licenseDeviceSerial = licenseRootObject.value(s_deviceSerialDescriptor).toString();
+
+    qWarning() << "Serial comparison:" << licenseDeviceSerial << m_deviceSerial << (licenseDeviceSerial == m_deviceSerial);
+    if(isValidLicenseDeviceSerial(licenseDeviceSerial))
+    {
+      const QString expiryMonth = licenseRootObject.value(s_expiresDescriptor).toString();
+      if(isValidLicenseExpiryDate(expiryMonth))
+      {
+        retVal = true;
+        m_licensedSystems.append(licenseRootObject.value(s_systemNameDescriptor).toString());
+      }
+      else
+      {
+        m_unlicensedSystems.append(t_uniqueSystemName);
+        qWarning() << "License expired for system:" << t_uniqueSystemName << "\n" << "date:" << licenseRootObject.value(s_expiresDescriptor).toString();
+      }
+    }
+    else
+    {
+      m_unlicensedSystems.append(t_uniqueSystemName);
+      qWarning() << "License serial number is invalid for system:" << t_uniqueSystemName << "\n" << "license serial:" <<  licenseRootObject.value(s_deviceSerialDescriptor).toString() << "expected serial:" << m_deviceSerial;
+    }
+  }
+  return retVal; //m_universalLicenseFound || m_licensedSystems.contains(t_uniqueModuleName);
 }
 
 QVariantMap LicenseSystem::systemLicenseConfiguration(const QString &t_systemName) const
 {
-  return m_systemConfigurationTable.value(t_systemName);
+  return m_verifiedLicenseDataTable.value(t_systemName);
 }
 
 void LicenseSystem::setDeviceSerial(const QString &t_serialNumber)
@@ -169,6 +191,32 @@ QHash<QString, QByteArray> LicenseSystem::getLicenseFilesFromPath(const QString 
   return retVal;
 }
 
+bool LicenseSystem::isValidLicenseExpiryDate(const QString t_dateString) const
+{
+  bool retVal = false;
+
+  if(t_dateString == s_expiresNeverDescriptor)
+  {
+    retVal = true;
+  }
+  else
+  {
+    //the license expires at the end of the given month so add 1 month here
+    const QDateTime tmpExpiryDate = QDateTime::fromString(t_dateString, "yyyy/MM").addMonths(1);
+    if(tmpExpiryDate.isValid() && tmpExpiryDate.isNull() == false && tmpExpiryDate >= QDateTime::currentDateTime())
+    {
+      retVal = true;
+    }
+  }
+
+  return retVal;
+}
+
+bool LicenseSystem::isValidLicenseDeviceSerial(const QString t_deviceSerial) const
+{
+  return (t_deviceSerial == s_universalSerialDescriptor || t_deviceSerial == m_deviceSerial);
+}
+
 bool LicenseSystem::processEvent(QEvent *t_event)
 {
   bool retVal = false;
@@ -185,7 +233,7 @@ bool LicenseSystem::processEvent(QEvent *t_event)
     //statusmodule initializes INF_SerialNr with our serial number to check the licenses against
     if(evData->entityId() == 1150
        && evData->type() == VeinComponent::ComponentData::dataType()
-       &&evData->eventOrigin() == VeinEvent::EventData::EventOrigin::EO_LOCAL)
+       && evData->eventOrigin() == VeinEvent::EventData::EventOrigin::EO_LOCAL)
     {
       VeinComponent::ComponentData *cData = static_cast<VeinComponent::ComponentData *>(evData);
 
