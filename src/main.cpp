@@ -127,11 +127,17 @@ int main(int argc, char *argv[])
   QList<VeinEvent::EventSystem*> subSystems;
   //do not reorder
   subSystems.append(mmController);
-  if(customerdataSystemEnabled && licenseSystem->isSystemLicensed(CustomerDataSystem::s_entityName))
+  if(customerdataSystemEnabled)
   {
     qDebug() << "CustomerDataSystem is enabled";
     customerDataSystem = new CustomerDataSystem(&a);
     QObject::connect(customerDataSystem, &CustomerDataSystem::sigCustomerDataError, errorReportFunction);
+    QObject::connect(licenseSystem, &LicenseSystem::sigSerialNumberInitialized, [&]() {
+      if(licenseSystem->isSystemLicensed(CustomerDataSystem::s_entityName))
+      {
+        customerDataSystem->intializeEntity();
+      }
+    });
     subSystems.append(customerDataSystem);
   }
   subSystems.append(introspectionSystem);
@@ -140,11 +146,10 @@ int main(int argc, char *argv[])
   subSystems.append(tcpSystem);
   subSystems.append(qmlSystem);
   subSystems.append(scriptSystem);
-  if(licenseSystem->isSystemLicensed(dataLoggerSystem->entityName()))
-  {
+  QObject::connect(licenseSystem, &LicenseSystem::sigSerialNumberInitialized, [&](){
     qDebug() << "DataLoggerSystem is enabled";
-    subSystems.append(dataLoggerSystem);
-  }
+    evHandler->addSubsystem(dataLoggerSystem);
+  });
   subSystems.append(licenseSystem);
 
   evHandler->setSubsystems(subSystems);

@@ -38,6 +38,7 @@ public:
   // EventSystem interface
 public:
   bool processEvent(QEvent *t_event) override;
+  void intializeEntity();
 
 public slots:
   void writeCustomerdata();
@@ -47,7 +48,6 @@ signals:
   void sigDataValueChanged(QString t_componentName, QString t_newValue);
 
 private:
-  void intializeEntity();
   void updateCustomerDataFileList();
   void updateDataFile(QString t_componentName, QString t_newValue);
   bool parseCustomerDataFile(const QString &t_fileName);
