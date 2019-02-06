@@ -291,7 +291,7 @@ namespace ZeraModules
 
   void ModuleManager::delayedModuleStartNext()
   {
-    if(m_licenseSystem->serialNumberIsInitialized() == true && m_deferredStartList.length()>0 && m_moduleStartLock == false)
+    if(m_licenseSystem->serialNumberIsInitialized() == true && m_moduleStartLock == false)
     {
       onModuleStartNext();
     }
