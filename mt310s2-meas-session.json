@@ -51,6 +51,11 @@
       "id": 1072
     },
     {
+      "name" : "power1module",
+      "configPath" : "/home/peter/C++/zera-classes/zera-modules/power1module/src/mt310s2-power1module4.xml",
+      "id": 1073
+    },
+    {
       "name" : "power3module",
       "configPath" : "/home/peter/C++/zera-classes/zera-modules/power3module/src/com5003-power3module.xml",
       "id": 1100
