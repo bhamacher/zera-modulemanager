@@ -66,6 +66,11 @@
       "id": 1110
     },
     {
+      "name" : "thdnmodule",
+      "configPath" : "/etc/zera/modules/mt310s2-thdnmodule2.xml",
+      "id": 1111
+    },
+    {
       "name" : "oscimodule",
       "configPath" : "/home/peter/C++/zera-classes/zera-modules/oscimodule/src/mt310s2-oscimodule.xml",
       "id": 1120
