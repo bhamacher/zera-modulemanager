@@ -30,7 +30,7 @@ public:
     CDS_QFILEDEVICE_FILEERROR_BEGIN = QFileDevice::ReadError //if the resultCode is >= CDS_QFILEDEVICE_FILEERROR_BEGIN then it is a QFileDevice::FileError
   };
 
-  CustomerDataSystem(QObject *t_parent = nullptr);
+  explicit CustomerDataSystem(QObject *t_parent = nullptr);
 
   VF_COMPONENT(entityName, "EntityName", "Entity name")
   static constexpr QLatin1String s_entityName = modman_util::to_latin1("CustomerData");
@@ -38,9 +38,15 @@ public:
   // EventSystem interface
 public:
   bool processEvent(QEvent *t_event) override;
+  /**
+   * @brief Adds the CustomerData entity and the components via vein framework
+   */
   void intializeEntity();
 
 public slots:
+  /**
+   * @brief Writes customerdata to file via QSaveFile
+   */
   void writeCustomerdata();
 
 signals:
@@ -48,10 +54,36 @@ signals:
   void sigDataValueChanged(QString t_componentName, QString t_newValue);
 
 private:
+  /**
+   * @brief Synchronizes the available customer data files with the component that lists them
+   */
   void updateCustomerDataFileList();
+  /**
+   * @brief Writes one value to a file, but delays the write in case of multiple changes that can occur in short frequence
+   * (on the client the entire file is changed at once if the user presses the save button)
+   * @param t_componentName
+   * @param t_newValue
+   */
   void updateDataFile(QString t_componentName, QString t_newValue);
+  /**
+   * @brief Reads a json encoded customer data file from the given path
+   * @param t_fileName
+   * @return success indicator
+   */
   bool parseCustomerDataFile(const QString &t_fileName);
+  /**
+   * @brief Packages rpc result data in RemoteProcedureData and sends a CommandEvent
+   * @param t_callId
+   * @param t_procedureName
+   * @param t_data
+   */
   void rpcFinished(QUuid t_callId, const QString &t_procedureName, const QVariantMap &t_data);
+  /**
+   * @brief Packages rpc progress data in RemoteProcedureData and sends a CommandEvent
+   * @param t_callId
+   * @param t_procedureName
+   * @param t_data
+   */
   void rpcProgress(QUuid t_callId, const QString &t_procedureName, const QVariantMap &t_data);
 
   static constexpr int s_entityId = 200;
@@ -113,6 +145,9 @@ private:
   //functions need an instance so no static variable
   const VeinEvent::RoutedRemoteProcedureAtlas m_remoteProcedures;
 
+  /**
+   * @brief Notifies if customer data files change outside of this program
+   */
   QFileSystemWatcher m_fileWatcher;
   QTimer m_dataWriteDelay;
   /**
