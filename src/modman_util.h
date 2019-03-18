@@ -38,6 +38,7 @@ namespace modman_util
   static constexpr QLatin1String s_##rpcIdentifier##ProcedureDescription = modman_util::to_latin1(procedureDescriptionString);
 
 /// helper to set up a map or hash of the remote procedures, mainly because qt creator breaks the indentation :(
+/// for infos on std::bind see https://en.cppreference.com/w/cpp/utility/functional/bind
 #define VF_RPC_BIND(rpcIdentifier, rpcBind) \
 { \
 s_##rpcIdentifier##ProcedureName, \

@@ -131,14 +131,14 @@ bool ModuleManagerController::processEvent(QEvent *t_event)
 
 void ModuleManagerController::initializeEntity(const QString &t_sessionPath, const QStringList &t_sessionList)
 {
-  if(m_storageSystem!=0)
+  if(m_storageSystem!=nullptr)
   {
     m_sessionReady=true;
     m_currentSession=t_sessionPath;
     m_availableSessions=t_sessionList;
 
-    VeinComponent::ComponentData *initData=0;
-    VeinEvent::CommandEvent *initEvent = 0;
+    VeinComponent::ComponentData *initData=nullptr;
+    VeinEvent::CommandEvent *initEvent = nullptr;
 
 
     initData = new VeinComponent::ComponentData();
@@ -152,7 +152,7 @@ void ModuleManagerController::initializeEntity(const QString &t_sessionPath, con
 
     initEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, initData);
     emit sigSendEvent(initEvent);
-    initEvent=0;
+    initEvent=nullptr;
 
 
     initData = new VeinComponent::ComponentData();
@@ -164,7 +164,7 @@ void ModuleManagerController::initializeEntity(const QString &t_sessionPath, con
     initData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
     initEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, initData);
     emit sigSendEvent(initEvent);
-    initEvent=0;
+    initEvent=nullptr;
 
 
     initData = new VeinComponent::ComponentData();
@@ -209,7 +209,7 @@ void ModuleManagerController::initOnce()
     componentData.insert(ModuleManagerController::s_modulesPausedComponentName, QVariant(false));
     componentData.insert(ModuleManagerController::s_serverIpComponentName, ipAdressList);
 
-    VeinComponent::ComponentData *initialData=0;
+    VeinComponent::ComponentData *initialData=nullptr;
     for(const QString &compName : componentData.keys())
     {
       initialData = new VeinComponent::ComponentData();
@@ -239,7 +239,7 @@ void ModuleManagerController::handleNotificationMessage(QJsonObject t_message)
 {
   Q_ASSERT(t_message.isEmpty() == false);
   VeinComponent::ComponentData *notificationMessagesData = new VeinComponent::ComponentData();
-  VeinEvent::CommandEvent *emDataEvent = 0;
+  VeinEvent::CommandEvent *emDataEvent = nullptr;
   notificationMessagesData->setEntityId(s_entityId);
   notificationMessagesData->setCommand(VeinComponent::ComponentData::Command::CCMD_SET);
   notificationMessagesData->setComponentName(s_notificationMessagesComponentName);

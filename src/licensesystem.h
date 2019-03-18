@@ -16,20 +16,56 @@ public:
   LicenseSystem(const QSet<QUrl> &t_licenseURLs, QObject *t_parent = nullptr);
 
   bool isSystemLicensed(const QString &t_uniqueModuleName);
+  /**
+   * @brief Returns the data of the license json objects for the given system
+   * @param t_systemName
+   * @return empty QVariantMap() if no system exists with t_systemName
+   */
   QVariantMap systemLicenseConfiguration(const QString &t_systemName) const;
 
   void setDeviceSerial(const QString &t_serialNumber);
+  /**
+   * @brief serialNumberIsInitialized
+   * @return true if the StatusModule1.INF_SerialNr was retrieved
+   */
   bool serialNumberIsInitialized() const;
 
 signals:
+  /**
+   * @brief Called once the StatusModule1.INF_SerialNr is retrieved
+   */
   void sigSerialNumberInitialized();
 
 private:
+  /**
+   * @brief loads the license data from ":/license_cert.pem"
+   * @return
+   */
   QByteArray loadCertData() const;
+  /**
+   * @brief reads a license file from the path
+   * @param t_filePath
+   * @return
+   */
   QByteArray loadLicenseFile(const QString &t_filePath) const;
+  /**
+   * @brief reads all license files in a directory via loadLicenseFile() into a hash
+   * @param t_path
+   * @return key: filename, value: license data
+   */
   QHash<QString, QByteArray> getLicenseFilesFromPath(const QString &t_path) const;
 
+  /**
+   * @brief Validates the expiry date against QDateTime::currentDateTime()
+   * @param t_dateString
+   * @return success indicator
+   */
   bool isValidLicenseExpiryDate(const QString t_dateString) const;
+  /**
+   * @brief Validates the device serial against the StatusModule1.INF_SerialNr
+   * @param t_deviceSerial
+   * @return success indicator
+   */
   bool isValidLicenseDeviceSerial(const QString t_deviceSerial) const;
 
   ///@todo allows multiple paths to load licenses from, but lacks implementations for them (e.g. http://$LICENSE_SERVER:8080/licenses/$SERIALNO)

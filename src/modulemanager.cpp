@@ -33,7 +33,7 @@ namespace ZeraModules
 
     static ModuleData *findByReference(QList<ModuleData*> t_list, VirtualModule *t_ref)
     {
-      ModuleData *retVal = 0;
+      ModuleData *retVal = nullptr;
       foreach(ModuleData *tmpData, t_list)
       {
         if(tmpData->m_reference == t_ref)
@@ -199,7 +199,7 @@ namespace ZeraModules
     }
     else
     {
-      m_deferredStartList.enqueue(new ModuleData(0, t_uniqueModuleName, t_xmlConfigPath, t_xmlConfigData, t_moduleId));
+      m_deferredStartList.enqueue(new ModuleData(nullptr, t_uniqueModuleName, t_xmlConfigPath, t_xmlConfigData, t_moduleId));
     }
   }
 

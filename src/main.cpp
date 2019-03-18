@@ -71,12 +71,12 @@ int main(int argc, char *argv[])
                                                 QString("%1.debug=false").arg(VEIN_API_QML_VERBOSE().categoryName()) <<
                                                 //                                                QString("%1.debug=false").arg(VEIN_LOGGER().categoryName()) <<
                                                 QString("%1.debug=false").arg(VEIN_STORAGE_HASH_VERBOSE().categoryName());
+  QLoggingCategory::setFilterRules(loggingFilters.join("\n"));
 
   const VeinLogger::DBFactory sqliteFactory = [](){
     return new VeinLogger::SQLiteDB();
   };
 
-  QLoggingCategory::setFilterRules(loggingFilters.join("\n"));
 
   ModuleEventHandler *evHandler = new ModuleEventHandler(&a);
 

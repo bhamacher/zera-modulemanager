@@ -19,6 +19,10 @@ public:
   using FilterFunction = std::function<bool (QString)>;
 
   explicit DirIteratorWorker(const QString &t_searchPath, const QStringList &t_searchPatterns, QDir::Filter t_filter, QDirIterator::IteratorFlags t_flags=QDirIterator::NoIteratorFlags, QObject *t_parent = nullptr);
+  /**
+   * @brief sets m_filterFunction
+   * @param t_function a function matching the signature of FilterFunction
+   */
   void setFilterFunction(FilterFunction t_function);
 
 signals:

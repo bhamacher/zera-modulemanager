@@ -12,11 +12,21 @@ public:
   const QString &getSessionFilePath() const;
 
 signals:
+  /**
+   * @brief Emitted for every module json object in a session file
+   * @param t_uniqueModuleName
+   * @param t_xmlPath Path to save back the settings if they were changed
+   * @param t_xmlData
+   * @param t_moduleId This is the module object entity id
+   */
   void sigLoadModule(QString t_uniqueModuleName, QString t_xmlPath, QByteArray t_xmlData, int t_moduleId);
 
 public slots:
+  /**
+   * @brief Loads a json formatted session file from the given path
+   * @param t_filePath
+   */
   void loadSession(QString t_filePath);
-
 
 private:
   QString m_currentSessionFile;
