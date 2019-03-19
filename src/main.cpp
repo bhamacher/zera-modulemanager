@@ -102,6 +102,15 @@ int main(int argc, char *argv[])
   ZeraModules::ModuleManager *modMan = new ZeraModules::ModuleManager(availableSessionList, &a);
   JsonSessionLoader *sessionLoader = new JsonSessionLoader(&a);
 
+  bool initQmlSystemOnce = false;
+  QObject::connect(qmlSystem, &VeinApiQml::VeinQml::sigStateChanged, [&](VeinApiQml::VeinQml::ConnectionState t_state){
+    if(t_state == VeinApiQml::VeinQml::ConnectionState::VQ_LOADED && initQmlSystemOnce == false)
+    {
+      modMan->loadScripts(scriptSystem);
+      initQmlSystemOnce = true;
+    }
+  });
+
   netSystem->setOperationMode(VeinNet::NetworkSystem::VNOM_SUBSCRIPTION);
   auto errorReportFunction = [dataLoggerSystem](const QString &t_error){
     QJsonObject jsonErrorObj;
@@ -127,32 +136,40 @@ int main(int argc, char *argv[])
   QList<VeinEvent::EventSystem*> subSystems;
   //do not reorder
   subSystems.append(mmController);
-  if(customerdataSystemEnabled)
-  {
-    qDebug() << "CustomerDataSystem is enabled";
-    customerDataSystem = new CustomerDataSystem(&a);
-    QObject::connect(customerDataSystem, &CustomerDataSystem::sigCustomerDataError, errorReportFunction);
-    QObject::connect(licenseSystem, &LicenseSystem::sigSerialNumberInitialized, [&]() {
-      if(licenseSystem->isSystemLicensed(CustomerDataSystem::s_entityName))
-      {
-        customerDataSystem->intializeEntity();
-      }
-    });
-    subSystems.append(customerDataSystem);
-  }
   subSystems.append(introspectionSystem);
   subSystems.append(storSystem);
   subSystems.append(netSystem);
   subSystems.append(tcpSystem);
   subSystems.append(qmlSystem);
   subSystems.append(scriptSystem);
-  QObject::connect(licenseSystem, &LicenseSystem::sigSerialNumberInitialized, [&](){
-    qDebug() << "DataLoggerSystem is enabled";
-    evHandler->addSubsystem(dataLoggerSystem);
-  });
   subSystems.append(licenseSystem);
 
   evHandler->setSubsystems(subSystems);
+
+  //conditional systems
+  if(customerdataSystemEnabled)
+  {
+    QObject::connect(customerDataSystem, &CustomerDataSystem::sigCustomerDataError, errorReportFunction);
+    QObject::connect(licenseSystem, &LicenseSystem::sigSerialNumberInitialized, [&]() {
+      if(licenseSystem->isSystemLicensed(CustomerDataSystem::s_entityName))
+      {
+        customerDataSystem = new CustomerDataSystem(&a);
+        qDebug() << "CustomerDataSystem is enabled";
+        evHandler->addSubsystem(customerDataSystem);
+        customerDataSystem->intializeEntity();
+      }
+    });
+  }
+  QObject::connect(licenseSystem, &LicenseSystem::sigSerialNumberInitialized, [&](){
+    if(licenseSystem->isSystemLicensed(dataLoggerSystem->entityName()))
+    {
+      qDebug() << "DataLoggerSystem is enabled";
+      evHandler->addSubsystem(dataLoggerSystem);
+
+      qmlSystem->entitySubscribeById(0); //0 = mmController
+      qmlSystem->entitySubscribeById(2); //2 = dataLoggerSystem
+    }
+  });
 
   modMan->setStorage(storSystem);
   modMan->setLicenseSystem(licenseSystem);
@@ -191,19 +208,6 @@ int main(int argc, char *argv[])
   QObject::connect(modMan, &ZeraModules::ModuleManager::sigModulesLoaded, mmController, &ModuleManagerController::initializeEntity);
   QObject::connect(mmController, &ModuleManagerController::sigChangeSession, modMan, &ZeraModules::ModuleManager::changeSessionFile);
   QObject::connect(mmController, &ModuleManagerController::sigModulesPausedChanged, modMan, &ZeraModules::ModuleManager::setModulesPaused);
-
-
-  qmlSystem->entitySubscribeById(0); //0 = ModuleManagerController
-  qmlSystem->entitySubscribeById(2); //2 = VeinLogger::DatabaseLogger
-  bool initOnce = false;
-
-  QObject::connect(qmlSystem, &VeinApiQml::VeinQml::sigStateChanged, [&](VeinApiQml::VeinQml::ConnectionState t_state){
-    if(t_state == VeinApiQml::VeinQml::ConnectionState::VQ_LOADED && initOnce == false)
-    {
-      modMan->loadScripts(scriptSystem);
-      initOnce = true;
-    }
-  });
 
   return a.exec();
 }
