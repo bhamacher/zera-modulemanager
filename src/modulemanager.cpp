@@ -162,7 +162,7 @@ namespace ZeraModules
       tmpFactory=m_factoryTable.value(t_uniqueModuleName);
       if(tmpFactory && m_licenseSystem->isSystemLicensed(t_uniqueModuleName))
       {
-        //qDebug()<<"Creating module instance:"<<tmpPeer->getName(); //<< "with config" << xmlConfigData;
+        qDebug() << "Creating module:" << t_uniqueModuleName << "with id:" << t_moduleId << "with config file:" << t_xmlConfigPath;
         VirtualModule *tmpModule = tmpFactory->createModule(m_proxyInstance, t_moduleId, m_storage, this);
         if(tmpModule)
         {
