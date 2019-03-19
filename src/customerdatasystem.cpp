@@ -215,7 +215,7 @@ bool CustomerDataSystem::processEvent(QEvent *t_event)
   return retVal;
 }
 
-void CustomerDataSystem::intializeEntity()
+void CustomerDataSystem::initializeEntity()
 {
   QJsonDocument introspectionDoc;
   QJsonObject introspectionRootObject;

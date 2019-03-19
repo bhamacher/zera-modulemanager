@@ -156,7 +156,7 @@ int main(int argc, char *argv[])
         customerDataSystem = new CustomerDataSystem(&a);
         qDebug() << "CustomerDataSystem is enabled";
         evHandler->addSubsystem(customerDataSystem);
-        customerDataSystem->intializeEntity();
+        customerDataSystem->initializeEntity();
       }
     });
   }

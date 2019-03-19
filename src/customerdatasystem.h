@@ -41,7 +41,7 @@ public:
   /**
    * @brief Adds the CustomerData entity and the components via vein framework
    */
-  void intializeEntity();
+  void initializeEntity();
 
 public slots:
   /**
