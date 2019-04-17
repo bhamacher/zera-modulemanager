@@ -91,7 +91,7 @@ class ZeraDBLoggerPrivate
       Q_ASSERT(componentData != nullptr);
       if(componentData->componentName() == s_recordNameEntityName)
       {
-        if(componentData->eventOrigin() == VeinComponent::ComponentData::EventOrigin::EO_FOREIGN
+        if(componentData->eventOrigin() == VeinComponent::ComponentData::EventOrigin::EO_FOREIGN ///@todo is the check for EO_FOREIGN really required?
            && componentData->eventCommand() == VeinComponent::ComponentData::Command::CCMD_SET
            && t_cEvent->eventSubtype() == VeinEvent::CommandEvent::EventSubtype::TRANSACTION)
         {
