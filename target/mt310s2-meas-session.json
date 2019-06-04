@@ -111,6 +111,11 @@
         "id": 1200
       },
       {
+        "name" : "spm1module",
+        "configPath" : "/etc/zera/modules/mt310s2-spm1module.xml",
+        "id": 1210
+      },
+      {
         "name" : "scpimodule",
         "configPath" : "/etc/zera/modules/mt310s2-scpimodule.xml",
         "id": 9999
