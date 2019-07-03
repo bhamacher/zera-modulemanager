@@ -1,6 +1,11 @@
 {
     "modules" : [
       {
+        "name" : "statusmodule",
+        "configPath" : "/etc/zera/modules/com5003-statusmodule.xml",
+        "id": 1150
+      } ,
+      {
         "name" : "modemodule",
         "configPath" : "/etc/zera/modules/com5003-modemoduleREF.xml",
         "id": 1000
@@ -25,11 +30,6 @@
         "configPath" : "/etc/zera/modules/com5003-power1moduleREF.xml",
         "id": 1070
       },
-      {
-        "name" : "statusmodule",
-        "configPath" : "/etc/zera/modules/com5003-statusmodule.xml",
-        "id": 1150
-      } ,
       {
         "name" : "scpimodule",
         "configPath" : "/etc/zera/modules/com5003-scpimodule.xml",

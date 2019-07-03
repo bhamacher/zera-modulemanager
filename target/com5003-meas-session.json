@@ -1,6 +1,11 @@
 {
     "modules" : [
       {
+        "name" : "statusmodule",
+        "configPath" : "/etc/zera/modules/com5003-statusmodule.xml",
+        "id": 1150
+      },
+      {
         "name" : "modemodule",
         "configPath" : "/etc/zera/modules/com5003-modemoduleAC.xml",
         "id": 1000
@@ -74,11 +79,6 @@
         "name" : "lambdamodule",
         "configPath" : "/etc/zera/modules/com5003-lambdamodule.xml",
         "id": 1140
-      },
-      {
-        "name" : "statusmodule",
-        "configPath" : "/etc/zera/modules/com5003-statusmodule.xml",
-        "id": 1150
       },
       {
         "name" : "adjustmentmodule",
