@@ -66,6 +66,11 @@
         "id": 1110
       },
       {
+        "name" : "thdnmodule",
+        "configPath" : "/etc/zera/modules/com5003-thdnmodule2.xml",
+        "id": 1111
+      },
+      {
         "name" : "oscimodule",
         "configPath" : "/etc/zera/modules/com5003-oscimodule.xml",
         "id": 1120
