@@ -34,6 +34,8 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
+#include <QRegExp>
+
 namespace ZeraModulemanager
 {
   QJsonDocument getDefaultConfig()
@@ -45,6 +47,26 @@ namespace ZeraModulemanager
       retVal = QJsonDocument::fromJson(configFile.readAll());
     }
     return retVal;
+  }
+  const QString getDevNameFromUBoot()
+  {
+    QString strDeviceName;
+    // Check for kernel cmdline param which u-boot should set
+    QFile procFileCmdLine(QLatin1String("/proc/cmdline"));
+    if(procFileCmdLine.open(QIODevice::ReadOnly))
+    {
+      QString cmdLine = procFileCmdLine.readAll();
+      procFileCmdLine.close();
+      // Extract 'zera_device=<device_name>'
+      QRegExp regExp(QLatin1String("\\bzera_device=[^ ]*"));
+      if(regExp.indexIn(cmdLine) != -1)
+      {
+        strDeviceName = regExp.cap(0);
+        strDeviceName.replace(QLatin1String("zera_device="), QLatin1String(""));
+        qInfo() << "ZERA Device from kernel cmdline: " << strDeviceName;
+      }
+    }
+    return strDeviceName;
   }
 }
 
@@ -58,7 +80,14 @@ int main(int argc, char *argv[])
     qCritical() << "Error loading config file from path:" << MODMAN_CONFIG_FILE;
     return -ENOENT;
   }
-  const QString deviceName = defaultConfig.object().value("deviceName").toString();
+  const QString deviceNameUBoot = ZeraModulemanager::getDevNameFromUBoot();
+  const QString deviceName = !deviceNameUBoot.isEmpty() ? deviceNameUBoot : defaultConfig.object().value("deviceName").toString();
+  if(deviceName.isEmpty())
+  {
+    qCritical() << "No device name found in kernel cmdline or default config!";
+    return -ENODEV;
+  }
+  qInfo() << "Loading session data for " << deviceName;
   const bool customerdataSystemEnabled = defaultConfig.object().value(deviceName).toObject().value("customerdataSystemEnabled").toBool(false);
   const QVariant tmpAvailList = defaultConfig.object().value(deviceName).toObject().value("availableSessions").toArray().toVariantList();
   const QStringList availableSessionList = tmpAvailList.toStringList();
