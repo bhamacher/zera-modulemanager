@@ -62,7 +62,9 @@ namespace ZeraModulemanager
       if(regExp.indexIn(cmdLine) != -1)
       {
         strDeviceName = regExp.cap(0);
+        // The following should go in regex above but...
         strDeviceName.replace(QLatin1String("zera_device="), QLatin1String(""));
+        strDeviceName.replace(QLatin1String("\n"), QLatin1String(""));
         qInfo() << "ZERA Device from kernel cmdline: " << strDeviceName;
       }
     }
