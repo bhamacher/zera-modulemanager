@@ -98,6 +98,12 @@ int main(int argc, char *argv[])
     qCritical() << "No sessions found for device" << deviceName;
     return -ENODEV;
   }
+  const QString defaultSessionFile = defaultConfig.object().value(deviceName).toObject().value("defaultSession").toString();
+  if(defaultSessionFile.isEmpty())
+  {
+    qCritical() << "No default session found for device" << deviceName;
+    return -ENODEV;
+  }
 
   QStringList loggingFilters = QStringList() << QString("%1.debug=false").arg(VEIN_EVENT().categoryName()) <<
                                                 QString("%1.debug=false").arg(VEIN_NET_VERBOSE().categoryName()) <<
@@ -236,7 +242,6 @@ int main(int argc, char *argv[])
   }
   else
   {
-    const QString defaultSessionFile = defaultConfig.object().value(deviceName).toObject().value("defaultSession").toString();
     modMan->changeSessionFile(defaultSessionFile);
     mmController->initOnce();
     tcpSystem->startServer(12000);
