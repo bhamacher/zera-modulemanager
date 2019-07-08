@@ -91,16 +91,6 @@
         "id": 1190
       },
       {
-        "name" : "sem1module",
-        "configPath" : "/etc/zera/modules/com5003-sem1module.xml",
-        "id": 1200
-      },
-      {
-        "name" : "spm1module",
-        "configPath" : "/etc/zera/modules/com5003-spm1module.xml",
-        "id": 1210
-      },
-      {
         "name" : "scpimodule",
         "configPath" : "/etc/zera/modules/com5003-scpimodule.xml",
         "id": 9999
