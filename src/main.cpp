@@ -93,6 +93,11 @@ int main(int argc, char *argv[])
   const bool customerdataSystemEnabled = defaultConfig.object().value(deviceName).toObject().value("customerdataSystemEnabled").toBool(false);
   const QVariant tmpAvailList = defaultConfig.object().value(deviceName).toObject().value("availableSessions").toArray().toVariantList();
   const QStringList availableSessionList = tmpAvailList.toStringList();
+  if(availableSessionList.isEmpty())
+  {
+    qCritical() << "No sessions found for device" << deviceName;
+    return -ENODEV;
+  }
 
   QStringList loggingFilters = QStringList() << QString("%1.debug=false").arg(VEIN_EVENT().categoryName()) <<
                                                 QString("%1.debug=false").arg(VEIN_NET_VERBOSE().categoryName()) <<
