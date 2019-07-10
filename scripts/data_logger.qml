@@ -12,10 +12,12 @@ VeinLogger {
   onSessionChanged: {
     if(session.indexOf("mt310s2")===-1)
     {
+      console.log("VeinLogger change session to ", session, " -> initScript");
       initScript();
     }
     else
     {
+      console.log("VeinLogger change session to ", session, " -> initScriptMTS2");
       initScriptMTS2()
     }
   }
