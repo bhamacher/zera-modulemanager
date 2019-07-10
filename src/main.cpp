@@ -204,14 +204,18 @@ int main(int argc, char *argv[])
       }
     });
   }
+  bool dataLoggerSystemInitialized = false;
   QObject::connect(licenseSystem, &LicenseSystem::sigSerialNumberInitialized, [&](){
     if(licenseSystem->isSystemLicensed(dataLoggerSystem->entityName()))
     {
-      qDebug() << "DataLoggerSystem is enabled";
-      evHandler->addSubsystem(dataLoggerSystem);
-
-      qmlSystem->entitySubscribeById(0); //0 = mmController
-      qmlSystem->entitySubscribeById(2); //2 = dataLoggerSystem
+      if(!dataLoggerSystemInitialized)
+      {
+        dataLoggerSystemInitialized = true;
+        qDebug() << "DataLoggerSystem is enabled";
+        evHandler->addSubsystem(dataLoggerSystem);
+        qmlSystem->entitySubscribeById(0); //0 = mmController
+        qmlSystem->entitySubscribeById(2); //2 = dataLoggerSystem
+      }
     }
   });
 
