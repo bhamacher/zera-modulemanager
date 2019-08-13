@@ -246,7 +246,7 @@ bool LicenseSystem::processEvent(QEvent *t_event)
         {
           retVal = true;
           const QString newSerialNumber = cData->newValue().toString();
-          if(newSerialNumber.isEmpty() == false)
+          if((newSerialNumber.isEmpty() == false) && (m_deviceSerial != newSerialNumber))
           {
             qWarning() << "Changed device serial from:" << m_deviceSerial << "to:" << cData->newValue() << cData->oldValue();
             setDeviceSerial(newSerialNumber);
