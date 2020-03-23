@@ -76,6 +76,11 @@
         "id": 1130
       },
       {
+        "name" : "sec1module",
+        "configPath" : "/etc/zera/modules/com5003-sec1module2.xml",
+        "id": 1131
+      },
+      {
         "name" : "lambdamodule",
         "configPath" : "/etc/zera/modules/com5003-lambdamodule.xml",
         "id": 1140
