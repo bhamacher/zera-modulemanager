@@ -29,6 +29,7 @@ Thumbs.db
 # qtcreator generated files
 *.pro.user*
 *.qmlproject.user*
+CMakeLists.txt.user*
 *.pluginspec
 
 #ignore the doc directory
