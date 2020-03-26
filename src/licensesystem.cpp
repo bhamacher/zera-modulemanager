@@ -233,14 +233,14 @@ bool LicenseSystem::processEvent(QEvent *t_event)
     evData = cEvent->eventData();
     Q_ASSERT(evData != nullptr);
 
-    //statusmodule initializes INF_SerialNr with our serial number to check the licenses against
+    //statusmodule initializes PAR_SerialNr with our serial number to check the licenses against
     if(evData->entityId() == 1150
        && evData->type() == VeinComponent::ComponentData::dataType()
        && evData->eventOrigin() == VeinEvent::EventData::EventOrigin::EO_LOCAL)
     {
       VeinComponent::ComponentData *cData = static_cast<VeinComponent::ComponentData *>(evData);
 
-      if(cData->componentName() == QString("INF_SerialNr"))
+      if(cData->componentName() == QString("PAR_SerialNr"))
       {
         if(cData->eventCommand() == VeinComponent::ComponentData::Command::CCMD_ADD || cData->eventCommand() == VeinComponent::ComponentData::Command::CCMD_SET)
         {

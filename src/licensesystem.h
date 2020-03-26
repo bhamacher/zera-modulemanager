@@ -26,13 +26,13 @@ public:
   void setDeviceSerial(const QString &t_serialNumber);
   /**
    * @brief serialNumberIsInitialized
-   * @return true if the StatusModule1.INF_SerialNr was retrieved
+   * @return true if the StatusModule1.PAR_SerialNr was retrieved
    */
   bool serialNumberIsInitialized() const;
 
 signals:
   /**
-   * @brief Called once the StatusModule1.INF_SerialNr is retrieved
+   * @brief Called once the StatusModule1.PAR_SerialNr is retrieved
    */
   void sigSerialNumberInitialized();
 
@@ -62,7 +62,7 @@ private:
    */
   bool isValidLicenseExpiryDate(const QString t_dateString) const;
   /**
-   * @brief Validates the device serial against the StatusModule1.INF_SerialNr
+   * @brief Validates the device serial against the StatusModule1.PAR_SerialNr
    * @param t_deviceSerial
    * @return success indicator
    */

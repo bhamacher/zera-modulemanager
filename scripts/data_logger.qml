@@ -262,7 +262,7 @@ VeinLogger {
       ],
       "1150":[
         "INF_ReleaseNr",
-        "INF_SerialNr"
+        "PAR_SerialNr"
       ],
       "1160":[
         "ACT_Burden1",

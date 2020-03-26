@@ -143,7 +143,7 @@ namespace ZeraModules
     ///@todo move to constructor as the ModuleManager depends on the LicenseSystem
     Q_ASSERT(t_licenseSystem != nullptr);
     m_licenseSystem = t_licenseSystem;
-    //start the next module as soon as the INF_SerialNr component is avaiable
+    //start the next module as soon as the PAR_SerialNr component is avaiable
     connect(m_licenseSystem, &LicenseSystem::sigSerialNumberInitialized, this, &ModuleManager::delayedModuleStartNext);
   }
 
