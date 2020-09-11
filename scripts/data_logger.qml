@@ -4,22 +4,26 @@ import VeinLogger 1.0
 
 VeinLogger {
   initializeValues: true;
-  recordName: loggerEntity.recordName;
+  //recordName: loggerEntity.recordName;
+  transactionName: loggerEntity.transactionName;
+
 
   readonly property QtObject systemEntity: VeinEntity.getEntity("_System");
   readonly property QtObject loggerEntity: VeinEntity.getEntity("_LoggingSystem");
-  readonly property string session: systemEntity.Session
-  onSessionChanged: {
-    if(session.indexOf("mt310s2")===-1)
-    {
-      console.log("VeinLogger change session to ", session, " -> initScript");
-      initScript();
-    }
-    else
-    {
-      console.log("VeinLogger change session to ", session, " -> initScriptMTS2");
-      initScriptMTS2()
-    }
+  readonly property string sysSession: systemEntity.Session
+  onSysSessionChanged: {
+    session = systemEntity.Session;
+    loggerEntity.availableContextList = readSession();
+//    loggerEntity.currentContext = "ZeraActualValues"
+      loggerEntity.invokeRPC("changeContext(QString context)",({"context":"ZeraActualValues"}));
+  }
+
+  readonly property string sysContext: loggerEntity.currentContext;
+  onSysContextChanged: {
+      context=loggerEntity.currentContext;
+      var comps = readContext();
+      clearLoggerEntries();
+      systemEntity.LoggedComponents = comps;
   }
 
   readonly property bool scriptRunning: loggingEnabled
@@ -48,6 +52,7 @@ VeinLogger {
       }
     }
   }
+
 
   function initScript() {
     clearLoggerEntries();
@@ -115,7 +120,9 @@ VeinLogger {
       p1m3Entries.push("PAR_MeasuringMode");
       logValues["1072"] = p1m3Entries;
     }
+
     systemEntity.LoggedComponents = logValues;
+
   }
 
   function initScriptMTS2() {

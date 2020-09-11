@@ -88,7 +88,7 @@ bool ModuleManagerController::processEvent(QEvent *t_event)
         {
           if(cData->componentName() == ModuleManagerController::s_sessionComponentName)
           {
-            //m_currentSession=cData->newValue().toString();
+            m_currentSession=cData->newValue().toString();
             if(m_sessionReady == true)
             {
               emit sigChangeSession(cData->newValue().toString());

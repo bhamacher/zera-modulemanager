@@ -140,6 +140,7 @@ int main(int argc, char *argv[])
 
   VeinApiQml::VeinQml::setStaticInstance(qmlSystem);
   VeinLogger::QmlLogger::setStaticLogger(dataLoggerSystem);
+  VeinLogger::QmlLogger::setContextPath(QString(MODMAN_CONTEXT_PATH).append("ZeraContext.json"),QString(MODMAN_CUST_CONTEXT_PATH).append("CustomerContext.json"));
 
   ZeraModules::ModuleManager *modMan = new ZeraModules::ModuleManager(availableSessionList, &a);
   JsonSessionLoader *sessionLoader = new JsonSessionLoader(&a);
