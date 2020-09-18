@@ -33,9 +33,16 @@ class ZeraDBLoggerPrivate
     {
 
     }
-
+    /**
+     * @brief initEntity
+     * @todo remove recordNameEntity
+     * @todo remove transactionNameEntity
+     * @todo move availabelContextListEntity
+     * @todo remove currentContextEntityName
+     */
     void initEntity()
     {
+        // init "recordName" component
         VeinComponent::ComponentData *recordNameData = new VeinComponent::ComponentData();
         recordNameData->setEntityId(m_qPtr->entityId());
         recordNameData->setCommand(VeinComponent::ComponentData::Command::CCMD_ADD);
@@ -43,7 +50,7 @@ class ZeraDBLoggerPrivate
         recordNameData->setNewValue(QString());
         recordNameData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
         recordNameData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
-
+        // init "transactionName" component
         VeinComponent::ComponentData *transactionNameData = new VeinComponent::ComponentData();
         transactionNameData->setEntityId(m_qPtr->entityId());
         transactionNameData->setCommand(VeinComponent::ComponentData::Command::CCMD_ADD);
@@ -52,6 +59,7 @@ class ZeraDBLoggerPrivate
         transactionNameData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
         transactionNameData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
 
+        // init "availableContextList" component
         VeinComponent::ComponentData *availableContextData = new VeinComponent::ComponentData();
         availableContextData->setEntityId(m_qPtr->entityId());
         availableContextData->setCommand(VeinComponent::ComponentData::Command::CCMD_ADD);
@@ -60,6 +68,7 @@ class ZeraDBLoggerPrivate
         availableContextData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
         availableContextData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
 
+        // init "currentContext" component
         VeinComponent::ComponentData *currentContextData = new VeinComponent::ComponentData();
         currentContextData->setEntityId(m_qPtr->entityId());
         currentContextData->setCommand(VeinComponent::ComponentData::Command::CCMD_ADD);

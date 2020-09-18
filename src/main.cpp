@@ -71,7 +71,10 @@ const QString getDevNameFromUBoot()
     return strDeviceName;
 }
 }
-
+/**
+ * @brief main
+ * @todo remove  VeinLogger::QmlLogger::setContextPat, when handling is moved to vl_databaselogger.
+ */
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
@@ -127,6 +130,8 @@ int main(int argc, char *argv[])
     PriorityArbitrationSystem *arbitrationSystem = new PriorityArbitrationSystem(&a);
     evHandler->setArbitrationSystem(arbitrationSystem);
 #endif
+
+    // setup vein modules
     ModuleManagerController *mmController = new ModuleManagerController(&a);
     VeinNet::IntrospectionSystem *introspectionSystem = new VeinNet::IntrospectionSystem(&a);
     VeinStorage::VeinHash *storSystem = new VeinStorage::VeinHash(&a);
@@ -138,8 +143,11 @@ int main(int argc, char *argv[])
     CustomerDataSystem *customerDataSystem = nullptr;
     LicenseSystem *licenseSystem = new LicenseSystem({QUrl("file:///home/operator/license-keys")}, &a);
 
+    //setup logger
     VeinApiQml::VeinQml::setStaticInstance(qmlSystem);
     VeinLogger::QmlLogger::setStaticLogger(dataLoggerSystem);
+
+    // set zera and customer context path. Defined in CMakeLists.txt.
     VeinLogger::QmlLogger::setContextPath(QString(MODMAN_CONTEXT_PATH).append("ZeraContext.json"),QString(MODMAN_CUST_CONTEXT_PATH).append("CustomerContext.json"));
 
     ZeraModules::ModuleManager *modMan = new ZeraModules::ModuleManager(availableSessionList, &a);
