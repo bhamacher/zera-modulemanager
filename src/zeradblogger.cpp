@@ -29,7 +29,7 @@ class ZeraDBLoggerPrivate
                             VF_RPC_BIND(findDBFile, std::bind(&ZeraDBLoggerPrivate::findDBFile, this, std::placeholders::_1, std::placeholders::_2)),
                             VF_RPC_BIND(changeContext, std::bind(&ZeraDBLoggerPrivate::changeContext, this, std::placeholders::_1, std::placeholders::_2)),
                             //VF_RPC_BIND(addContext, std::bind(&ZeraDBLoggerPrivate::addContext, this, std::placeholders::_1, std::placeholders::_2))
-        }
+}
     {
 
     }

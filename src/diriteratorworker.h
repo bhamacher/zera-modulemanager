@@ -14,48 +14,48 @@
  */
 class DirIteratorWorker : public QObject
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  using FilterFunction = std::function<bool (QString)>;
+    using FilterFunction = std::function<bool (QString)>;
 
-  explicit DirIteratorWorker(const QString &t_searchPath, const QStringList &t_searchPatterns, QDir::Filter t_filter, QDirIterator::IteratorFlags t_flags=QDirIterator::NoIteratorFlags, QObject *t_parent = nullptr);
-  /**
+    explicit DirIteratorWorker(const QString &t_searchPath, const QStringList &t_searchPatterns, QDir::Filter t_filter, QDirIterator::IteratorFlags t_flags=QDirIterator::NoIteratorFlags, QObject *t_parent = nullptr);
+    /**
    * @brief sets m_filterFunction
    * @param t_function a function matching the signature of FilterFunction
    */
-  void setFilterFunction(FilterFunction t_function);
+    void setFilterFunction(FilterFunction t_function);
 
 signals:
-  /**
+    /**
    * @brief Emits when the search is completed
    */
-  void sigFinished();
-  /**
+    void sigFinished();
+    /**
    * @brief see http://doc.qt.io/qt-5/qthread.html#isInterruptionRequested
    */
-  void sigInterrupted();
-  /**
+    void sigInterrupted();
+    /**
    * @brief Emits for each entry of the result list
    * @param t_partialResult
    */
-  void sigPartialResultReady(QString t_partialResult);
-  /**
+    void sigPartialResultReady(QString t_partialResult);
+    /**
    * @brief Emits when the search result is available
    * @param t_result
    */
-  void sigCompleteResultReady(QStringList t_result);
+    void sigCompleteResultReady(QStringList t_result);
 
 public slots:
-  void startSearch();
+    void startSearch();
 
 private:
-  static bool defaultFilter(QString) {return true;}
+    static bool defaultFilter(QString) {return true;}
 
-  QDirIterator m_iterator;
-  QStringList m_resultList;
-  QMutex m_searchMutex;
-  FilterFunction m_filterFunction = defaultFilter;
-  bool m_running=false;
+    QDirIterator m_iterator;
+    QStringList m_resultList;
+    QMutex m_searchMutex;
+    FilterFunction m_filterFunction = defaultFilter;
+    bool m_running=false;
 };
 
 #endif // DDIRITERATORWORKER_H

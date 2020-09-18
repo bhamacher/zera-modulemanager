@@ -9,7 +9,7 @@
 
 namespace VeinLogger
 {
-  class DataSource;
+class DataSource;
 }
 
 class ZeraDBLoggerPrivate;
@@ -19,29 +19,29 @@ class ZeraDBLoggerPrivate;
  */
 class ZeraDBLogger : public VeinLogger::DatabaseLogger
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  ZeraDBLogger(VeinLogger::DataSource *t_dataSource, VeinLogger::DBFactory t_factoryFunction, QObject *t_parent=nullptr);
-  ~ZeraDBLogger() override;
+    ZeraDBLogger(VeinLogger::DataSource *t_dataSource, VeinLogger::DBFactory t_factoryFunction, QObject *t_parent=nullptr);
+    ~ZeraDBLogger() override;
 signals:
 
-  // DatabaseLogger interface
+    // DatabaseLogger interface
 public slots:
-  /**
+    /**
    * @brief this only calls ZeraDBLoggerPrivate::checkStorageLocation() and then VeinLogger::DatabaseLogger::openDatabase()
    * @param t_filePath
    * @return
    */
-  bool openDatabase(const QString &t_filePath) override;
-  bool processEvent(QEvent *t_event) override;
+    bool openDatabase(const QString &t_filePath) override;
+    bool processEvent(QEvent *t_event) override;
 
 private slots:
-  void rpcFinished(QUuid t_callId, const QString &t_procedureName, const QVariantMap &t_data);
-  void rpcProgress(QUuid t_callId, const QString &t_procedureName, const QVariantMap &t_data);
+    void rpcFinished(QUuid t_callId, const QString &t_procedureName, const QVariantMap &t_data);
+    void rpcProgress(QUuid t_callId, const QString &t_procedureName, const QVariantMap &t_data);
 
 private:
-  ZeraDBLoggerPrivate *m_dPtr=nullptr;
-  friend class ZeraDBLoggerPrivate;
+    ZeraDBLoggerPrivate *m_dPtr=nullptr;
+    friend class ZeraDBLoggerPrivate;
 };
 
 #endif // ZERADBLOGGER_H

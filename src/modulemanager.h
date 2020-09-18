@@ -11,20 +11,20 @@
 
 namespace Zera
 {
-  namespace Proxy
-  {
-    class cProxy;
-  }
+namespace Proxy
+{
+class cProxy;
+}
 }
 
 namespace VeinEvent
 {
-  class StorageSystem;
+class StorageSystem;
 }
 
 namespace VeinScript
 {
-  class ScriptSystem;
+class ScriptSystem;
 }
 
 class ModuleEventHandler;
@@ -33,12 +33,12 @@ class LicenseSystem;
 
 namespace ZeraModules
 {
-  class ModuleData;
+class ModuleData;
 
-  class ModuleManager : public QObject
-  {
+class ModuleManager : public QObject
+{
     Q_OBJECT
-  public:
+public:
     explicit ModuleManager(const QStringList &t_sessionList, QObject *t_parent = nullptr);
     ~ModuleManager() override;
     /**
@@ -67,7 +67,7 @@ namespace ZeraModules
      */
     void setEventHandler(ModuleEventHandler *t_eventHandler);
 
-  signals:
+signals:
     /**
      * @brief called when the session is switched via changeSessionFile()
      * @param t_newSessionPath
@@ -80,7 +80,7 @@ namespace ZeraModules
      */
     void sigModulesLoaded(const QString &t_sessionPath, const QStringList &t_sessionsAvailable);
 
-  public slots:
+public slots:
     /**
      * @brief starts the module, or adds it to the m_deferredStartList if a startup is in progress
      * connected to the signal JsonSessionLoader::sigLoadModule , but also called in onModuleStartNext()
@@ -108,7 +108,7 @@ namespace ZeraModules
      */
     void setModulesPaused(bool t_paused);
 
-  private slots:
+private slots:
     /**
      * @brief connected to the moduleDeactivated signal called from MeasurementModuleFactory::destroyModule()
      * deletes the ModuleData entry from the m_moduleList and connects the VirtualModule::destroyed signal to checkModuleList()
@@ -140,7 +140,7 @@ namespace ZeraModules
      */
     void onModuleEventSystemAdded(VeinEvent::EventSystem *t_eventSystem);
 
-  private:
+private:
     /**
      * @brief writes the changed configuration file of a module back to disk
      * @param t_moduleData
@@ -160,7 +160,7 @@ namespace ZeraModules
     QList<QString> m_sessionsAvailable;
 
     bool m_moduleStartLock;
-  };
+};
 }
 
 #endif // MODULELOADER_H
