@@ -13,7 +13,7 @@ VeinLogger {
   readonly property string sysSession: systemEntity.Session
   onSysSessionChanged: {
     session = systemEntity.Session;
-    loggerEntity.availableContextList = readSession();
+    loggerEntity.availableContentSets = readSession();
   }
 
   readonly property string sysContext: loggerEntity.currentContext;

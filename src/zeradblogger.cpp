@@ -59,11 +59,11 @@ class ZeraDBLoggerPrivate
         transactionNameData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
         transactionNameData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
 
-        // init "availableContextList" component
+        // init "availableContentSets" component
         VeinComponent::ComponentData *availableContextData = new VeinComponent::ComponentData();
         availableContextData->setEntityId(m_qPtr->entityId());
         availableContextData->setCommand(VeinComponent::ComponentData::Command::CCMD_ADD);
-        availableContextData->setComponentName(s_availableContextListEntityName);
+        availableContextData->setComponentName(s_availableContentSetsEntityName);
         availableContextData->setNewValue(QStringList());
         availableContextData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
         availableContextData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
@@ -177,16 +177,16 @@ class ZeraDBLoggerPrivate
                     retVal = true;
                     t_cEvent->accept();
                 }
-                else if(componentData->componentName() == s_availableContextListEntityName){
-                    VeinComponent::ComponentData *availableContextListData = new VeinComponent::ComponentData();
-                    availableContextListData->setEntityId(m_qPtr->entityId());
-                    availableContextListData->setCommand(VeinComponent::ComponentData::Command::CCMD_SET);
-                    availableContextListData->setComponentName(s_availableContextListEntityName);
-                    availableContextListData->setNewValue(componentData->newValue());
-                    availableContextListData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
-                    availableContextListData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
+                else if(componentData->componentName() == s_availableContentSetsEntityName){
+                    VeinComponent::ComponentData *availableContentSetsData = new VeinComponent::ComponentData();
+                    availableContentSetsData->setEntityId(m_qPtr->entityId());
+                    availableContentSetsData->setCommand(VeinComponent::ComponentData::Command::CCMD_SET);
+                    availableContentSetsData->setComponentName(s_availableContentSetsEntityName);
+                    availableContentSetsData->setNewValue(componentData->newValue());
+                    availableContentSetsData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
+                    availableContentSetsData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
 
-                    emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, availableContextListData));
+                    emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, availableContentSetsData));
 
                     retVal = true;
                     t_cEvent->accept();
@@ -386,7 +386,7 @@ class ZeraDBLoggerPrivate
     static constexpr QLatin1String s_findDbReturnValueName = modman_util::to_latin1("ZeraDBLogger::searchResultEntry");
     static constexpr QLatin1String s_recordNameEntityName = modman_util::to_latin1("recordName");
     static constexpr QLatin1String s_transactionNameEntityName = modman_util::to_latin1("transactionName");
-    static constexpr QLatin1String s_availableContextListEntityName = modman_util::to_latin1("availableContextList");
+    static constexpr QLatin1String s_availableContentSetsEntityName = modman_util::to_latin1("availableContentSets");
     static constexpr QLatin1String s_currentContextEntityName = modman_util::to_latin1("currentContext");
     static constexpr QLatin1String s_changeContextEntityName = modman_util::to_latin1("changeContext");
 
@@ -406,7 +406,7 @@ constexpr QLatin1String ZeraDBLoggerPrivate::s_findDbReturnValueName; //from VF_
 constexpr QLatin1String ZeraDBLoggerPrivate::s_changeContextProcedureName;
 constexpr QLatin1String ZeraDBLoggerPrivate::s_recordNameEntityName;
 constexpr QLatin1String ZeraDBLoggerPrivate::s_transactionNameEntityName;
-constexpr QLatin1String ZeraDBLoggerPrivate::s_availableContextListEntityName;
+constexpr QLatin1String ZeraDBLoggerPrivate::s_availableContentSetsEntityName;
 constexpr QLatin1String ZeraDBLoggerPrivate::s_currentContextEntityName;
 
 
