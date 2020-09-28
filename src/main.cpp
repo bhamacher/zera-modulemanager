@@ -73,7 +73,7 @@ const QString getDevNameFromUBoot()
 }
 /**
  * @brief main
- * @todo remove  VeinLogger::QmlLogger::setContextPat, when handling is moved to vl_databaselogger.
+ * @todo remove  VeinLogger::QmlLogger::setContentSetPaths, when handling is moved to vl_databaselogger.
  */
 int main(int argc, char *argv[])
 {
@@ -147,8 +147,8 @@ int main(int argc, char *argv[])
     VeinApiQml::VeinQml::setStaticInstance(qmlSystem);
     VeinLogger::QmlLogger::setStaticLogger(dataLoggerSystem);
 
-    // set zera and customer context path. Defined in CMakeLists.txt.
-    VeinLogger::QmlLogger::setContextPath(QString(MODMAN_CONTEXT_PATH).append("ZeraContext.json"),QString(MODMAN_CUST_CONTEXT_PATH).append("CustomerContext.json"));
+    // set zera and customer contentSet path. Defined in CMakeLists.txt.
+    VeinLogger::QmlLogger::setContentSetPaths(QString(MODMAN_CONTENTSET_PATH).append("ZeraContext.json"),QString(MODMAN_CUST_CONTENTSET_PATH).append("CustomerContext.json"));
 
     ZeraModules::ModuleManager *modMan = new ZeraModules::ModuleManager(availableSessionList, &a);
     JsonSessionLoader *sessionLoader = new JsonSessionLoader(&a);

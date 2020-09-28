@@ -28,7 +28,7 @@ class ZeraDBLoggerPrivate
         m_remoteProcedures{ VF_RPC_BIND(listStorages, std::bind(&ZeraDBLoggerPrivate::listStorages, this, std::placeholders::_1, std::placeholders::_2)),
                             VF_RPC_BIND(findDBFile, std::bind(&ZeraDBLoggerPrivate::findDBFile, this, std::placeholders::_1, std::placeholders::_2)),
                             VF_RPC_BIND(changeContentSet, std::bind(&ZeraDBLoggerPrivate::changeContentSet, this, std::placeholders::_1, std::placeholders::_2)),
-                            //VF_RPC_BIND(addContext, std::bind(&ZeraDBLoggerPrivate::addContext, this, std::placeholders::_1, std::placeholders::_2))
+                            //VF_RPC_BIND(addContentSet, std::bind(&ZeraDBLoggerPrivate::addContentSet, this, std::placeholders::_1, std::placeholders::_2))
 }
     {
 
@@ -37,7 +37,7 @@ class ZeraDBLoggerPrivate
      * @brief initEntity
      * @todo remove recordNameEntity
      * @todo remove transactionNameEntity
-     * @todo move availabelContextListEntity
+     * @todo move availableContentSetDataEntity
      * @todo remove currentContentSetEntityName
      */
     void initEntity()
@@ -60,13 +60,13 @@ class ZeraDBLoggerPrivate
         transactionNameData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
 
         // init "availableContentSets" component
-        VeinComponent::ComponentData *availableContextData = new VeinComponent::ComponentData();
-        availableContextData->setEntityId(m_qPtr->entityId());
-        availableContextData->setCommand(VeinComponent::ComponentData::Command::CCMD_ADD);
-        availableContextData->setComponentName(s_availableContentSetsEntityName);
-        availableContextData->setNewValue(QStringList());
-        availableContextData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
-        availableContextData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
+        VeinComponent::ComponentData *availableContentSetData = new VeinComponent::ComponentData();
+        availableContentSetData->setEntityId(m_qPtr->entityId());
+        availableContentSetData->setCommand(VeinComponent::ComponentData::Command::CCMD_ADD);
+        availableContentSetData->setComponentName(s_availableContentSetsEntityName);
+        availableContentSetData->setNewValue(QStringList());
+        availableContentSetData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
+        availableContentSetData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
 
         // init "currentContentSet" component
         VeinComponent::ComponentData *currentContentSetData = new VeinComponent::ComponentData();
@@ -78,7 +78,7 @@ class ZeraDBLoggerPrivate
         currentContentSetData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
 
         emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, recordNameData));
-        emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, availableContextData));
+        emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, availableContentSetData));
         emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, currentContentSetData));
         emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, transactionNameData));
 
@@ -259,41 +259,41 @@ class ZeraDBLoggerPrivate
         m_qPtr->rpcFinished(t_callId, s_listStoragesProcedureName, retVal);
     }
 
-    //VF_RPC(addContext, "addContext(QString context)", "save durrent LoggedCoomponents as new Context in .json")
-    void addContext(const QUuid &t_callId, const QVariantMap &t_rpcParameters)
+    //VF_RPC(addContentSet, "addContentSet(QString contentSet)", "save current LoggedComponents as new ContentSet in .json")
+    void addContentSet(const QUuid &t_callId, const QVariantMap &t_rpcParameters)
     {
-        QSet<QString> requiredParamKeys = {"context"};
+        QSet<QString> requiredParamKeys = {"contentSet"};
         const QVariantMap searchParameters = t_rpcParameters.value(VeinComponent::RemoteProcedureData::s_parameterString).toMap();
         requiredParamKeys.subtract(searchParameters.keys().toSet());
 
         if(requiredParamKeys.isEmpty())
         {
-            QString context =  searchParameters.value("context").toString();
-            // TODO Add new Context here
+            QString contentSet =  searchParameters.value("contentSet").toString();
+            // TODO Add new ContentSet here
 
         }
         QVariantMap retVal = t_rpcParameters; //copy parameters and other data, the client could attach tracking
         retVal.insert(VeinComponent::RemoteProcedureData::s_resultCodeString, 0); //success
-        //m_qPtr->rpcFinished(t_callId, s_addContextProcedureName, retVal);
+        //m_qPtr->rpcFinished(t_callId, s_addContentSetProcedureName, retVal);
 
 
     }
 
 
-    VF_RPC(changeContentSet, "changeContentSet(QString context)", "save durrent LoggedCoomponents as new Context in .json")
+    VF_RPC(changeContentSet, "changeContentSet(QString contentSet)", "save current LoggedCoomponents as new ContentSet in .json")
     void changeContentSet(const QUuid &t_callId, const QVariantMap &t_rpcParameters){
-        QSet<QString> requiredParamKeys = {"context"};
+        QSet<QString> requiredParamKeys = {"contentSet"};
         const QVariantMap searchParameters = t_rpcParameters.value(VeinComponent::RemoteProcedureData::s_parameterString).toMap();
         requiredParamKeys.subtract(searchParameters.keys().toSet());
 
         if(requiredParamKeys.isEmpty())
         {
-            QString context =  searchParameters.value("context").toString();
+            QString contentSet =  searchParameters.value("contentSet").toString();
             VeinComponent::ComponentData *currentContentSetData = new VeinComponent::ComponentData();
             currentContentSetData->setEntityId(m_qPtr->entityId());
             currentContentSetData->setCommand(VeinComponent::ComponentData::Command::CCMD_SET);
             currentContentSetData->setComponentName(s_currentContentSetEntityName);
-            currentContentSetData->setNewValue(context);
+            currentContentSetData->setNewValue(contentSet);
             currentContentSetData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
             currentContentSetData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
 
@@ -402,7 +402,7 @@ constexpr QLatin1String ZeraDBLoggerPrivate::s_listStoragesReturnValueName; //fr
 constexpr QLatin1String ZeraDBLoggerPrivate::s_findDBFileProcedureName; //from VF_RPC(findDBFile...
 constexpr QLatin1String ZeraDBLoggerPrivate::s_findDBFileProcedureDescription; //from VF_RPC(findDBFile...
 constexpr QLatin1String ZeraDBLoggerPrivate::s_findDbReturnValueName; //from VF_RPC(findDBFile...
-//constexpr QLatin1String ZeraDBLoggerPrivate::s_addContextProcedureName; //TODO from VF_RPX(addContext...
+//constexpr QLatin1String ZeraDBLoggerPrivate::s_addContentSetProcedureName; //TODO from VF_RPX(addContentSet...
 constexpr QLatin1String ZeraDBLoggerPrivate::s_changeContentSetProcedureName;
 constexpr QLatin1String ZeraDBLoggerPrivate::s_recordNameEntityName;
 constexpr QLatin1String ZeraDBLoggerPrivate::s_transactionNameEntityName;

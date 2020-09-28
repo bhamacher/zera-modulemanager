@@ -16,10 +16,10 @@ VeinLogger {
     loggerEntity.availableContentSets = readSession();
   }
 
-  readonly property string sysContext: loggerEntity.currentContentSet;
-  onSysContextChanged: {
-      context=loggerEntity.currentContentSet;
-      var comps = readContext();
+  readonly property string sysContentSet: loggerEntity.currentContentSet;
+  onSysContentSetChanged: {
+      contentSet = loggerEntity.currentContentSet;
+      var comps = readContentSet();
       clearLoggerEntries();
       systemEntity.LoggedComponents = comps;
   }
