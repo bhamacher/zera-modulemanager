@@ -38,7 +38,7 @@ class ZeraDBLoggerPrivate
      * @todo remove recordNameEntity
      * @todo remove transactionNameEntity
      * @todo move availabelContextListEntity
-     * @todo remove currentContextEntityName
+     * @todo remove currentContentSetEntityName
      */
     void initEntity()
     {
@@ -68,18 +68,18 @@ class ZeraDBLoggerPrivate
         availableContextData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
         availableContextData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
 
-        // init "currentContext" component
-        VeinComponent::ComponentData *currentContextData = new VeinComponent::ComponentData();
-        currentContextData->setEntityId(m_qPtr->entityId());
-        currentContextData->setCommand(VeinComponent::ComponentData::Command::CCMD_ADD);
-        currentContextData->setComponentName(s_currentContextEntityName);
-        currentContextData->setNewValue(QString());
-        currentContextData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
-        currentContextData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
+        // init "currentContentSet" component
+        VeinComponent::ComponentData *currentContentSetData = new VeinComponent::ComponentData();
+        currentContentSetData->setEntityId(m_qPtr->entityId());
+        currentContentSetData->setCommand(VeinComponent::ComponentData::Command::CCMD_ADD);
+        currentContentSetData->setComponentName(s_currentContentSetEntityName);
+        currentContentSetData->setNewValue(QString());
+        currentContentSetData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
+        currentContentSetData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
 
         emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, recordNameData));
         emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, availableContextData));
-        emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, currentContextData));
+        emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, currentContentSetData));
         emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, transactionNameData));
 
         const QList<QString> tmpRemoteProcedureList = m_remoteProcedures.keys();
@@ -163,16 +163,16 @@ class ZeraDBLoggerPrivate
                     retVal = true;
                     t_cEvent->accept();
                 }
-                else if(componentData->componentName() == s_currentContextEntityName){
-                    VeinComponent::ComponentData *currentContextData = new VeinComponent::ComponentData();
-                    currentContextData->setEntityId(m_qPtr->entityId());
-                    currentContextData->setCommand(VeinComponent::ComponentData::Command::CCMD_SET);
-                    currentContextData->setComponentName(s_currentContextEntityName);
-                    currentContextData->setNewValue(componentData->newValue());
-                    currentContextData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
-                    currentContextData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
+                else if(componentData->componentName() == s_currentContentSetEntityName){
+                    VeinComponent::ComponentData *currentContentSetData = new VeinComponent::ComponentData();
+                    currentContentSetData->setEntityId(m_qPtr->entityId());
+                    currentContentSetData->setCommand(VeinComponent::ComponentData::Command::CCMD_SET);
+                    currentContentSetData->setComponentName(s_currentContentSetEntityName);
+                    currentContentSetData->setNewValue(componentData->newValue());
+                    currentContentSetData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
+                    currentContentSetData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
 
-                    emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, currentContextData));
+                    emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, currentContentSetData));
 
                     retVal = true;
                     t_cEvent->accept();
@@ -289,15 +289,15 @@ class ZeraDBLoggerPrivate
         if(requiredParamKeys.isEmpty())
         {
             QString context =  searchParameters.value("context").toString();
-            VeinComponent::ComponentData *currentContextData = new VeinComponent::ComponentData();
-            currentContextData->setEntityId(m_qPtr->entityId());
-            currentContextData->setCommand(VeinComponent::ComponentData::Command::CCMD_SET);
-            currentContextData->setComponentName(s_currentContextEntityName);
-            currentContextData->setNewValue(context);
-            currentContextData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
-            currentContextData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
+            VeinComponent::ComponentData *currentContentSetData = new VeinComponent::ComponentData();
+            currentContentSetData->setEntityId(m_qPtr->entityId());
+            currentContentSetData->setCommand(VeinComponent::ComponentData::Command::CCMD_SET);
+            currentContentSetData->setComponentName(s_currentContentSetEntityName);
+            currentContentSetData->setNewValue(context);
+            currentContentSetData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
+            currentContentSetData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
 
-            emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, currentContextData));
+            emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, currentContentSetData));
 
         }
         QVariantMap retVal = t_rpcParameters; //copy parameters and other data, the client could attach tracking
@@ -387,7 +387,7 @@ class ZeraDBLoggerPrivate
     static constexpr QLatin1String s_recordNameEntityName = modman_util::to_latin1("recordName");
     static constexpr QLatin1String s_transactionNameEntityName = modman_util::to_latin1("transactionName");
     static constexpr QLatin1String s_availableContentSetsEntityName = modman_util::to_latin1("availableContentSets");
-    static constexpr QLatin1String s_currentContextEntityName = modman_util::to_latin1("currentContext");
+    static constexpr QLatin1String s_currentContentSetEntityName = modman_util::to_latin1("currentContentSet");
     static constexpr QLatin1String s_changeContextEntityName = modman_util::to_latin1("changeContext");
 
 
@@ -407,7 +407,7 @@ constexpr QLatin1String ZeraDBLoggerPrivate::s_changeContextProcedureName;
 constexpr QLatin1String ZeraDBLoggerPrivate::s_recordNameEntityName;
 constexpr QLatin1String ZeraDBLoggerPrivate::s_transactionNameEntityName;
 constexpr QLatin1String ZeraDBLoggerPrivate::s_availableContentSetsEntityName;
-constexpr QLatin1String ZeraDBLoggerPrivate::s_currentContextEntityName;
+constexpr QLatin1String ZeraDBLoggerPrivate::s_currentContentSetEntityName;
 
 
 ZeraDBLogger::ZeraDBLogger(VeinLogger::DataSource *t_dataSource, VeinLogger::DBFactory t_factoryFunction, QObject *t_parent) :
