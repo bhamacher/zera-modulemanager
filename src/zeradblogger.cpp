@@ -27,7 +27,7 @@ class ZeraDBLoggerPrivate
         m_qPtr(t_qPtr),
         m_remoteProcedures{ VF_RPC_BIND(listStorages, std::bind(&ZeraDBLoggerPrivate::listStorages, this, std::placeholders::_1, std::placeholders::_2)),
                             VF_RPC_BIND(findDBFile, std::bind(&ZeraDBLoggerPrivate::findDBFile, this, std::placeholders::_1, std::placeholders::_2)),
-                            VF_RPC_BIND(changeContext, std::bind(&ZeraDBLoggerPrivate::changeContext, this, std::placeholders::_1, std::placeholders::_2)),
+                            VF_RPC_BIND(changeContentSet, std::bind(&ZeraDBLoggerPrivate::changeContentSet, this, std::placeholders::_1, std::placeholders::_2)),
                             //VF_RPC_BIND(addContext, std::bind(&ZeraDBLoggerPrivate::addContext, this, std::placeholders::_1, std::placeholders::_2))
 }
     {
@@ -280,8 +280,8 @@ class ZeraDBLoggerPrivate
     }
 
 
-    VF_RPC(changeContext, "changeContext(QString context)", "save durrent LoggedCoomponents as new Context in .json")
-    void changeContext(const QUuid &t_callId, const QVariantMap &t_rpcParameters){
+    VF_RPC(changeContentSet, "changeContentSet(QString context)", "save durrent LoggedCoomponents as new Context in .json")
+    void changeContentSet(const QUuid &t_callId, const QVariantMap &t_rpcParameters){
         QSet<QString> requiredParamKeys = {"context"};
         const QVariantMap searchParameters = t_rpcParameters.value(VeinComponent::RemoteProcedureData::s_parameterString).toMap();
         requiredParamKeys.subtract(searchParameters.keys().toSet());
@@ -302,7 +302,7 @@ class ZeraDBLoggerPrivate
         }
         QVariantMap retVal = t_rpcParameters; //copy parameters and other data, the client could attach tracking
         retVal.insert(VeinComponent::RemoteProcedureData::s_resultCodeString, 0); //success
-        m_qPtr->rpcFinished(t_callId, s_changeContextProcedureName, retVal);
+        m_qPtr->rpcFinished(t_callId, s_changeContentSetProcedureName, retVal);
 
     }
 
@@ -388,7 +388,7 @@ class ZeraDBLoggerPrivate
     static constexpr QLatin1String s_transactionNameEntityName = modman_util::to_latin1("transactionName");
     static constexpr QLatin1String s_availableContentSetsEntityName = modman_util::to_latin1("availableContentSets");
     static constexpr QLatin1String s_currentContentSetEntityName = modman_util::to_latin1("currentContentSet");
-    static constexpr QLatin1String s_changeContextEntityName = modman_util::to_latin1("changeContext");
+    static constexpr QLatin1String s_changeContentSetEntityName = modman_util::to_latin1("changeContentSet");
 
 
 
@@ -403,7 +403,7 @@ constexpr QLatin1String ZeraDBLoggerPrivate::s_findDBFileProcedureName; //from V
 constexpr QLatin1String ZeraDBLoggerPrivate::s_findDBFileProcedureDescription; //from VF_RPC(findDBFile...
 constexpr QLatin1String ZeraDBLoggerPrivate::s_findDbReturnValueName; //from VF_RPC(findDBFile...
 //constexpr QLatin1String ZeraDBLoggerPrivate::s_addContextProcedureName; //TODO from VF_RPX(addContext...
-constexpr QLatin1String ZeraDBLoggerPrivate::s_changeContextProcedureName;
+constexpr QLatin1String ZeraDBLoggerPrivate::s_changeContentSetProcedureName;
 constexpr QLatin1String ZeraDBLoggerPrivate::s_recordNameEntityName;
 constexpr QLatin1String ZeraDBLoggerPrivate::s_transactionNameEntityName;
 constexpr QLatin1String ZeraDBLoggerPrivate::s_availableContentSetsEntityName;
