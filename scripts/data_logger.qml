@@ -18,10 +18,13 @@ VeinLogger {
 
     readonly property string sysContentSet: loggerEntity.currentContentSet;
     onSysContentSetChanged: {
+        // update VeinLogger property contentSet
         contentSet = loggerEntity.currentContentSet;
-        var comps = readContentSet();
+
+        var loggedComponentsFromContentSet = readContentSet();
+
         clearLoggerEntries();
-        systemEntity.LoggedComponents = comps;
+        systemEntity.LoggedComponents = loggedComponentsFromContentSet;
     }
 
     readonly property bool scriptRunning: loggingEnabled
@@ -36,13 +39,14 @@ VeinLogger {
         }
     }
 
+    // Still makes sense to view/access LoggedComponents
     readonly property var loggedValues: systemEntity.LoggedComponents
     onLoggedValuesChanged: {
         clearLoggerEntries();
-        for(var it in loggedValues) {
-            var entData = loggedValues[it];
-            for(var i=0; i<entData.length; ++i) {
-                addLoggerEntry(it, entData[i]);
+        for(var entityID in loggedValues) {
+            var componentsArray = loggedValues[entityID];
+            for(var componentConfigured = 0; componentConfigured < componentsArray.length; ++componentConfigured) {
+                addLoggerEntry(entityID, componentsArray[componentConfigured]);
             }
         }
     }
