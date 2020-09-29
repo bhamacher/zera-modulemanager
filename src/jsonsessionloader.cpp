@@ -23,7 +23,7 @@ void JsonSessionLoader::loadSession(QString t_filePath)
     sesFile.setFileName(t_filePath);
 
     if(sesFile.exists() && sesFile.open(QIODevice::Unbuffered | QIODevice::ReadOnly)) {
-        qDebug() << "loading session:" << t_filePath;
+        qInfo() << "loading session:" << t_filePath;
         QByteArray sesFileContent;
         QJsonDocument jsonSession;
         QJsonParseError jsonError;
@@ -58,21 +58,21 @@ void JsonSessionLoader::loadSession(QString t_filePath)
                                 emit sigLoadModule(tmpNameString, tmpConfigString, xmlConfigData, moduleId);
                             }
                             else {
-                                qDebug() << "Error opening config file for module:" << tmpNameString << "path:" << tmpConfigString;
+                                qWarning() << "Error opening config file for module:" << tmpNameString << "path:" << tmpConfigString;
                             }
                         }
                     }
                 }
                 else {
-                    qDebug() << "Error parsing session file:" << t_filePath << "content mismatch";
+                    qWarning() << "Error parsing session file:" << t_filePath << "content mismatch";
                 }
             }
         }
         else {
-            qDebug() << "Error parsing session file:" << t_filePath << "error:" << jsonError.errorString();
+            qWarning() << "Error parsing session file:" << t_filePath << "error:" << jsonError.errorString();
         }
     }
     else {
-        qDebug() << "Error opening session file:" << t_filePath;
+        qWarning() << "Error opening session file:" << t_filePath;
     }
 }
