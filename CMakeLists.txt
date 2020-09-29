@@ -36,6 +36,7 @@ find_package(VfCryptoBridge REQUIRED)
 find_Package(MeasurementModuleInterface REQUIRED)
 find_Package(zeraproxy REQUIRED)
 
+option(MM_NO_CONFIG_INSTALL "Do not install configuration/session files - for debugging on PC" OFF)
 
 set(SET_MODMAN_SESSION_PATH "${CMAKE_INSTALL_SYSCONFDIR}/zera/modules/sessions/")
 set(SET_MODMAN_CONFIG_PATH  "${CMAKE_INSTALL_SYSCONFDIR}/zera/modules/")
@@ -151,16 +152,17 @@ install(TARGETS zera-modulemanager
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
 
-install(
-    FILES ${SESSION_FILES}
-    DESTINATION ${SET_MODMAN_SESSION_PATH}
-    )
+if(NOT MM_NO_CONFIG_INSTALL)
+    install(
+        FILES ${SESSION_FILES}
+        DESTINATION ${SET_MODMAN_SESSION_PATH}
+        )
 
-
-install(
-    FILES ${CONFIG_FILES}
-    DESTINATION ${SET_MODMAN_CONFIG_PATH}
-    )
+    install(
+        FILES ${CONFIG_FILES}
+        DESTINATION ${SET_MODMAN_CONFIG_PATH}
+        )
+endif()
 
 # spawn out some info on configuration
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
