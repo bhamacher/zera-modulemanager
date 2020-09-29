@@ -45,8 +45,16 @@ VeinLogger {
         clearLoggerEntries();
         for(var entityID in loggedValues) {
             var componentsArray = loggedValues[entityID];
-            for(var componentConfigured = 0; componentConfigured < componentsArray.length; ++componentConfigured) {
-                addLoggerEntry(entityID, componentsArray[componentConfigured]);
+            // specific components configured
+            if(componentsArray.length > 0) {
+                for(var componentConfigured = 0; componentConfigured < componentsArray.length; ++componentConfigured) {
+                    addLoggerEntry(entityID, componentsArray[componentConfigured]);
+                }
+            }
+            else {
+                // We need to add a special component name to inform logger
+                // to store all components
+                addLoggerEntry(entityID, "__ALL_COMPONENTS__");
             }
         }
     }
