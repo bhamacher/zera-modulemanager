@@ -22,8 +22,7 @@ void JsonSessionLoader::loadSession(QString t_filePath)
     QFile sesFile;
     sesFile.setFileName(t_filePath);
 
-    if(sesFile.exists() && sesFile.open(QIODevice::Unbuffered | QIODevice::ReadOnly))
-    {
+    if(sesFile.exists() && sesFile.open(QIODevice::Unbuffered | QIODevice::ReadOnly)) {
         qDebug() << "loading session:" << t_filePath;
         QByteArray sesFileContent;
         QJsonDocument jsonSession;
@@ -33,20 +32,15 @@ void JsonSessionLoader::loadSession(QString t_filePath)
         sesFile.close();
 
         jsonSession = QJsonDocument::fromJson(sesFileContent, &jsonError);
-        if(jsonError.error == QJsonParseError::NoError)
-        {
-            if(jsonSession.isObject())
-            {
+        if(jsonError.error == QJsonParseError::NoError) {
+            if(jsonSession.isObject()) {
                 QJsonObject rootObj = jsonSession.object();
                 QJsonValue tmpModules = rootObj.value("modules");
-                if(tmpModules.isArray())
-                {
+                if(tmpModules.isArray()) {
                     QJsonArray moduleArray = tmpModules.toArray();
-                    for(int i = 0; i < moduleArray.count(); i++)
-                    {
+                    for(int i = 0; i < moduleArray.count(); i++) {
                         QJsonValue tmpObject = moduleArray.at(i);
-                        if(tmpObject.isObject())
-                        {
+                        if(tmpObject.isObject()) {
                             QJsonObject moduleObject = tmpObject.toObject();
                             QString tmpNameString, tmpConfigString;
                             int moduleId;
@@ -58,32 +52,27 @@ void JsonSessionLoader::loadSession(QString t_filePath)
                             moduleId = moduleObject.value("id").toInt();
 
                             tmpXmlConfigFile.setFileName(tmpConfigString);
-                            if(tmpXmlConfigFile.exists() && tmpXmlConfigFile.open(QIODevice::Unbuffered | QIODevice::ReadOnly))
-                            {
+                            if(tmpXmlConfigFile.exists() && tmpXmlConfigFile.open(QIODevice::Unbuffered | QIODevice::ReadOnly)) {
                                 xmlConfigData = tmpXmlConfigFile.readAll();
                                 tmpXmlConfigFile.close();
                                 emit sigLoadModule(tmpNameString, tmpConfigString, xmlConfigData, moduleId);
                             }
-                            else
-                            {
+                            else {
                                 qDebug() << "Error opening config file for module:" << tmpNameString << "path:" << tmpConfigString;
                             }
                         }
                     }
                 }
-                else
-                {
+                else {
                     qDebug() << "Error parsing session file:" << t_filePath << "content mismatch";
                 }
             }
         }
-        else
-        {
+        else {
             qDebug() << "Error parsing session file:" << t_filePath << "error:" << jsonError.errorString();
         }
     }
-    else
-    {
+    else {
         qDebug() << "Error opening session file:" << t_filePath;
     }
 }
