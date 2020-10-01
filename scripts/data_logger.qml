@@ -21,7 +21,7 @@ VeinLogger {
         // update VeinLogger property contentSet
         contentSet = loggerEntity.currentContentSet;
 
-        var loggedComponentsFromContentSet = readContentSet();
+        var loggedComponentsFromContentSet = readContentSets();
 
         clearLoggerEntries();
         systemEntity.LoggedComponents = loggedComponentsFromContentSet;
