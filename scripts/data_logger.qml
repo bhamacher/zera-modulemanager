@@ -19,12 +19,12 @@ VeinLogger {
     readonly property string sysContentSet: loggerEntity.currentContentSet;
     onSysContentSetChanged: {
         // update VeinLogger property contentSet
-        contentSet = loggerEntity.currentContentSet;
+        contentSets = loggerEntity.currentContentSet;
 
-        var loggedComponentsFromContentSet = readContentSets();
+        var loggedComponentsFromContentSets = readContentSets();
 
         clearLoggerEntries();
-        systemEntity.LoggedComponents = loggedComponentsFromContentSet;
+        systemEntity.LoggedComponents = loggedComponentsFromContentSets;
     }
 
     readonly property bool scriptRunning: loggingEnabled
