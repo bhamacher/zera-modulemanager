@@ -26,9 +26,7 @@ class ZeraDBLoggerPrivate
     ZeraDBLoggerPrivate(ZeraDBLogger *t_qPtr) :
         m_qPtr(t_qPtr),
         m_remoteProcedures{ VF_RPC_BIND(listStorages, std::bind(&ZeraDBLoggerPrivate::listStorages, this, std::placeholders::_1, std::placeholders::_2)),
-                            VF_RPC_BIND(findDBFile, std::bind(&ZeraDBLoggerPrivate::findDBFile, this, std::placeholders::_1, std::placeholders::_2)),
-                            VF_RPC_BIND(changeContentSet, std::bind(&ZeraDBLoggerPrivate::changeContentSet, this, std::placeholders::_1, std::placeholders::_2)),
-                            //VF_RPC_BIND(addContentSet, std::bind(&ZeraDBLoggerPrivate::addContentSet, this, std::placeholders::_1, std::placeholders::_2))
+                            VF_RPC_BIND(findDBFile, std::bind(&ZeraDBLoggerPrivate::findDBFile, this, std::placeholders::_1, std::placeholders::_2))
 }
     {
 
@@ -259,53 +257,6 @@ class ZeraDBLoggerPrivate
         m_qPtr->rpcFinished(t_callId, s_listStoragesProcedureName, retVal);
     }
 
-    //VF_RPC(addContentSet, "addContentSet(QString contentSet)", "save current LoggedComponents as new ContentSet in .json")
-    void addContentSet(const QUuid &t_callId, const QVariantMap &t_rpcParameters)
-    {
-        QSet<QString> requiredParamKeys = {"contentSet"};
-        const QVariantMap searchParameters = t_rpcParameters.value(VeinComponent::RemoteProcedureData::s_parameterString).toMap();
-        requiredParamKeys.subtract(searchParameters.keys().toSet());
-
-        if(requiredParamKeys.isEmpty())
-        {
-            QString contentSet =  searchParameters.value("contentSet").toString();
-            // TODO Add new ContentSet here
-
-        }
-        QVariantMap retVal = t_rpcParameters; //copy parameters and other data, the client could attach tracking
-        retVal.insert(VeinComponent::RemoteProcedureData::s_resultCodeString, 0); //success
-        //m_qPtr->rpcFinished(t_callId, s_addContentSetProcedureName, retVal);
-
-
-    }
-
-
-    VF_RPC(changeContentSet, "changeContentSet(QString contentSet)", "save current LoggedCoomponents as new ContentSet in .json")
-    void changeContentSet(const QUuid &t_callId, const QVariantMap &t_rpcParameters){
-        QSet<QString> requiredParamKeys = {"contentSet"};
-        const QVariantMap searchParameters = t_rpcParameters.value(VeinComponent::RemoteProcedureData::s_parameterString).toMap();
-        requiredParamKeys.subtract(searchParameters.keys().toSet());
-
-        if(requiredParamKeys.isEmpty())
-        {
-            QString contentSet =  searchParameters.value("contentSet").toString();
-            VeinComponent::ComponentData *currentContentSetData = new VeinComponent::ComponentData();
-            currentContentSetData->setEntityId(m_qPtr->entityId());
-            currentContentSetData->setCommand(VeinComponent::ComponentData::Command::CCMD_SET);
-            currentContentSetData->setComponentName(s_currentContentSetEntityName);
-            currentContentSetData->setNewValue(contentSet);
-            currentContentSetData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
-            currentContentSetData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
-
-            emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, currentContentSetData));
-
-        }
-        QVariantMap retVal = t_rpcParameters; //copy parameters and other data, the client could attach tracking
-        retVal.insert(VeinComponent::RemoteProcedureData::s_resultCodeString, 0); //success
-        m_qPtr->rpcFinished(t_callId, s_changeContentSetProcedureName, retVal);
-
-    }
-
     VF_RPC(findDBFile, "findDBFile(QString searchPath, QStringList searchPatternList)", "returns ZeraDBLogger::searchResultEntry A streamed list of available database files on the currently selected storage")
     void findDBFile(const QUuid &t_callId, const QVariantMap &t_rpcParameters)
     {
@@ -402,8 +353,6 @@ constexpr QLatin1String ZeraDBLoggerPrivate::s_listStoragesReturnValueName; //fr
 constexpr QLatin1String ZeraDBLoggerPrivate::s_findDBFileProcedureName; //from VF_RPC(findDBFile...
 constexpr QLatin1String ZeraDBLoggerPrivate::s_findDBFileProcedureDescription; //from VF_RPC(findDBFile...
 constexpr QLatin1String ZeraDBLoggerPrivate::s_findDbReturnValueName; //from VF_RPC(findDBFile...
-//constexpr QLatin1String ZeraDBLoggerPrivate::s_addContentSetProcedureName; //TODO from VF_RPX(addContentSet...
-constexpr QLatin1String ZeraDBLoggerPrivate::s_changeContentSetProcedureName;
 constexpr QLatin1String ZeraDBLoggerPrivate::s_recordNameEntityName;
 constexpr QLatin1String ZeraDBLoggerPrivate::s_transactionNameEntityName;
 constexpr QLatin1String ZeraDBLoggerPrivate::s_availableContentSetsEntityName;
