@@ -6,6 +6,7 @@ VeinLogger {
     initializeValues: true;
     recordName: loggerEntity.recordName;
     transactionName: loggerEntity.transactionName;
+    guiContext: loggerEntity.guiContext;
 
 
     readonly property QtObject systemEntity: VeinEntity.getEntity("_System");
