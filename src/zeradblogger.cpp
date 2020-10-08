@@ -40,7 +40,7 @@ class ZeraDBLoggerPrivate
      */
     void initEntity()
     {
-        // init "recordName" component
+        // init "sessionName" component
         VeinComponent::ComponentData *recordNameData = new VeinComponent::ComponentData();
         recordNameData->setEntityId(m_qPtr->entityId());
         recordNameData->setCommand(VeinComponent::ComponentData::Command::CCMD_ADD);
@@ -335,7 +335,7 @@ class ZeraDBLoggerPrivate
     const VeinEvent::RoutedRemoteProcedureAtlas m_remoteProcedures;
     static constexpr QLatin1String s_listStoragesReturnValueName = modman_util::to_latin1("ZeraDBLogger::storageList");
     static constexpr QLatin1String s_findDbReturnValueName = modman_util::to_latin1("ZeraDBLogger::searchResultEntry");
-    static constexpr QLatin1String s_recordNameEntityName = modman_util::to_latin1("recordName");
+    static constexpr QLatin1String s_recordNameEntityName = modman_util::to_latin1("sessionName");
     static constexpr QLatin1String s_transactionNameEntityName = modman_util::to_latin1("transactionName");
     static constexpr QLatin1String s_availableContentSetsEntityName = modman_util::to_latin1("availableContentSets");
     static constexpr QLatin1String s_currentContentSetsEntityName = modman_util::to_latin1("currentContentSets");
