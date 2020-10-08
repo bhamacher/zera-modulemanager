@@ -33,7 +33,7 @@ class ZeraDBLoggerPrivate
     }
     /**
      * @brief initEntity
-     * @todo remove recordNameEntity
+     * @todo remove sessionNameEntity
      * @todo remove transactionNameEntity
      * @todo move availableContentSetDataEntity
      * @todo remove currentContentSetEntityName
@@ -41,13 +41,13 @@ class ZeraDBLoggerPrivate
     void initEntity()
     {
         // init "sessionName" component
-        VeinComponent::ComponentData *recordNameData = new VeinComponent::ComponentData();
-        recordNameData->setEntityId(m_qPtr->entityId());
-        recordNameData->setCommand(VeinComponent::ComponentData::Command::CCMD_ADD);
-        recordNameData->setComponentName(s_recordNameEntityName);
-        recordNameData->setNewValue(QString());
-        recordNameData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
-        recordNameData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
+        VeinComponent::ComponentData *sessionNameData = new VeinComponent::ComponentData();
+        sessionNameData->setEntityId(m_qPtr->entityId());
+        sessionNameData->setCommand(VeinComponent::ComponentData::Command::CCMD_ADD);
+        sessionNameData->setComponentName(s_sessionNameEntityName);
+        sessionNameData->setNewValue(QString());
+        sessionNameData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
+        sessionNameData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
         // init "transactionName" component
         VeinComponent::ComponentData *transactionNameData = new VeinComponent::ComponentData();
         transactionNameData->setEntityId(m_qPtr->entityId());
@@ -75,7 +75,7 @@ class ZeraDBLoggerPrivate
         currentContentSetData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
         currentContentSetData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
 
-        emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, recordNameData));
+        emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, sessionNameData));
         emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, availableContentSetData));
         emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, currentContentSetData));
         emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, transactionNameData));
@@ -131,18 +131,18 @@ class ZeraDBLoggerPrivate
                     componentData->eventCommand() == VeinComponent::ComponentData::Command::CCMD_SET &&
                     t_cEvent->eventSubtype() == VeinEvent::CommandEvent::EventSubtype::TRANSACTION)
             {
-                if(componentData->componentName() == s_recordNameEntityName)
+                if(componentData->componentName() == s_sessionNameEntityName)
                 {
 
-                    VeinComponent::ComponentData *recordNameData = new VeinComponent::ComponentData();
-                    recordNameData->setEntityId(m_qPtr->entityId());
-                    recordNameData->setCommand(VeinComponent::ComponentData::Command::CCMD_SET);
-                    recordNameData->setComponentName(s_recordNameEntityName);
-                    recordNameData->setNewValue(componentData->newValue());
-                    recordNameData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
-                    recordNameData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
+                    VeinComponent::ComponentData *sessionNameData = new VeinComponent::ComponentData();
+                    sessionNameData->setEntityId(m_qPtr->entityId());
+                    sessionNameData->setCommand(VeinComponent::ComponentData::Command::CCMD_SET);
+                    sessionNameData->setComponentName(s_sessionNameEntityName);
+                    sessionNameData->setNewValue(componentData->newValue());
+                    sessionNameData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
+                    sessionNameData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
 
-                    emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, recordNameData));
+                    emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, sessionNameData));
 
                     retVal = true;
                     t_cEvent->accept();
@@ -335,7 +335,7 @@ class ZeraDBLoggerPrivate
     const VeinEvent::RoutedRemoteProcedureAtlas m_remoteProcedures;
     static constexpr QLatin1String s_listStoragesReturnValueName = modman_util::to_latin1("ZeraDBLogger::storageList");
     static constexpr QLatin1String s_findDbReturnValueName = modman_util::to_latin1("ZeraDBLogger::searchResultEntry");
-    static constexpr QLatin1String s_recordNameEntityName = modman_util::to_latin1("sessionName");
+    static constexpr QLatin1String s_sessionNameEntityName = modman_util::to_latin1("sessionName");
     static constexpr QLatin1String s_transactionNameEntityName = modman_util::to_latin1("transactionName");
     static constexpr QLatin1String s_availableContentSetsEntityName = modman_util::to_latin1("availableContentSets");
     static constexpr QLatin1String s_currentContentSetsEntityName = modman_util::to_latin1("currentContentSets");
@@ -353,7 +353,7 @@ constexpr QLatin1String ZeraDBLoggerPrivate::s_listStoragesReturnValueName; //fr
 constexpr QLatin1String ZeraDBLoggerPrivate::s_findDBFileProcedureName; //from VF_RPC(findDBFile...
 constexpr QLatin1String ZeraDBLoggerPrivate::s_findDBFileProcedureDescription; //from VF_RPC(findDBFile...
 constexpr QLatin1String ZeraDBLoggerPrivate::s_findDbReturnValueName; //from VF_RPC(findDBFile...
-constexpr QLatin1String ZeraDBLoggerPrivate::s_recordNameEntityName;
+constexpr QLatin1String ZeraDBLoggerPrivate::s_sessionNameEntityName;
 constexpr QLatin1String ZeraDBLoggerPrivate::s_transactionNameEntityName;
 constexpr QLatin1String ZeraDBLoggerPrivate::s_availableContentSetsEntityName;
 constexpr QLatin1String ZeraDBLoggerPrivate::s_currentContentSetsEntityName;
