@@ -34,7 +34,6 @@ class ZeraDBLoggerPrivate
     /**
      * @brief initEntity
      * @todo remove sessionNameEntity
-     * @todo move availableContentSetDataEntity
      */
     void initEntity()
     {
@@ -47,17 +46,7 @@ class ZeraDBLoggerPrivate
         sessionNameData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
         sessionNameData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
 
-        // init "availableContentSets" component
-        VeinComponent::ComponentData *availableContentSetData = new VeinComponent::ComponentData();
-        availableContentSetData->setEntityId(m_qPtr->entityId());
-        availableContentSetData->setCommand(VeinComponent::ComponentData::Command::CCMD_ADD);
-        availableContentSetData->setComponentName(s_availableContentSetsEntityName);
-        availableContentSetData->setNewValue(QStringList());
-        availableContentSetData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
-        availableContentSetData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
-
         emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, sessionNameData));
-        emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, availableContentSetData));
 
         const QList<QString> tmpRemoteProcedureList = m_remoteProcedures.keys();
         for(const QString &tmpRemoteProcedureName : qAsConst(tmpRemoteProcedureList))
@@ -122,20 +111,6 @@ class ZeraDBLoggerPrivate
                     sessionNameData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
 
                     emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, sessionNameData));
-
-                    retVal = true;
-                    t_cEvent->accept();
-                }
-                else if(componentData->componentName() == s_availableContentSetsEntityName){
-                    VeinComponent::ComponentData *availableContentSetsData = new VeinComponent::ComponentData();
-                    availableContentSetsData->setEntityId(m_qPtr->entityId());
-                    availableContentSetsData->setCommand(VeinComponent::ComponentData::Command::CCMD_SET);
-                    availableContentSetsData->setComponentName(s_availableContentSetsEntityName);
-                    availableContentSetsData->setNewValue(componentData->newValue());
-                    availableContentSetsData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
-                    availableContentSetsData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
-
-                    emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, availableContentSetsData));
 
                     retVal = true;
                     t_cEvent->accept();
@@ -287,7 +262,6 @@ class ZeraDBLoggerPrivate
     static constexpr QLatin1String s_listStoragesReturnValueName = modman_util::to_latin1("ZeraDBLogger::storageList");
     static constexpr QLatin1String s_findDbReturnValueName = modman_util::to_latin1("ZeraDBLogger::searchResultEntry");
     static constexpr QLatin1String s_sessionNameEntityName = modman_util::to_latin1("sessionName");
-    static constexpr QLatin1String s_availableContentSetsEntityName = modman_util::to_latin1("availableContentSets");
 
     friend class ZeraDBLogger;
 };
@@ -300,7 +274,6 @@ constexpr QLatin1String ZeraDBLoggerPrivate::s_findDBFileProcedureName; //from V
 constexpr QLatin1String ZeraDBLoggerPrivate::s_findDBFileProcedureDescription; //from VF_RPC(findDBFile...
 constexpr QLatin1String ZeraDBLoggerPrivate::s_findDbReturnValueName; //from VF_RPC(findDBFile...
 constexpr QLatin1String ZeraDBLoggerPrivate::s_sessionNameEntityName;
-constexpr QLatin1String ZeraDBLoggerPrivate::s_availableContentSetsEntityName;
 
 ZeraDBLogger::ZeraDBLogger(VeinLogger::DataSource *t_dataSource, VeinLogger::DBFactory t_factoryFunction, QObject *t_parent) :
     VeinLogger::DatabaseLogger(t_dataSource, t_factoryFunction, t_parent),
