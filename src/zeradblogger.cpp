@@ -314,7 +314,6 @@ class ZeraDBLoggerPrivate
     static constexpr QLatin1String s_sessionNameEntityName = modman_util::to_latin1("sessionName");
     static constexpr QLatin1String s_availableContentSetsEntityName = modman_util::to_latin1("availableContentSets");
     static constexpr QLatin1String s_currentContentSetsEntityName = modman_util::to_latin1("currentContentSets");
-    static constexpr QLatin1String s_changeContentSetEntityName = modman_util::to_latin1("changeContentSets");
 
     friend class ZeraDBLogger;
 };
