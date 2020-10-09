@@ -34,7 +34,6 @@ class ZeraDBLoggerPrivate
     /**
      * @brief initEntity
      * @todo remove sessionNameEntity
-     * @todo remove transactionNameEntity
      * @todo move availableContentSetDataEntity
      * @todo remove currentContentSetEntityName
      */
@@ -48,14 +47,6 @@ class ZeraDBLoggerPrivate
         sessionNameData->setNewValue(QString());
         sessionNameData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
         sessionNameData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
-        // init "transactionName" component
-        VeinComponent::ComponentData *transactionNameData = new VeinComponent::ComponentData();
-        transactionNameData->setEntityId(m_qPtr->entityId());
-        transactionNameData->setCommand(VeinComponent::ComponentData::Command::CCMD_ADD);
-        transactionNameData->setComponentName(s_transactionNameEntityName);
-        transactionNameData->setNewValue(QString());
-        transactionNameData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
-        transactionNameData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
 
         // init "availableContentSets" component
         VeinComponent::ComponentData *availableContentSetData = new VeinComponent::ComponentData();
@@ -78,7 +69,6 @@ class ZeraDBLoggerPrivate
         emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, sessionNameData));
         emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, availableContentSetData));
         emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, currentContentSetData));
-        emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, transactionNameData));
 
         const QList<QString> tmpRemoteProcedureList = m_remoteProcedures.keys();
         for(const QString &tmpRemoteProcedureName : qAsConst(tmpRemoteProcedureList))
@@ -143,20 +133,6 @@ class ZeraDBLoggerPrivate
                     sessionNameData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
 
                     emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, sessionNameData));
-
-                    retVal = true;
-                    t_cEvent->accept();
-                }
-                else if(componentData->componentName() == s_transactionNameEntityName){
-                    VeinComponent::ComponentData *transactionNameData = new VeinComponent::ComponentData();
-                    transactionNameData->setEntityId(m_qPtr->entityId());
-                    transactionNameData->setCommand(VeinComponent::ComponentData::Command::CCMD_SET);
-                    transactionNameData->setComponentName(s_transactionNameEntityName);
-                    transactionNameData->setNewValue(componentData->newValue());
-                    transactionNameData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
-                    transactionNameData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
-
-                    emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, transactionNameData));
 
                     retVal = true;
                     t_cEvent->accept();
@@ -336,12 +312,9 @@ class ZeraDBLoggerPrivate
     static constexpr QLatin1String s_listStoragesReturnValueName = modman_util::to_latin1("ZeraDBLogger::storageList");
     static constexpr QLatin1String s_findDbReturnValueName = modman_util::to_latin1("ZeraDBLogger::searchResultEntry");
     static constexpr QLatin1String s_sessionNameEntityName = modman_util::to_latin1("sessionName");
-    static constexpr QLatin1String s_transactionNameEntityName = modman_util::to_latin1("transactionName");
     static constexpr QLatin1String s_availableContentSetsEntityName = modman_util::to_latin1("availableContentSets");
     static constexpr QLatin1String s_currentContentSetsEntityName = modman_util::to_latin1("currentContentSets");
     static constexpr QLatin1String s_changeContentSetEntityName = modman_util::to_latin1("changeContentSets");
-
-
 
     friend class ZeraDBLogger;
 };
@@ -354,7 +327,6 @@ constexpr QLatin1String ZeraDBLoggerPrivate::s_findDBFileProcedureName; //from V
 constexpr QLatin1String ZeraDBLoggerPrivate::s_findDBFileProcedureDescription; //from VF_RPC(findDBFile...
 constexpr QLatin1String ZeraDBLoggerPrivate::s_findDbReturnValueName; //from VF_RPC(findDBFile...
 constexpr QLatin1String ZeraDBLoggerPrivate::s_sessionNameEntityName;
-constexpr QLatin1String ZeraDBLoggerPrivate::s_transactionNameEntityName;
 constexpr QLatin1String ZeraDBLoggerPrivate::s_availableContentSetsEntityName;
 constexpr QLatin1String ZeraDBLoggerPrivate::s_currentContentSetsEntityName;
 
