@@ -35,7 +35,6 @@ class ZeraDBLoggerPrivate
      * @brief initEntity
      * @todo remove sessionNameEntity
      * @todo move availableContentSetDataEntity
-     * @todo remove currentContentSetEntityName
      */
     void initEntity()
     {
@@ -57,18 +56,8 @@ class ZeraDBLoggerPrivate
         availableContentSetData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
         availableContentSetData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
 
-        // init "currentContentSets" component
-        VeinComponent::ComponentData *currentContentSetData = new VeinComponent::ComponentData();
-        currentContentSetData->setEntityId(m_qPtr->entityId());
-        currentContentSetData->setCommand(VeinComponent::ComponentData::Command::CCMD_ADD);
-        currentContentSetData->setComponentName(s_currentContentSetsEntityName);
-        currentContentSetData->setNewValue(QStringList());
-        currentContentSetData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
-        currentContentSetData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
-
         emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, sessionNameData));
         emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, availableContentSetData));
-        emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, currentContentSetData));
 
         const QList<QString> tmpRemoteProcedureList = m_remoteProcedures.keys();
         for(const QString &tmpRemoteProcedureName : qAsConst(tmpRemoteProcedureList))
@@ -133,20 +122,6 @@ class ZeraDBLoggerPrivate
                     sessionNameData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
 
                     emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, sessionNameData));
-
-                    retVal = true;
-                    t_cEvent->accept();
-                }
-                else if(componentData->componentName() == s_currentContentSetsEntityName){
-                    VeinComponent::ComponentData *currentContentSetData = new VeinComponent::ComponentData();
-                    currentContentSetData->setEntityId(m_qPtr->entityId());
-                    currentContentSetData->setCommand(VeinComponent::ComponentData::Command::CCMD_SET);
-                    currentContentSetData->setComponentName(s_currentContentSetsEntityName);
-                    currentContentSetData->setNewValue(componentData->newValue());
-                    currentContentSetData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
-                    currentContentSetData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
-
-                    emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, currentContentSetData));
 
                     retVal = true;
                     t_cEvent->accept();
@@ -313,7 +288,6 @@ class ZeraDBLoggerPrivate
     static constexpr QLatin1String s_findDbReturnValueName = modman_util::to_latin1("ZeraDBLogger::searchResultEntry");
     static constexpr QLatin1String s_sessionNameEntityName = modman_util::to_latin1("sessionName");
     static constexpr QLatin1String s_availableContentSetsEntityName = modman_util::to_latin1("availableContentSets");
-    static constexpr QLatin1String s_currentContentSetsEntityName = modman_util::to_latin1("currentContentSets");
 
     friend class ZeraDBLogger;
 };
@@ -327,8 +301,6 @@ constexpr QLatin1String ZeraDBLoggerPrivate::s_findDBFileProcedureDescription; /
 constexpr QLatin1String ZeraDBLoggerPrivate::s_findDbReturnValueName; //from VF_RPC(findDBFile...
 constexpr QLatin1String ZeraDBLoggerPrivate::s_sessionNameEntityName;
 constexpr QLatin1String ZeraDBLoggerPrivate::s_availableContentSetsEntityName;
-constexpr QLatin1String ZeraDBLoggerPrivate::s_currentContentSetsEntityName;
-
 
 ZeraDBLogger::ZeraDBLogger(VeinLogger::DataSource *t_dataSource, VeinLogger::DBFactory t_factoryFunction, QObject *t_parent) :
     VeinLogger::DatabaseLogger(t_dataSource, t_factoryFunction, t_parent),
