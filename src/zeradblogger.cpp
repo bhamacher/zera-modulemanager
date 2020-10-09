@@ -33,21 +33,9 @@ class ZeraDBLoggerPrivate
     }
     /**
      * @brief initEntity
-     * @todo remove sessionNameEntity
      */
     void initEntity()
     {
-        // init "sessionName" component
-        VeinComponent::ComponentData *sessionNameData = new VeinComponent::ComponentData();
-        sessionNameData->setEntityId(m_qPtr->entityId());
-        sessionNameData->setCommand(VeinComponent::ComponentData::Command::CCMD_ADD);
-        sessionNameData->setComponentName(s_sessionNameEntityName);
-        sessionNameData->setNewValue(QString());
-        sessionNameData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
-        sessionNameData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
-
-        emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, sessionNameData));
-
         const QList<QString> tmpRemoteProcedureList = m_remoteProcedures.keys();
         for(const QString &tmpRemoteProcedureName : qAsConst(tmpRemoteProcedureList))
         {
@@ -99,22 +87,7 @@ class ZeraDBLoggerPrivate
                     componentData->eventCommand() == VeinComponent::ComponentData::Command::CCMD_SET &&
                     t_cEvent->eventSubtype() == VeinEvent::CommandEvent::EventSubtype::TRANSACTION)
             {
-                if(componentData->componentName() == s_sessionNameEntityName)
-                {
-
-                    VeinComponent::ComponentData *sessionNameData = new VeinComponent::ComponentData();
-                    sessionNameData->setEntityId(m_qPtr->entityId());
-                    sessionNameData->setCommand(VeinComponent::ComponentData::Command::CCMD_SET);
-                    sessionNameData->setComponentName(s_sessionNameEntityName);
-                    sessionNameData->setNewValue(componentData->newValue());
-                    sessionNameData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
-                    sessionNameData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
-
-                    emit m_qPtr->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, sessionNameData));
-
-                    retVal = true;
-                    t_cEvent->accept();
-                }
+                // TODO remove this?
             }
         }
         else if(t_cEvent->eventData()->type() == VeinComponent::RemoteProcedureData::dataType())
@@ -261,7 +234,6 @@ class ZeraDBLoggerPrivate
     const VeinEvent::RoutedRemoteProcedureAtlas m_remoteProcedures;
     static constexpr QLatin1String s_listStoragesReturnValueName = modman_util::to_latin1("ZeraDBLogger::storageList");
     static constexpr QLatin1String s_findDbReturnValueName = modman_util::to_latin1("ZeraDBLogger::searchResultEntry");
-    static constexpr QLatin1String s_sessionNameEntityName = modman_util::to_latin1("sessionName");
 
     friend class ZeraDBLogger;
 };
@@ -273,7 +245,6 @@ constexpr QLatin1String ZeraDBLoggerPrivate::s_listStoragesReturnValueName; //fr
 constexpr QLatin1String ZeraDBLoggerPrivate::s_findDBFileProcedureName; //from VF_RPC(findDBFile...
 constexpr QLatin1String ZeraDBLoggerPrivate::s_findDBFileProcedureDescription; //from VF_RPC(findDBFile...
 constexpr QLatin1String ZeraDBLoggerPrivate::s_findDbReturnValueName; //from VF_RPC(findDBFile...
-constexpr QLatin1String ZeraDBLoggerPrivate::s_sessionNameEntityName;
 
 ZeraDBLogger::ZeraDBLogger(VeinLogger::DataSource *t_dataSource, VeinLogger::DBFactory t_factoryFunction, QObject *t_parent) :
     VeinLogger::DatabaseLogger(t_dataSource, t_factoryFunction, t_parent),
