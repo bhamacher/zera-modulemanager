@@ -23,6 +23,7 @@
 #include <vl_datasource.h>
 #include <vl_qmllogger.h>
 #include <vl_sqlitedb.h>
+#include <vf_export.h>
 
 #include <QDebug>
 
@@ -35,6 +36,7 @@
 #include <QJsonArray>
 
 #include <QRegExp>
+
 
 namespace ZeraModulemanager
 {
@@ -142,6 +144,7 @@ int main(int argc, char *argv[])
     ZeraDBLogger *dataLoggerSystem = new ZeraDBLogger(new VeinLogger::DataSource(storSystem, &a), sqliteFactory, &a); //takes ownership of DataSource
     CustomerDataSystem *customerDataSystem = nullptr;
     LicenseSystem *licenseSystem = new LicenseSystem({QUrl("file:///home/operator/license-keys")}, &a);
+    vfExport::vf_export *exportModule=new vfExport::vf_export();
 
     //setup logger
     VeinApiQml::VeinQml::setStaticInstance(qmlSystem);
@@ -195,6 +198,7 @@ int main(int argc, char *argv[])
     subSystems.append(scriptSystem);
     subSystems.append(licenseSystem);
 
+
     evHandler->setSubsystems(subSystems);
 
     //conditional systems
@@ -222,8 +226,11 @@ int main(int argc, char *argv[])
                 dataLoggerSystemInitialized = true;
                 qDebug() << "DataLoggerSystem is enabled";
                 evHandler->addSubsystem(dataLoggerSystem);
+                evHandler->addSubsystem(exportModule->getVeinEntity());
+                exportModule->initOnce();
                 qmlSystem->entitySubscribeById(0); //0 = mmController
                 qmlSystem->entitySubscribeById(2); //2 = dataLoggerSystem
+                qmlSystem->entitySubscribeById(3); //3 = ExportSystem
             }
         }
     });
