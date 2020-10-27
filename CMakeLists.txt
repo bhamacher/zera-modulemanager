@@ -33,8 +33,10 @@ find_package(VfHelpers REQUIRED)
 find_package(VfScript REQUIRED)
 find_package(VfLogger REQUIRED)
 find_package(VfCryptoBridge REQUIRED)
+find_package(VfExport REQUIRED)
 find_Package(MeasurementModuleInterface REQUIRED)
 find_Package(zeraproxy REQUIRED)
+find_Package(VfCpp REQUIRED)
 
 option(MM_NO_CONFIG_INSTALL "Do not install configuration/session files - for debugging on PC" OFF)
 
@@ -126,6 +128,8 @@ target_link_libraries(zera-modulemanager
     VeinMeta::VfQml
     VeinMeta::VfScript
     VeinMeta::VfLogger
+    VeinMeta::VfCpp
+    VeinMeta::VfExport
     VeinMeta::VfCryptoBridge
     ZeraClasses::MeasurementModuleInterface
     ZeraClasses::zeraproxy
