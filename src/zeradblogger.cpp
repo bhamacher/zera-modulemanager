@@ -107,21 +107,21 @@ class ZeraDBLoggerPrivate
                     m_remoteProcedures.value(rpcData->procedureName())(callId, rpcData->invokationData()); //rpc invokation
                     t_cEvent->accept();
                 }
-                else //unknown procedure
+                else if(!t_cEvent->isAccepted()) //unknown procedure
                 {
-                    retVal = true;
-                    qWarning() << "No remote procedure with entityId:" << m_qPtr->entityId() << "name:" << rpcData->procedureName();
-                    VF_ASSERT(false, QStringC(QString("No remote procedure with entityId: %1 name: %2").arg(m_qPtr->entityId()).arg(rpcData->procedureName())));
-                    VeinComponent::ErrorData *eData = new VeinComponent::ErrorData();
-                    eData->setEntityId(m_qPtr->entityId());
-                    eData->setErrorDescription(QString("No remote procedure with name: %1").arg(rpcData->procedureName()));
-                    eData->setOriginalData(rpcData);
-                    eData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
-                    eData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
-                    VeinEvent::CommandEvent *errorEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, eData);
-                    errorEvent->setPeerId(t_cEvent->peerId());
-                    t_cEvent->accept();
-                    emit m_qPtr->sigSendEvent(errorEvent);
+//                    retVal = true;
+//                    qWarning() << "No remote procedure with entityId:" << m_qPtr->entityId() << "name:" << rpcData->procedureName();
+//                    VF_ASSERT(false, QStringC(QString("No remote procedure with entityId: %1 name: %2").arg(m_qPtr->entityId()).arg(rpcData->procedureName())));
+//                    VeinComponent::ErrorData *eData = new VeinComponent::ErrorData();
+//                    eData->setEntityId(m_qPtr->entityId());
+//                    eData->setErrorDescription(QString("No remote procedure with name: %1").arg(rpcData->procedureName()));
+//                    eData->setOriginalData(rpcData);
+//                    eData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
+//                    eData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
+//                    VeinEvent::CommandEvent *errorEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, eData);
+//                    errorEvent->setPeerId(t_cEvent->peerId());
+//                    t_cEvent->accept();
+//                    emit m_qPtr->sigSendEvent(errorEvent);
                 }
             }
         }
