@@ -247,6 +247,7 @@ int main(int argc, char *argv[])
     qRegisterMetaTypeStreamOperators<QList<double> >("QList<double>");
     qRegisterMetaTypeStreamOperators<QList<QString> >("QList<QString>");
     qRegisterMetaTypeStreamOperators<QVector<QString> >("QVector<QString>");
+    qRegisterMetaTypeStreamOperators<QList<QVariantMap> >("QList<QVariantMap>");
 
 
 
