@@ -226,11 +226,14 @@ int main(int argc, char *argv[])
                 dataLoggerSystemInitialized = true;
                 qDebug() << "DataLoggerSystem is enabled";
                 evHandler->addSubsystem(dataLoggerSystem);
+
                 evHandler->addSubsystem(exportModule->getVeinEntity());
                 exportModule->initOnce();
+
+                // subscribe those entitities our magic logger QML script
+                // requires (see modMan->loadScripts above)
                 qmlSystem->entitySubscribeById(0); //0 = mmController
                 qmlSystem->entitySubscribeById(2); //2 = dataLoggerSystem
-                qmlSystem->entitySubscribeById(3); //3 = ExportSystem
             }
         }
     });
