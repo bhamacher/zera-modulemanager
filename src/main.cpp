@@ -240,6 +240,12 @@ int main(int argc, char *argv[])
                             QStringLiteral("AutoMountedPaths"),
                             QStringList(),
                             QDir::NoDotAndDotDot | QDir::Dirs);
+                filesModule->addDirToWatch(
+                            QStringLiteral(MODMAN_CUSTOMERDATA_PATH),
+                            QStringLiteral("AvailableCutomerData"),
+                            QStringList({"*.json", "*/*.json"}),
+                            QDir::NoDotAndDotDot | QDir::Files);
+
                 // exports entity
                 evHandler->addSubsystem(exportModule->getVeinEntity());
                 exportModule->initOnce();
