@@ -207,12 +207,12 @@ int main(int argc, char *argv[])
     bool customerDataSystemInitialized = false;
     if(customerdataSystemEnabled)
     {
-        QObject::connect(customerDataSystem, &CustomerDataSystem::sigCustomerDataError, errorReportFunction);
         QObject::connect(licenseSystem, &LicenseSystem::sigSerialNumberInitialized, [&]() {
             if(licenseSystem->isSystemLicensed(CustomerDataSystem::s_entityName) && !customerDataSystemInitialized)
             {
                 customerDataSystemInitialized = true;
                 customerDataSystem = new CustomerDataSystem(&a);
+                QObject::connect(customerDataSystem, &CustomerDataSystem::sigCustomerDataError, errorReportFunction);
                 qDebug() << "CustomerDataSystem is enabled";
                 evHandler->addSubsystem(customerDataSystem);
                 customerDataSystem->initializeEntity();
