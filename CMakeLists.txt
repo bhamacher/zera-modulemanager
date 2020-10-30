@@ -34,6 +34,7 @@ find_package(VfScript REQUIRED)
 find_package(VfLogger REQUIRED)
 find_package(VfCryptoBridge REQUIRED)
 find_package(VfExport REQUIRED)
+find_package(VfFiles REQUIRED)
 find_Package(MeasurementModuleInterface REQUIRED)
 find_Package(zeraproxy REQUIRED)
 find_Package(VfCpp REQUIRED)
@@ -130,6 +131,7 @@ target_link_libraries(zera-modulemanager
     VeinMeta::VfLogger
     VeinMeta::VfCpp
     VeinMeta::VfExport
+    VeinMeta::VfFiles
     VeinMeta::VfCryptoBridge
     ZeraClasses::MeasurementModuleInterface
     ZeraClasses::zeraproxy

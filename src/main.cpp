@@ -24,6 +24,7 @@
 #include <vl_qmllogger.h>
 #include <vl_sqlitedb.h>
 #include <vf_export.h>
+#include <vf_files.h>
 
 #include <QDebug>
 
