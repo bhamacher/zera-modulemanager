@@ -146,6 +146,7 @@ int main(int argc, char *argv[])
     CustomerDataSystem *customerDataSystem = nullptr;
     LicenseSystem *licenseSystem = new LicenseSystem({QUrl("file:///home/operator/license-keys")}, &a);
     vfExport::vf_export *exportModule=new vfExport::vf_export();
+    vfFiles::vf_files *filesModule = new vfFiles::vf_files();
 
     //setup logger
     VeinApiQml::VeinQml::setStaticInstance(qmlSystem);
@@ -228,6 +229,18 @@ int main(int argc, char *argv[])
                 qDebug() << "DataLoggerSystem is enabled";
                 evHandler->addSubsystem(dataLoggerSystem);
 
+                // the following code is not exactly depending on license system
+                // but here event system is up and running
+
+                // files entity
+                evHandler->addSubsystem(filesModule->getVeinEntity());
+                filesModule->initOnce();
+                filesModule->addDirToWatch(
+                            QStringLiteral(MODMAN_AUTOMOUNT_PATH),
+                            QStringLiteral("AutoMountedPaths"),
+                            QStringList(),
+                            QDir::NoDotAndDotDot | QDir::Dirs);
+                // exports entity
                 evHandler->addSubsystem(exportModule->getVeinEntity());
                 exportModule->initOnce();
 
