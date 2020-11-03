@@ -26,6 +26,7 @@
 #include <vf_export.h>
 
 #include <QDebug>
+#include <QThread>
 
 #include <QLoggingCategory>
 #include <QStringList>
@@ -144,7 +145,7 @@ int main(int argc, char *argv[])
     ZeraDBLogger *dataLoggerSystem = new ZeraDBLogger(new VeinLogger::DataSource(storSystem, &a), sqliteFactory, &a); //takes ownership of DataSource
     CustomerDataSystem *customerDataSystem = nullptr;
     LicenseSystem *licenseSystem = new LicenseSystem({QUrl("file:///home/operator/license-keys")}, &a);
-    vfExport::vf_export *exportModule=new vfExport::vf_export(&a);
+    vfExport::vf_export *exportModule=new vfExport::vf_export(&a,520);
 
     //setup logger
     VeinApiQml::VeinQml::setStaticInstance(qmlSystem);
@@ -226,10 +227,6 @@ int main(int argc, char *argv[])
                 dataLoggerSystemInitialized = true;
                 qDebug() << "DataLoggerSystem is enabled";
                 evHandler->addSubsystem(dataLoggerSystem);
-
-                evHandler->addSubsystem(exportModule->getVeinEntity());
-
-
                 // subscribe those entitities our magic logger QML script
                 // requires (see modMan->loadScripts above)
                 qmlSystem->entitySubscribeById(0); //0 = mmController
@@ -238,9 +235,18 @@ int main(int argc, char *argv[])
         }
     });
 
+
+    QObject::connect(dataLoggerSystem, &ZeraDBLogger::sigAttached, [&](){
+         evHandler->addSubsystem(exportModule->getVeinEntity());
+    });
+
+
     QObject::connect(exportModule->getVeinEntity(), &VfCpp::veinmoduleentity::sigAttached, [&](){
         exportModule->initOnce();
     });
+
+
+
 
 
     modMan->setStorage(storSystem);
