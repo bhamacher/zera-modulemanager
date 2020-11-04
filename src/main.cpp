@@ -239,12 +239,14 @@ int main(int argc, char *argv[])
                             QStringLiteral(MODMAN_AUTOMOUNT_PATH),
                             QStringLiteral("AutoMountedPaths"),
                             QStringList(),
-                            QDir::NoDotAndDotDot | QDir::Dirs);
+                            QDir::NoDotAndDotDot | QDir::Dirs,
+                            true);
                 filesModule->addDirToWatch(
                             QStringLiteral(MODMAN_CUSTOMERDATA_PATH),
-                            QStringLiteral("AvailableCutomerData"),
+                            QStringLiteral("AvailableCustomerData"),
                             QStringList({"*.json", "*/*.json"}),
-                            QDir::NoDotAndDotDot | QDir::Files);
+                            QDir::NoDotAndDotDot | QDir::Files,
+                            false);
 
                 // exports entity
                 evHandler->addSubsystem(exportModule->getVeinEntity());
