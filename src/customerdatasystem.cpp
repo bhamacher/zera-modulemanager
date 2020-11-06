@@ -22,7 +22,6 @@ using namespace VeinComponent;
 
 const QHash<QString, QString> CustomerDataSystem::s_componentIntrospection = {
     {CustomerDataSystem::s_entityNameComponentName, CustomerDataSystem::s_entityNameComponentDescription},
-    {CustomerDataSystem::s_fileListComponentName, CustomerDataSystem::s_fileListComponentDescription},
     {CustomerDataSystem::s_fileSelectedComponentName, CustomerDataSystem::s_fileSelectedComponentDescription},
     //base
     {CustomerDataSystem::s_baseIdentifierComponentName, CustomerDataSystem::s_baseIdentifierComponentDescription},
@@ -64,7 +63,6 @@ const QHash<QString, QString> CustomerDataSystem::s_remoteProcedureIntrospection
 
 const QSet<QString> CustomerDataSystem::s_writeProtectedComponents = {
     CustomerDataSystem::s_entityNameComponentName,
-    CustomerDataSystem::s_fileListComponentName,
     CustomerDataSystem::s_introspectionComponentName,
 };
 
@@ -94,8 +92,6 @@ CustomerDataSystem::CustomerDataSystem(QObject *t_parent) :
     m_dataWriteDelay.setSingleShot(true);
     connect(&m_dataWriteDelay, &QTimer::timeout, this, &CustomerDataSystem::writeCustomerdata);
 
-    m_fileWatcher.addPath(MODMAN_CUSTOMERDATA_PATH);
-    connect(&m_fileWatcher, &QFileSystemWatcher::directoryChanged, this, &CustomerDataSystem::updateCustomerDataFileList);
     connect(this, &CustomerDataSystem::sigDataValueChanged, this, &CustomerDataSystem::updateDataFile);
 }
 
@@ -129,8 +125,8 @@ bool CustomerDataSystem::processEvent(QEvent *t_event)
                         }
                         //prevent cases where different files exist with the same uppercase and lowercase name, as windows treats them as the same file (if they ever get copied to a windows host)
                         const QString fileName = cData->newValue().toString().toLower();
-                        if(fileName.isEmpty() == false
-                                && m_fileList.contains(fileName))
+                        bool jsonExists = !fileName.isEmpty() && QFile(QString("%1%2").arg(MODMAN_CUSTOMERDATA_PATH).arg(fileName)).exists();
+                        if(jsonExists)
                         {
                             if(parseCustomerDataFile(fileName) == true)
                             {
@@ -250,7 +246,7 @@ void CustomerDataSystem::initializeEntity()
         {
             initData->setNewValue(CustomerDataSystem::s_entityName);
         }
-        else if(tmpComponentName != CustomerDataSystem::s_fileListComponentName) //the fileListComponent is updated in updateCustomerDataFileList();
+        else
         {
             initData->setNewValue(QString(""));
         }
@@ -276,9 +272,6 @@ void CustomerDataSystem::initializeEntity()
         emit sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, rpcData));
     }
 
-    //initialize the file list
-    updateCustomerDataFileList();
-
     introspectionRootObject.insert(QLatin1String("ComponentInfo"), componentInfo);
     introspectionRootObject.insert(QLatin1String("ProcedureInfo"), remoteProcedureInfo);
     introspectionDoc.setObject(introspectionRootObject);
@@ -303,46 +296,6 @@ void CustomerDataSystem::writeCustomerdata()
     if(customerDataFile.commit() == false)
     {
         qCritical() << "Error writing customerdata json file:" << m_currentCustomerFileName;
-    }
-}
-
-void CustomerDataSystem::updateCustomerDataFileList()
-{
-    QDir fileList(MODMAN_CUSTOMERDATA_PATH);
-    fileList.setNameFilters({"*.json", "*/*.json"});
-    if(m_fileList != fileList.entryList())
-    {
-        m_fileList = fileList.entryList();
-
-        VeinComponent::ComponentData *fileListData = new VeinComponent::ComponentData();
-        fileListData->setEntityId(CustomerDataSystem::s_entityId);
-        fileListData->setCommand(VeinComponent::ComponentData::Command::CCMD_SET);
-        fileListData->setComponentName(CustomerDataSystem::s_fileListComponentName);
-        fileListData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
-        fileListData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
-        fileListData->setNewValue(m_fileList);
-        emit sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, fileListData));
-
-        if(m_fileList.contains(m_currentCustomerFileName) == false) //set sane default value
-        {
-            VeinComponent::ComponentData *selectedFileData = new VeinComponent::ComponentData();
-            selectedFileData->setEntityId(CustomerDataSystem::s_entityId);
-            selectedFileData->setCommand(VeinComponent::ComponentData::Command::CCMD_SET);
-            selectedFileData->setComponentName(CustomerDataSystem::s_fileSelectedComponentName);
-            selectedFileData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
-            selectedFileData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
-            if(m_fileList.isEmpty() == false)
-            {
-                selectedFileData->setNewValue(m_fileList.first());//default value
-                parseCustomerDataFile(m_fileList.first());
-            }
-            else
-            {
-                selectedFileData->setNewValue(QString());//unset value
-                parseCustomerDataFile(QString());
-            }
-            emit sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, selectedFileData));
-        }
     }
 }
 
@@ -382,7 +335,6 @@ bool CustomerDataSystem::parseCustomerDataFile(const QString &t_fileName)
             QSet<QString> componentNames = s_componentIntrospection.keys().toSet();
             //remove hostile entries that have no use in the file
             componentNames.remove(CustomerDataSystem::s_entityNameComponentName);
-            componentNames.remove(CustomerDataSystem::s_fileListComponentName);
             componentNames.remove(CustomerDataSystem::s_fileSelectedComponentName);
             QSet<QString> unknownData = entries; //copy from componentNames
 
@@ -424,7 +376,6 @@ bool CustomerDataSystem::parseCustomerDataFile(const QString &t_fileName)
     {
         QSet<QString> componentNames = s_componentIntrospection.keys().toSet();
         componentNames.remove(CustomerDataSystem::s_entityNameComponentName);
-        componentNames.remove(CustomerDataSystem::s_fileListComponentName);
         componentNames.remove(CustomerDataSystem::s_fileSelectedComponentName);
         for(QString compName : qAsConst(componentNames))//unset all components
         {
@@ -516,7 +467,6 @@ void CustomerDataSystem::customerDataAdd(const QUuid &t_callId, const QVariantMa
                     QList<QString> entries = CustomerDataSystem::s_componentIntrospection.keys();
                     //remove entries that have no use in the file
                     entries.removeAll(CustomerDataSystem::s_entityNameComponentName);
-                    entries.removeAll(CustomerDataSystem::s_fileListComponentName);
                     entries.removeAll(CustomerDataSystem::s_fileSelectedComponentName);
                     for(const QString &entryName : qAsConst(entries))
                     {
@@ -526,7 +476,6 @@ void CustomerDataSystem::customerDataAdd(const QUuid &t_callId, const QVariantMa
                     newCustomerDataFile.write(dataDocument.toJson(QJsonDocument::Indented));
                     newCustomerDataFile.close();
                     retVal.insert(VeinComponent::RemoteProcedureData::s_resultCodeString, RPCResultCodes::CDS_SUCCESS);
-                    updateCustomerDataFileList();
                 }
                 else
                 {
@@ -585,7 +534,6 @@ void CustomerDataSystem::customerDataRemove(const QUuid &t_callId, const QVarian
                 if(toDelete.remove() == true)
                 {
                     retVal.insert(VeinComponent::RemoteProcedureData::s_resultCodeString, RPCResultCodes::CDS_SUCCESS);
-                    updateCustomerDataFileList();
                 }
                 else
                 {
@@ -642,7 +590,8 @@ void CustomerDataSystem::customerDataSearch(const QUuid &t_callId, const QVarian
                 rpcFinished(t_callId, s_customerDataSearchProcedureName, retVal);
                 tmpWatcher->deleteLater();
             });
-            QFuture<QString> searchResultStream = QtConcurrent::filtered(qAsConst(m_fileList), [searchParamMap](const QString &t_fileName){
+            const QStringList entryList = QDir(MODMAN_CUSTOMERDATA_PATH, QStringLiteral("*.json")).entryList();
+            QFuture<QString> searchResultStream = QtConcurrent::filtered(entryList, [searchParamMap](const QString &t_fileName){
                 bool retVal = true;
                 QFile jsonFile(QString("%1%2").arg(MODMAN_CUSTOMERDATA_PATH).arg(t_fileName));
                 jsonFile.open(QFile::ReadOnly);
@@ -691,8 +640,6 @@ constexpr QLatin1String CustomerDataSystem::s_entityNameComponentName;
 constexpr QLatin1String CustomerDataSystem::s_entityNameComponentDescription;
 constexpr QLatin1String CustomerDataSystem::s_introspectionComponentName;
 constexpr QLatin1String CustomerDataSystem::s_introspectionComponentDescription;
-constexpr QLatin1String CustomerDataSystem::s_fileListComponentName;
-constexpr QLatin1String CustomerDataSystem::s_fileListComponentDescription;
 constexpr QLatin1String CustomerDataSystem::s_fileSelectedComponentName;
 constexpr QLatin1String CustomerDataSystem::s_fileSelectedComponentDescription;
 //rpc

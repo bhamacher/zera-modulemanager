@@ -55,10 +55,6 @@ signals:
 
 private:
     /**
-   * @brief Synchronizes the available customer data files with the component that lists them
-   */
-    void updateCustomerDataFileList();
-    /**
    * @brief Writes one value to a file, but delays the write in case of multiple changes that can occur in short frequence
    * (on the client the entire file is changed at once if the user presses the save button)
    * @param t_componentName
@@ -89,8 +85,6 @@ private:
     static constexpr int s_entityId = 200;
 
     VF_COMPONENT(introspection, "INF_ModuleInterface", "Introspection data")
-    VF_COMPONENT(fileList, "FileList", "Customer data files available")
-    QStringList m_fileList;
     VF_COMPONENT(fileSelected, "FileSelected", "Currently selected customer data file")
     QString m_currentCustomerFileName;
     QJsonDocument m_currentCustomerDocument;
@@ -145,10 +139,6 @@ private:
     //functions need an instance so no static variable
     const VeinEvent::RoutedRemoteProcedureAtlas m_remoteProcedures;
 
-    /**
-   * @brief Notifies if customer data files change outside of this program
-   */
-    QFileSystemWatcher m_fileWatcher;
     QTimer m_dataWriteDelay;
     /**
    * @brief call id, peer id
