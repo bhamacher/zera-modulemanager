@@ -58,11 +58,9 @@ ModuleManager::ModuleManager(const QStringList &t_sessionList, QObject *t_parent
     m_proxyInstance(Zera::Proxy::cProxy::getInstance()),
     m_moduleStartLock(false)
 {
-    QStringList sessionExtension("*.json");
-    QDir directory(MODMAN_SESSION_PATH);
-    QSet<QString> fileSet, expectedSet;
-    fileSet = directory.entryList(sessionExtension).toSet();
-    expectedSet = t_sessionList.toSet();
+    QStringList entryList = QDir(MODMAN_SESSION_PATH).entryList(QStringList({"*.json"}));
+    QSet<QString> fileSet(entryList.begin(), entryList.end());
+    QSet<QString> expectedSet(t_sessionList.begin(), t_sessionList.end());
     if(fileSet.contains(expectedSet))
     {
         m_sessionsAvailable = t_sessionList;
@@ -90,14 +88,12 @@ ModuleManager::~ModuleManager()
 bool ModuleManager::loadModules()
 {
     bool retVal = false;
-    QDir moduleDir;
+    QDir moduleDir(MODMAN_MODULE_PATH);
     qDebug() << "Loading modules";
     foreach (QObject *staticModule, QPluginLoader::staticInstances())
     {
         qDebug()<<staticModule;//doNothing();
     }
-
-    moduleDir = MODMAN_MODULE_PATH;
 
     foreach (QString fileName, moduleDir.entryList(QDir::Files))
     {
@@ -120,7 +116,7 @@ bool ModuleManager::loadModules()
 void ModuleManager::loadScripts(VeinScript::ScriptSystem *t_scriptSystem)
 {
     //load builtin scripts
-    const QDir virtualFiles = QDir(":/scripts");
+    const QDir virtualFiles(":/scripts");
     const QStringList scriptList = virtualFiles.entryList();
     for(const QString &scriptFilePath : scriptList)
     {

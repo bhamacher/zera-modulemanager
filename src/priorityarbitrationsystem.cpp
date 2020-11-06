@@ -231,7 +231,8 @@ void PriorityArbitrationSystem::arbitrationAdd(const QUuid &t_callId, const QVar
     QSet<QString> requiredParamKeys = {"uid", "priority"};
     QVariantMap retVal = t_parameters;//copy parameters and other data, the client could have attached additional data
     const QVariantMap parameters = t_parameters.value(VeinComponent::RemoteProcedureData::s_parameterString).toMap();
-    requiredParamKeys.subtract(parameters.keys().toSet());
+    QStringList parameterNameList(parameters.keys());
+    requiredParamKeys.subtract(QSet<QString>(parameterNameList.begin(), parameterNameList.end()));
 
     if(requiredParamKeys.isEmpty())
     {
@@ -264,7 +265,7 @@ void PriorityArbitrationSystem::arbitrationAdd(const QUuid &t_callId, const QVar
     else
     {
         retVal.insert(VeinComponent::RemoteProcedureData::s_resultCodeString, RPCResultCodes::PAS_EINVAL);
-        retVal.insert(VeinComponent::RemoteProcedureData::s_errorMessageString, QString("Missing required parameters: [%1]").arg(requiredParamKeys.toList().join(',')));
+        retVal.insert(VeinComponent::RemoteProcedureData::s_errorMessageString, QString("Missing required parameters: [%1]").arg(requiredParamKeys.values().join(',')));
     }
     rpcFinished(t_callId, PriorityArbitrationSystem::s_arbitrationAddProcedureName, retVal);
 }
@@ -274,7 +275,8 @@ void PriorityArbitrationSystem::arbitrationRemove(const QUuid &t_callId, const Q
     QSet<QString> requiredParamKeys = {"uid"};
     QVariantMap retVal = t_parameters;//copy parameters and other data, the client could attach tracking
     const QVariantMap parameters = t_parameters.value(VeinComponent::RemoteProcedureData::s_parameterString).toMap();
-    requiredParamKeys.subtract(parameters.keys().toSet());
+    QStringList parameterNameList(parameters.keys());
+    requiredParamKeys.subtract(QSet<QString>(parameterNameList.begin(), parameterNameList.end()));
 
     const QUuid peerId = parameters.value("uid").toUuid();
     const int tmpKey = m_priorityArbitrationMap.key(peerId, -1);
@@ -304,7 +306,7 @@ void PriorityArbitrationSystem::arbitrationRemove(const QUuid &t_callId, const Q
     else
     {
         retVal.insert(VeinComponent::RemoteProcedureData::s_resultCodeString, RPCResultCodes::PAS_EINVAL);
-        retVal.insert(VeinComponent::RemoteProcedureData::s_errorMessageString, QString("Missing required parameters: [%1]").arg(requiredParamKeys.toList().join(',')));
+        retVal.insert(VeinComponent::RemoteProcedureData::s_errorMessageString, QString("Missing required parameters: [%1]").arg(requiredParamKeys.values().join(',')));
     }
     rpcFinished(t_callId, PriorityArbitrationSystem::s_arbitrationAddProcedureName, retVal);
 }

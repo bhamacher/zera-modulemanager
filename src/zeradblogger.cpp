@@ -161,7 +161,8 @@ class ZeraDBLoggerPrivate
     {
         QSet<QString> requiredParamKeys = { "searchPath", "searchPatternList" };
         const QVariantMap searchParameters = t_rpcParameters.value(VeinComponent::RemoteProcedureData::s_parameterString).toMap();
-        requiredParamKeys.subtract(searchParameters.keys().toSet());
+        QStringList paramNameList(searchParameters.keys());
+        requiredParamKeys.subtract(QSet<QString>(paramNameList.begin(), paramNameList.end()));
 
         if(requiredParamKeys.isEmpty())
         {
@@ -218,7 +219,7 @@ class ZeraDBLoggerPrivate
         {
             QVariantMap retVal = t_rpcParameters; //copy parameters and other data, the client could attach tracking
             retVal.insert(VeinComponent::RemoteProcedureData::s_resultCodeString, RPCResultCodes::RPC_EINVAL);
-            retVal.insert(VeinComponent::RemoteProcedureData::s_errorMessageString, QString("Missing required parameters: [%1]").arg(requiredParamKeys.toList().join(',')));
+            retVal.insert(VeinComponent::RemoteProcedureData::s_errorMessageString, QString("Missing required parameters: [%1]").arg(requiredParamKeys.values().join(',')));
             m_qPtr->rpcFinished(t_callId, s_findDBFileProcedureName, retVal);
         }
     }

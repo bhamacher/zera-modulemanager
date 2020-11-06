@@ -304,8 +304,8 @@ void CustomerDataSystem::updateDataFile(QString t_componentName, QString t_newVa
     if(m_currentCustomerFileName.isEmpty() == false)
     {
         QJsonObject tmpObject = m_currentCustomerDocument.object();
-        const QStringList keys = tmpObject.keys();
-        if(keys.contains(t_componentName))
+        const QStringList documentKeyList = tmpObject.keys();
+        if(documentKeyList.contains(t_componentName))
         {
             tmpObject.insert(t_componentName, t_newValue);
             m_currentCustomerDocument.setObject(tmpObject);
@@ -331,8 +331,10 @@ bool CustomerDataSystem::parseCustomerDataFile(const QString &t_fileName)
         if(m_currentCustomerDocument.isObject())
         {
             const QJsonObject tmpObject = m_currentCustomerDocument.object();
-            QSet<QString> entries = tmpObject.keys().toSet();
-            QSet<QString> componentNames = s_componentIntrospection.keys().toSet();
+            QStringList documentKeyList(tmpObject.keys());
+            QSet<QString> entries(documentKeyList.begin(), documentKeyList.end());
+            QStringList componentNameList = s_componentIntrospection.keys();
+            QSet<QString> componentNames(componentNameList.begin(), componentNameList.end());
             //remove hostile entries that have no use in the file
             componentNames.remove(CustomerDataSystem::s_entityNameComponentName);
             componentNames.remove(CustomerDataSystem::s_fileSelectedComponentName);
@@ -374,7 +376,8 @@ bool CustomerDataSystem::parseCustomerDataFile(const QString &t_fileName)
     }
     else
     {
-        QSet<QString> componentNames = s_componentIntrospection.keys().toSet();
+        QStringList componentNameList(s_componentIntrospection.keys());
+        QSet<QString> componentNames(componentNameList.begin(), componentNameList.end());
         componentNames.remove(CustomerDataSystem::s_entityNameComponentName);
         componentNames.remove(CustomerDataSystem::s_fileSelectedComponentName);
         for(QString compName : qAsConst(componentNames))//unset all components
@@ -430,7 +433,8 @@ void CustomerDataSystem::customerDataAdd(const QUuid &t_callId, const QVariantMa
     QSet<QString> requiredParamKeys = {"fileName"};
     const QVariantMap parameters = t_parameters.value(VeinComponent::RemoteProcedureData::s_parameterString).toMap();
     QVariantMap retVal = t_parameters;//copy parameters and other data, the client could attach tracking
-    requiredParamKeys.subtract(parameters.keys().toSet());
+    QStringList parameterNameList(parameters.keys());
+    requiredParamKeys.subtract(QSet<QString>(parameterNameList.begin(), parameterNameList.end()));
 
     if(requiredParamKeys.isEmpty())
     {
@@ -493,7 +497,7 @@ void CustomerDataSystem::customerDataAdd(const QUuid &t_callId, const QVariantMa
     else
     {
         retVal.insert(VeinComponent::RemoteProcedureData::s_resultCodeString, RPCResultCodes::CDS_EINVAL);
-        retVal.insert(VeinComponent::RemoteProcedureData::s_errorMessageString, QString("Missing required parameters: [%1]").arg(requiredParamKeys.toList().join(',')));
+        retVal.insert(VeinComponent::RemoteProcedureData::s_errorMessageString, QString("Missing required parameters: [%1]").arg(requiredParamKeys.values().join(',')));
     }
 
     rpcFinished(t_callId, s_customerDataAddProcedureName, retVal);
@@ -504,7 +508,8 @@ void CustomerDataSystem::customerDataRemove(const QUuid &t_callId, const QVarian
     QSet<QString> requiredParamKeys = {"fileName"};
     const QVariantMap parameters = t_parameters.value(VeinComponent::RemoteProcedureData::s_parameterString).toMap();
     QVariantMap retVal = parameters;//copy parameters and other data (e.g. client request tracking)
-    requiredParamKeys.subtract(parameters.keys().toSet());
+    QStringList parameterNameList(parameters.keys());
+    requiredParamKeys.subtract(QSet<QString>(parameterNameList.begin(), parameterNameList.end()));
 
     if(requiredParamKeys.isEmpty())
     {
@@ -551,7 +556,7 @@ void CustomerDataSystem::customerDataRemove(const QUuid &t_callId, const QVarian
     else
     {
         retVal.insert(VeinComponent::RemoteProcedureData::s_resultCodeString, RPCResultCodes::CDS_EINVAL);
-        retVal.insert(VeinComponent::RemoteProcedureData::s_errorMessageString, QString("Missing required parameters: [%1]").arg(requiredParamKeys.toList().join(',')));
+        retVal.insert(VeinComponent::RemoteProcedureData::s_errorMessageString, QString("Missing required parameters: [%1]").arg(requiredParamKeys.values().join(',')));
     }
 
     rpcFinished(t_callId, s_customerDataRemoveProcedureName, retVal);
@@ -561,7 +566,8 @@ void CustomerDataSystem::customerDataSearch(const QUuid &t_callId, const QVarian
 {
     QSet<QString> requiredParamKeys = {"searchMap"};
     const QVariantMap parameters = t_parameters.value(VeinComponent::RemoteProcedureData::s_parameterString).toMap();
-    requiredParamKeys.subtract(parameters.keys().toSet());
+    QStringList parameterNameList(parameters.keys());
+    requiredParamKeys.subtract(QSet<QString>(parameterNameList.begin(), parameterNameList.end()));
 
     if(requiredParamKeys.isEmpty())
     {
@@ -629,7 +635,7 @@ void CustomerDataSystem::customerDataSearch(const QUuid &t_callId, const QVarian
     {
         QVariantMap retVal = t_parameters;//writable copy
         retVal.insert(VeinComponent::RemoteProcedureData::s_resultCodeString, RPCResultCodes::CDS_EINVAL);
-        retVal.insert(VeinComponent::RemoteProcedureData::s_errorMessageString, QString("Missing required parameters: [%1]").arg(requiredParamKeys.toList().join(',')));
+        retVal.insert(VeinComponent::RemoteProcedureData::s_errorMessageString, QString("Missing required parameters: [%1]").arg(requiredParamKeys.values().join(',')));
         rpcFinished(t_callId, s_customerDataSearchProcedureName, retVal);
     }
 }
