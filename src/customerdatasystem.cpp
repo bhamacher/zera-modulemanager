@@ -125,28 +125,32 @@ bool CustomerDataSystem::processEvent(QEvent *t_event)
                         }
                         //prevent cases where different files exist with the same uppercase and lowercase name, as windows treats them as the same file (if they ever get copied to a windows host)
                         const QString fileName = cData->newValue().toString().toLower();
-                        bool jsonExists = !fileName.isEmpty() && QFile(QString("%1%2").arg(MODMAN_CUSTOMERDATA_PATH).arg(fileName)).exists();
-                        if(jsonExists)
-                        {
-                            if(parseCustomerDataFile(fileName) == true)
+                        if(!fileName.isEmpty()){
+                            bool jsonExists = QFile(QString("%1%2").arg(MODMAN_CUSTOMERDATA_PATH).arg(fileName)).exists();
+                            if(jsonExists)
                             {
-                                validated = true;
+                                if(parseCustomerDataFile(fileName) == true)
+                                {
+                                    validated = true;
+                                }
                             }
-                        }
-                        else //unknown or empty file
-                        {
-                            qWarning() << "Invalid customerdata file selected:" << fileName;
-                            retVal = true;
-                            VeinComponent::ErrorData *eData = new VeinComponent::ErrorData();
-                            eData->setEntityId(CustomerDataSystem::s_entityId);
-                            eData->setErrorDescription(QString("Customer data file does not exist: %1").arg(fileName));
-                            eData->setOriginalData(cData);
-                            eData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
-                            eData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
-                            VeinEvent::CommandEvent *errorEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, eData);
-                            errorEvent->setPeerId(cEvent->peerId());
-                            cEvent->accept();
-                            emit sigSendEvent(errorEvent);
+                            else //unknown or empty file
+                            {
+                                qWarning() << "Invalid customerdata file selected:" << fileName;
+                                retVal = true;
+                                VeinComponent::ErrorData *eData = new VeinComponent::ErrorData();
+                                eData->setEntityId(CustomerDataSystem::s_entityId);
+                                eData->setErrorDescription(QString("Customer data file does not exist: %1").arg(fileName));
+                                eData->setOriginalData(cData);
+                                eData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
+                                eData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
+                                VeinEvent::CommandEvent *errorEvent = new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, eData);
+                                errorEvent->setPeerId(cEvent->peerId());
+                                cEvent->accept();
+                                emit sigSendEvent(errorEvent);
+                            }
+                        }else{
+
                         }
                     }
                     else if(CustomerDataSystem::s_componentIntrospection.contains(cData->componentName()) //validate all data components, except the write protected
