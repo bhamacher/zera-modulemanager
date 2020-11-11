@@ -55,6 +55,12 @@ signals:
 
 private:
     /**
+     * @brief unloadFile
+     *
+     * sets all components to initial value
+     */
+    void unloadFile();
+    /**
    * @brief Writes one value to a file, but delays the write in case of multiple changes that can occur in short frequence
    * (on the client the entire file is changed at once if the user presses the save button)
    * @param t_componentName

@@ -150,7 +150,7 @@ bool CustomerDataSystem::processEvent(QEvent *t_event)
                                 emit sigSendEvent(errorEvent);
                             }
                         }else{
-
+                                unloadFile();
                         }
                     }
                     else if(CustomerDataSystem::s_componentIntrospection.contains(cData->componentName()) //validate all data components, except the write protected
@@ -289,6 +289,24 @@ void CustomerDataSystem::initializeEntity()
     initData->setNewValue(introspectionDoc.toJson());
     emit sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, initData));
     initData = nullptr;
+}
+
+void CustomerDataSystem::unloadFile(){
+    VeinComponent::ComponentData *initData=nullptr;
+    const QList<QString> tmpComponentList = CustomerDataSystem::s_componentIntrospection.keys();
+    for(const QString &tmpComponentName : qAsConst(tmpComponentList))
+    {
+        if(tmpComponentName != CustomerDataSystem::s_entityNameComponentName){
+            initData = new VeinComponent::ComponentData();
+            initData->setEntityId(CustomerDataSystem::s_entityId);
+            initData->setCommand(VeinComponent::ComponentData::Command::CCMD_SET);
+            initData->setComponentName(tmpComponentName);
+            initData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
+            initData->setEventTarget(VeinEvent::EventData::EventTarget::ET_ALL);
+            initData->setNewValue(QString(""));
+            emit sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::NOTIFICATION, initData));
+        }
+    }
 }
 
 void CustomerDataSystem::writeCustomerdata()
