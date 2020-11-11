@@ -134,7 +134,7 @@ class ZeraDBLoggerPrivate
     void listStorages(const QUuid &t_callId, const QVariantMap &t_parameters)
     {
         QVariantMap retVal = t_parameters;
-        const QFileInfo defaultPath("/home/operator/logger");
+        const QFileInfo defaultPath(MODMAN_LOGGER_LOCAL_PATH);
 
         const auto storages = QStorageInfo::mountedVolumes();
         QStringList storageList;
