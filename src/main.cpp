@@ -247,6 +247,10 @@ int main(int argc, char *argv[])
                             QStringList({"*.json", "*/*.json"}),
                             QDir::NoDotAndDotDot | QDir::Files,
                             false);
+                filesModule->addDefaultPathComponent(
+                            QStringLiteral(MODMAN_LOGGER_LOCAL_PATH),
+                            QStringLiteral("LoggerLocalPath"),
+                            true);
 
                 // exports entity
                 evHandler->addSubsystem(exportModule->getVeinEntity());
