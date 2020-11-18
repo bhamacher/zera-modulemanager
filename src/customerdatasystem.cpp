@@ -507,6 +507,10 @@ void CustomerDataSystem::customerDataRemove(const QUuid &t_callId, const QVarian
             if(fileName.isEmpty() == false && toDelete.exists()) {
                 if(toDelete.remove() == true) {
                     retVal.insert(VeinComponent::RemoteProcedureData::s_resultCodeString, RPCResultCodes::CDS_SUCCESS);
+                    if(fileName == m_currentCustomerFileName) { // was it FileSelected?
+                        m_currentCustomerFileName.clear();
+                        unloadFile();
+                    }
                 }
                 else {
                     retVal.insert(VeinComponent::RemoteProcedureData::s_resultCodeString, toDelete.error());//maps to values >= ResultCodes::CDS_QFILEDEVICE_FILEERROR_BEGIN
