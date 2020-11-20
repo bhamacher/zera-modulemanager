@@ -235,21 +235,18 @@ int main(int argc, char *argv[])
                 // files entity
                 evHandler->addSubsystem(filesModule->getVeinEntity());
                 filesModule->initOnce();
-                filesModule->addDirToWatch(
-                            QStringLiteral(MODMAN_AUTOMOUNT_PATH),
+                filesModule->addMountToWatch(
                             QStringLiteral("AutoMountedPaths"),
-                            QStringList(),
-                            QDir::NoDotAndDotDot | QDir::Dirs,
-                            true);
+                            QStringLiteral(MODMAN_AUTOMOUNT_PATH));
                 filesModule->addDirToWatch(
-                            QStringLiteral(MODMAN_CUSTOMERDATA_PATH),
                             QStringLiteral("AvailableCustomerData"),
+                            QStringLiteral(MODMAN_CUSTOMERDATA_PATH),
                             QStringList({"*.json", "*/*.json"}),
                             QDir::NoDotAndDotDot | QDir::Files,
                             false);
                 filesModule->addDefaultPathComponent(
-                            QStringLiteral(MODMAN_LOGGER_LOCAL_PATH),
                             QStringLiteral("LoggerLocalPath"),
+                            QStringLiteral(MODMAN_LOGGER_LOCAL_PATH),
                             true);
 
                 // exports entity
