@@ -43,12 +43,12 @@ option(MM_NO_CONFIG_INSTALL "Do not install configuration/session files - for de
 
 set(SET_MODMAN_SESSION_PATH "${CMAKE_INSTALL_SYSCONFDIR}/zera/modules/sessions/")
 set(SET_MODMAN_CONFIG_PATH  "${CMAKE_INSTALL_SYSCONFDIR}/zera/modules/")
-set(SET_MODMAN_CUSTOMERDATA_PATH "/home/operator/customerdata/" CACHE STRING "CUSTOMDATA PATH")
 set(SET_MODMAN_MODULE_PATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/zera-modules/")
 set(SET_MODMAN_CONTENTSET_PATH "${CMAKE_INSTALL_SYSCONFDIR}/zera/configs/")
-set(SET_MODMAN_CUST_CONTENTSET_PATH "/home/operator/logger-contentsets/")
-set(SET_MODMAN_AUTOMOUNT_PATH "/media/")
-set(SET_MODMAN_LOGGER_LOCAL_PATH "/home/operator/logger")
+set(SET_MODMAN_CUSTOMERDATA_PATH "/home/operator/customerdata/" CACHE STRING "Customer data path")
+set(SET_MODMAN_CUST_CONTENTSET_PATH "/home/operator/logger-contentsets/" CACHE STRING "Logger contentset path")
+set(SET_MODMAN_AUTOMOUNT_PATH "/media/" CACHE STRING "Automount path")
+set(SET_MODMAN_LOGGER_LOCAL_PATH "/home/operator/logger" CACHE STRING "Logger local storage path")
 
 add_definitions(-DMODMAN_SESSION_PATH="${SET_MODMAN_SESSION_PATH}")
 add_definitions(-DMODMAN_CONFIG_FILE="${SET_MODMAN_CONFIG_PATH}/modulemanager_config.json")
