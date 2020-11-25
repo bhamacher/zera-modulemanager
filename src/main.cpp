@@ -248,6 +248,10 @@ int main(int argc, char *argv[])
                             QStringLiteral("LoggerLocalPath"),
                             QStringLiteral(MODMAN_LOGGER_LOCAL_PATH),
                             true);
+                filesModule->addDefaultPathComponent(
+                            QStringLiteral("CustomerDataLocalPath"),
+                            QStringLiteral(MODMAN_CUSTOMERDATA_PATH),
+                            true);
 
                 // exports entity
                 evHandler->addSubsystem(exportModule->getVeinEntity());
