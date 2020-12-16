@@ -50,29 +50,6 @@ class ZeraDBLoggerPrivate
         }
     }
 
-    /**
-   * @brief
-   * @param t_dbFilePath
-   * @return
-   * @note policy was to not store the database on the OS partition due to sdcard / flash wear, but removable storage filesystem formats do not allow group permission based access (FAT32/NTFS)
-   */
-    bool checkStorageLocation(const QString &t_dbFilePath) const
-    {
-        bool retVal = false;
-        const auto storages = QStorageInfo::mountedVolumes();
-        for(const auto &storDevice : storages)
-        {
-            if(storDevice.fileSystemType().contains("tmpfs") == false
-                    //&& storDevice.isRoot() == false
-                    && t_dbFilePath.contains(storDevice.rootPath()))
-            {
-                retVal = true;
-                break;
-            }
-        }
-
-        return retVal;
-    }
 
     bool processCommandEvent(VeinEvent::CommandEvent *t_cEvent)
     {
@@ -261,16 +238,6 @@ ZeraDBLogger::~ZeraDBLogger()
 {
     delete m_dPtr->m_validationDB;
     delete m_dPtr;
-}
-
-bool ZeraDBLogger::openDatabase(const QString &t_filePath)
-{
-    bool retVal = false;
-    if(m_dPtr->checkStorageLocation(t_filePath))
-    {
-        retVal = VeinLogger::DatabaseLogger::openDatabase(t_filePath);
-    }
-    return retVal;
 }
 
 bool ZeraDBLogger::processEvent(QEvent *t_event)

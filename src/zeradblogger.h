@@ -27,12 +27,6 @@ signals:
 
     // DatabaseLogger interface
 public slots:
-    /**
-   * @brief this only calls ZeraDBLoggerPrivate::checkStorageLocation() and then VeinLogger::DatabaseLogger::openDatabase()
-   * @param t_filePath
-   * @return
-   */
-    bool openDatabase(const QString &t_filePath) override;
     bool processEvent(QEvent *t_event) override;
 
 private slots:
