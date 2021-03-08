@@ -38,7 +38,6 @@
 
 /**
  * @brief main
- * @todo remove  VeinLogger::QmlLogger::setContentSetPaths, when handling is moved to vl_databaselogger.
  */
 int main(int argc, char *argv[])
 {
@@ -68,7 +67,6 @@ int main(int argc, char *argv[])
     // setup vein modules
     VeinManager *mmController = new VeinManager(&a);
 
-    VeinScript::ScriptSystem *scriptSystem = new VeinScript::ScriptSystem(&a);
 
     VeinLogger::DatabaseLogger *dataLoggerSystem = new VeinLogger::DatabaseLogger(new VeinLogger::DataSource(static_cast<VeinStorage::VeinHash*>(mmController->getStorageSystem())),sqliteFactory); //takes ownership of DataSource
     dataLoggerSystem->setContentSetPath(QString(MODMAN_CONTENTSET_PATH).append("ZeraContext.json"),QString(MODMAN_CONTENTSET_PATH).append("CustomerContext.json"));
@@ -83,9 +81,7 @@ int main(int argc, char *argv[])
     modManager->setLicenseSystem(licSys);
 
     QList<VeinEvent::EventSystem*> subSystems;
-    //do not reorder
     subSystems.append(mmController);
-    subSystems.append(scriptSystem);
     subSystems.append(modManager->entity());
     evHandler->setSubsystems(subSystems);
     modManager->loadLicensedModule("CustomerData", customerDataSystem->entity());
@@ -95,7 +91,6 @@ int main(int argc, char *argv[])
 
     //conditional systems
     QObject::connect(filesModule->getVeinEntity(),&VeinEvent::EventSystem::sigAttached,[=](){
-        filesModule->initOnce();
         filesModule->addMountToWatch(
                     QStringLiteral("AutoMountedPaths"),
                     QStringLiteral(MODMAN_AUTOMOUNT_PATH));
@@ -115,25 +110,15 @@ int main(int argc, char *argv[])
                     true);
     });
 
-    bool modulesFound;
 
     qRegisterMetaTypeStreamOperators<QList<int> >("QList<int>");
+    qRegisterMetaTypeStreamOperators<QSet<int> >("QSet<int>");
     qRegisterMetaTypeStreamOperators<QList<float> >("QList<float>");
     qRegisterMetaTypeStreamOperators<QList<double> >("QList<double>");
     qRegisterMetaTypeStreamOperators<QList<QString> >("QList<QString>");
     qRegisterMetaTypeStreamOperators<QVector<QString> >("QVector<QString>");
     qRegisterMetaTypeStreamOperators<QList<QVariantMap> >("QList<QVariantMap>");
-
-
-    if(!modulesFound)
-    {
-        qCritical() << "[Zera-Module-Manager] No modules found";
-        a.quit();
-    }
-    else
-    {
-        mmController->startServer(12000);
-    }
+    mmController->startServer(12000);
 
     return a.exec();
 }
