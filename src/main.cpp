@@ -82,28 +82,6 @@ int main(int argc, char *argv[])
     LicenseSystem* licSys = new LicenseSystem({QUrl("file:///home/operator/license-keys/")},QUrl("file:///opt/zera/conf/serialnumber"));
     modManager->setLicenseSystem(licSys);
 
-/*
-    auto errorReportFunction = [dataLoggerSystem](const QString &t_error){
-        QJsonObject jsonErrorObj;
-
-        jsonErrorObj.insert("ModuleName", "DataLogger");
-        jsonErrorObj.insert("Time", QDateTime::currentDateTime().toString("yyyy/MM/dd HH:mm:ss"));
-        jsonErrorObj.insert("Error", t_error);
-
-        VeinComponent::ComponentData *cData = new VeinComponent::ComponentData();
-        cData->setEntityId(0);
-        cData->setEventOrigin(VeinEvent::EventData::EventOrigin::EO_LOCAL);
-        cData->setEventTarget(VeinEvent::EventData::EventTarget::ET_LOCAL);
-        cData->setCommand(VeinComponent::ComponentData::Command::CCMD_SET);
-        cData->setComponentName(ModuleManagerController::s_notificationMessagesComponentName);
-
-        cData->setNewValue(jsonErrorObj);
-
-        emit dataLoggerSystem->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::TRANSACTION, cData));
-    };
-    QObject::connect(dataLoggerSystem, &VeinLogger::DatabaseLogger::sigDatabaseError, errorReportFunction);
-*/
-
     QList<VeinEvent::EventSystem*> subSystems;
     //do not reorder
     subSystems.append(mmController);
