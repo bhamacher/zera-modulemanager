@@ -40,6 +40,7 @@ find_Package(zeraproxy REQUIRED)
 find_Package(VfCpp REQUIRED)
 find_package(VfVeinmanager REQUIRED)
 find_package(VfSession REQUIRED)
+find_package(VfCustomerdata REQUIRED)
 
 option(MM_NO_CONFIG_INSTALL "Do not install configuration/session files - for debugging on PC" OFF)
 
@@ -125,6 +126,7 @@ target_link_libraries(zera-modulemanager
     ZeraClasses::zeraproxy
     VeinMeta::VfVeinmanager
     VeinMeta::VfSession
+    VeinMeta::VfCustomerdata
 )	
 
 

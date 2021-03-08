@@ -1,8 +1,4 @@
 #include <moduleeventhandler.h>
-
-#include "customerdatasystem.h"
-
-
 #include <QCoreApplication>
 
 #include <ve_commandevent.h>
@@ -38,7 +34,7 @@
 #include <veinmanager.h>
 #include <modulemanager.h>
 #include <licensesystem.h>
-
+#include <customerdatasystem.h>
 
 /**
  * @brief main
@@ -77,7 +73,7 @@ int main(int argc, char *argv[])
     VeinLogger::DatabaseLogger *dataLoggerSystem = new VeinLogger::DatabaseLogger(new VeinLogger::DataSource(static_cast<VeinStorage::VeinHash*>(mmController->getStorageSystem())),sqliteFactory); //takes ownership of DataSource
     dataLoggerSystem->setContentSetPath(QString(MODMAN_CONTENTSET_PATH).append("ZeraContext.json"),QString(MODMAN_CONTENTSET_PATH).append("CustomerContext.json"));
 
-    CustomerDataSystem *customerDataSystem = nullptr;
+    VfCustomerdata::CustomerDataSystem *customerDataSystem = new VfCustomerdata::CustomerDataSystem("/home/operator/customerdata/");
 
     vfExport::vf_export *exportModule=new vfExport::vf_export();
 
@@ -114,18 +110,12 @@ int main(int argc, char *argv[])
     subSystems.append(scriptSystem);
     subSystems.append(modManager->entity());
     evHandler->setSubsystems(subSystems);
-    modManager->loadLicensedModule("CustomerData", customerDataSystem);
+    modManager->loadLicensedModule("CustomerData", customerDataSystem->entity());
     modManager->loadLicensedModule("_LoggingSystem", exportModule->getVeinEntity());
     modManager->loadLicensedModule("_LoggingSystem", dataLoggerSystem);
 
 
     //conditional systems
-
-        QObject::connect(customerDataSystem, &CustomerDataSystem::sigAttached, [&]() {
-                customerDataSystem->initializeEntity();
-        });
-
-
     QObject::connect(filesModule->getVeinEntity(),&VeinEvent::EventSystem::sigAttached,[=](){
         filesModule->initOnce();
         filesModule->addMountToWatch(
