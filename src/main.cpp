@@ -39,6 +39,8 @@
 #include <QRegExp>
 
 
+#include <veinmanager.h>
+
 namespace ZeraModulemanager
 {
 QJsonDocument getDefaultConfig()
@@ -135,14 +137,10 @@ int main(int argc, char *argv[])
 #endif
 
     // setup vein modules
-    ModuleManagerController *mmController = new ModuleManagerController(&a);
-    VeinNet::IntrospectionSystem *introspectionSystem = new VeinNet::IntrospectionSystem(&a);
-    VeinStorage::VeinHash *storSystem = new VeinStorage::VeinHash(&a);
-    VeinNet::NetworkSystem *netSystem = new VeinNet::NetworkSystem(&a);
-    VeinNet::TcpSystem *tcpSystem = new VeinNet::TcpSystem(&a);
+    VeinManager *mmController = new VeinManager(&a);
     VeinScript::ScriptSystem *scriptSystem = new VeinScript::ScriptSystem(&a);
     VeinApiQml::VeinQml *qmlSystem = new VeinApiQml::VeinQml(&a);
-    ZeraDBLogger *dataLoggerSystem = new ZeraDBLogger(new VeinLogger::DataSource(storSystem, &a), sqliteFactory, &a); //takes ownership of DataSource
+    ZeraDBLogger *dataLoggerSystem = new ZeraDBLogger(new VeinLogger::DataSource(static_cast<VeinStorage::VeinHash*>(mmController->getStorageSystem()), &a), sqliteFactory, &a); //takes ownership of DataSource
     CustomerDataSystem *customerDataSystem = nullptr;
     LicenseSystem *licenseSystem = new LicenseSystem({QUrl("file:///home/operator/license-keys")}, &a);
     vfExport::vf_export *exportModule=new vfExport::vf_export();
@@ -167,7 +165,6 @@ int main(int argc, char *argv[])
         }
     });
 
-    netSystem->setOperationMode(VeinNet::NetworkSystem::VNOM_SUBSCRIPTION);
     auto errorReportFunction = [dataLoggerSystem](const QString &t_error){
         QJsonObject jsonErrorObj;
 
@@ -192,10 +189,6 @@ int main(int argc, char *argv[])
     QList<VeinEvent::EventSystem*> subSystems;
     //do not reorder
     subSystems.append(mmController);
-    subSystems.append(introspectionSystem);
-    subSystems.append(storSystem);
-    subSystems.append(netSystem);
-    subSystems.append(tcpSystem);
     subSystems.append(qmlSystem);
     subSystems.append(scriptSystem);
     subSystems.append(licenseSystem);
@@ -271,10 +264,8 @@ int main(int argc, char *argv[])
         }
     });
 
-    modMan->setStorage(storSystem);
     modMan->setLicenseSystem(licenseSystem);
     modMan->setEventHandler(evHandler);
-    mmController->setStorage(storSystem);
 
     QObject::connect(sessionLoader, &JsonSessionLoader::sigLoadModule, modMan, &ZeraModules::ModuleManager::startModule);
     QObject::connect(modMan, &ZeraModules::ModuleManager::sigSessionSwitched, sessionLoader, &JsonSessionLoader::loadSession);
@@ -305,11 +296,8 @@ int main(int argc, char *argv[])
     {
         modMan->changeSessionFile(defaultSessionFile);
         mmController->initOnce();
-        tcpSystem->startServer(12000);
+        mmController->startServer(12000);
     }
-    QObject::connect(modMan, &ZeraModules::ModuleManager::sigModulesLoaded, mmController, &ModuleManagerController::initializeEntity);
-    QObject::connect(mmController, &ModuleManagerController::sigChangeSession, modMan, &ZeraModules::ModuleManager::changeSessionFile);
-    QObject::connect(mmController, &ModuleManagerController::sigModulesPausedChanged, modMan, &ZeraModules::ModuleManager::setModulesPaused);
 
     return a.exec();
 }
