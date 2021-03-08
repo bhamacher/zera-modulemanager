@@ -1,15 +1,7 @@
 #include <moduleeventhandler.h>
 #include <QCoreApplication>
 
-#include <ve_commandevent.h>
-#include <vcmp_componentdata.h>
-#include <vn_networksystem.h>
-#include <vn_tcpsystem.h>
-#include <vn_introspectionsystem.h>
 #include <vs_veinhash.h>
-#include <vsc_scriptsystem.h>
-#include <veinqml.h>
-#include <veinqmlwrapper.h>
 
 #include <vl_databaselogger.h>
 #include <vl_datasource.h>
@@ -47,8 +39,6 @@ int main(int argc, char *argv[])
                                                   QString("%1.debug=false").arg(VEIN_NET_VERBOSE().categoryName()) <<
                                                   QString("%1.debug=false").arg(VEIN_NET_INTRO_VERBOSE().categoryName()) << //< Introspection logging is still enabled
                                                   QString("%1.debug=false").arg(VEIN_NET_TCP_VERBOSE().categoryName()) <<
-                                                  QString("%1.debug=false").arg(VEIN_API_QML().categoryName()) <<
-                                                  QString("%1.debug=false").arg(VEIN_API_QML_VERBOSE().categoryName()) <<
                                                   //                                                QString("%1.debug=false").arg(VEIN_LOGGER().categoryName()) <<
                                                   QString("%1.debug=false").arg(VEIN_STORAGE_HASH_VERBOSE().categoryName());
     QLoggingCategory::setFilterRules(loggingFilters.join("\n"));
