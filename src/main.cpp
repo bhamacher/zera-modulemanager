@@ -4,7 +4,6 @@
 #include "moduleeventhandler.h"
 #include "customerdatasystem.h"
 #include "priorityarbitrationsystem.h"
-#include "zeradblogger.h"
 #include "licensesystem.h"
 
 #include <QCoreApplication>
@@ -21,7 +20,6 @@
 
 #include <vl_databaselogger.h>
 #include <vl_datasource.h>
-#include <vl_qmllogger.h>
 #include <vl_sqlitedb.h>
 #include <vf_export.h>
 #include <vf_files.h>
@@ -139,31 +137,18 @@ int main(int argc, char *argv[])
     // setup vein modules
     VeinManager *mmController = new VeinManager(&a);
     VeinScript::ScriptSystem *scriptSystem = new VeinScript::ScriptSystem(&a);
-    VeinApiQml::VeinQml *qmlSystem = new VeinApiQml::VeinQml(&a);
-    ZeraDBLogger *dataLoggerSystem = new ZeraDBLogger(new VeinLogger::DataSource(static_cast<VeinStorage::VeinHash*>(mmController->getStorageSystem()), &a), sqliteFactory, &a); //takes ownership of DataSource
+    VeinLogger::DatabaseLogger *dataLoggerSystem = new VeinLogger::DatabaseLogger(new VeinLogger::DataSource(static_cast<VeinStorage::VeinHash*>(mmController->getStorageSystem())),sqliteFactory); //takes ownership of DataSource
+    dataLoggerSystem->setContentSetPath(QString(MODMAN_CONTENTSET_PATH).append("ZeraContext.json"),QString(MODMAN_CONTENTSET_PATH).append("CustomerContext.json"));
     CustomerDataSystem *customerDataSystem = nullptr;
     LicenseSystem *licenseSystem = new LicenseSystem({QUrl("file:///home/operator/license-keys")}, &a);
     vfExport::vf_export *exportModule=new vfExport::vf_export();
     vfFiles::vf_files *filesModule = new vfFiles::vf_files();
 
-    //setup logger
-    VeinApiQml::VeinQml::setStaticInstance(qmlSystem);
-    VeinLogger::QmlLogger::setStaticLogger(dataLoggerSystem);
-
     // set zera and customer contentSet path. Defined in CMakeLists.txt.
-    VeinLogger::QmlLogger::setContentSetPaths(QString(MODMAN_CONTENTSET_PATH).append("ZeraContext.json"),QString(MODMAN_CUST_CONTENTSET_PATH).append("CustomerContext.json"));
 
     ZeraModules::ModuleManager *modMan = new ZeraModules::ModuleManager(availableSessionList, &a);
     JsonSessionLoader *sessionLoader = new JsonSessionLoader(&a);
 
-    bool initQmlSystemOnce = false;
-    QObject::connect(qmlSystem, &VeinApiQml::VeinQml::sigStateChanged, [&](VeinApiQml::VeinQml::ConnectionState t_state){
-        if(t_state == VeinApiQml::VeinQml::ConnectionState::VQ_LOADED && initQmlSystemOnce == false)
-        {
-            modMan->loadScripts(scriptSystem);
-            initQmlSystemOnce = true;
-        }
-    });
 
     auto errorReportFunction = [dataLoggerSystem](const QString &t_error){
         QJsonObject jsonErrorObj;
@@ -189,7 +174,6 @@ int main(int argc, char *argv[])
     QList<VeinEvent::EventSystem*> subSystems;
     //do not reorder
     subSystems.append(mmController);
-    subSystems.append(qmlSystem);
     subSystems.append(scriptSystem);
     subSystems.append(licenseSystem);
 
@@ -258,8 +242,6 @@ int main(int argc, char *argv[])
 
                 // subscribe those entitities our magic logger QML script
                 // requires (see modMan->loadScripts above)
-                qmlSystem->entitySubscribeById(0); //0 = mmController
-                qmlSystem->entitySubscribeById(2); //2 = dataLoggerSystem
             }
         }
     });

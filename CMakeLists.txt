@@ -76,7 +76,6 @@ ${PROJECT_SOURCE_DIR}/src/modulemanagercontroller.cpp
 ${PROJECT_SOURCE_DIR}/src/moduleeventhandler.cpp
 ${PROJECT_SOURCE_DIR}/src/customerdatasystem.cpp
 ${PROJECT_SOURCE_DIR}/src/priorityarbitrationsystem.cpp
-${PROJECT_SOURCE_DIR}/src/zeradblogger.cpp
 ${PROJECT_SOURCE_DIR}/src/licensesystem.cpp
 ${PROJECT_SOURCE_DIR}/src/diriteratorworker.cpp
     )
@@ -90,7 +89,6 @@ ${PROJECT_SOURCE_DIR}/src/moduleeventhandler.h
 ${PROJECT_SOURCE_DIR}/src/customerdatasystem.h
 ${PROJECT_SOURCE_DIR}/src/modman_util.h
 ${PROJECT_SOURCE_DIR}/src/priorityarbitrationsystem.h
-${PROJECT_SOURCE_DIR}/src/zeradblogger.h
 ${PROJECT_SOURCE_DIR}/src/licensesystem.h
 ${PROJECT_SOURCE_DIR}/src/diriteratorworker.h
     )
