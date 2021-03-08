@@ -60,13 +60,12 @@ int main(int argc, char *argv[])
 
     ModuleEventHandler *evHandler = new ModuleEventHandler(&a);
 
-    ZeraModules::ModuleManager* modManager = new ZeraModules::ModuleManager(QString(),MODMAN_CONFIG_FILE,MODMAN_SESSION_PATH,MODMAN_MODULE_PATH);
-    modManager->setEventHandler(evHandler);
-
-
     // setup vein modules
     VeinManager *mmController = new VeinManager(&a);
 
+    ZeraModules::ModuleManager* modManager = new ZeraModules::ModuleManager(QString(),MODMAN_CONFIG_FILE,MODMAN_SESSION_PATH,MODMAN_MODULE_PATH);
+    modManager->setEventHandler(evHandler);
+    modManager->setStorage(mmController->getStorageSystem());
 
     VeinLogger::DatabaseLogger *dataLoggerSystem = new VeinLogger::DatabaseLogger(new VeinLogger::DataSource(static_cast<VeinStorage::VeinHash*>(mmController->getStorageSystem())),sqliteFactory); //takes ownership of DataSource
     dataLoggerSystem->setContentSetPath(QString(MODMAN_CONTENTSET_PATH).append("ZeraContext.json"),QString(MODMAN_CONTENTSET_PATH).append("CustomerContext.json"));
