@@ -73,9 +73,9 @@ int main(int argc, char *argv[])
 
     VfCustomerdata::CustomerDataSystem *customerDataSystem = new VfCustomerdata::CustomerDataSystem("/home/operator/customerdata/");
 
-    vfExport::vf_export *exportModule=new vfExport::vf_export();
+    vfExport::vf_export *exportModule=new vfExport::vf_export(&a,4);
 
-    vfFiles::vf_files *filesModule = new vfFiles::vf_files();
+    vfFiles::vf_files *filesModule = new vfFiles::vf_files(&a,5);
 
     LicenseSystem* licSys = new LicenseSystem({QUrl("file:///home/operator/license-keys/")},QUrl("file:///opt/zera/conf/serialnumber"));
     modManager->setLicenseSystem(licSys);
@@ -83,6 +83,7 @@ int main(int argc, char *argv[])
     QList<VeinEvent::EventSystem*> subSystems;
     subSystems.append(mmController);
     subSystems.append(modManager->entity());
+    subSystems.append(filesModule->getVeinEntity());
     evHandler->setSubsystems(subSystems);
     modManager->loadLicensedModule("CustomerData", customerDataSystem->entity());
     modManager->loadLicensedModule("_LoggingSystem", exportModule->getVeinEntity());
