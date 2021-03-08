@@ -220,6 +220,30 @@ int main(int argc, char *argv[])
         });
     }
     bool dataLoggerSystemInitialized = false;
+
+    QObject::connect(filesModule->getVeinEntity(),&VeinEvent::EventSystem::sigAttached,[=](){
+        filesModule->initOnce();
+        filesModule->addMountToWatch(
+                    QStringLiteral("AutoMountedPaths"),
+                    QStringLiteral(MODMAN_AUTOMOUNT_PATH));
+        filesModule->addDirToWatch(
+                    QStringLiteral("AvailableCustomerData"),
+                    QStringLiteral(MODMAN_CUSTOMERDATA_PATH),
+                    QStringList({"*.json", "*/*.json"}),
+                    QDir::NoDotAndDotDot | QDir::Files,
+                    false);
+        filesModule->addDefaultPathComponent(
+                    QStringLiteral("LoggerLocalPath"),
+                    QStringLiteral(MODMAN_LOGGER_LOCAL_PATH),
+                    true);
+        filesModule->addDefaultPathComponent(
+                    QStringLiteral("CustomerDataLocalPath"),
+                    QStringLiteral(MODMAN_CUSTOMERDATA_PATH),
+                    true);
+    });
+
+
+
     QObject::connect(licenseSystem, &LicenseSystem::sigSerialNumberInitialized, [&](){
         if(licenseSystem->isSystemLicensed(dataLoggerSystem->entityName()))
         {
@@ -234,24 +258,6 @@ int main(int argc, char *argv[])
 
                 // files entity
                 evHandler->addSubsystem(filesModule->getVeinEntity());
-                filesModule->initOnce();
-                filesModule->addMountToWatch(
-                            QStringLiteral("AutoMountedPaths"),
-                            QStringLiteral(MODMAN_AUTOMOUNT_PATH));
-                filesModule->addDirToWatch(
-                            QStringLiteral("AvailableCustomerData"),
-                            QStringLiteral(MODMAN_CUSTOMERDATA_PATH),
-                            QStringList({"*.json", "*/*.json"}),
-                            QDir::NoDotAndDotDot | QDir::Files,
-                            false);
-                filesModule->addDefaultPathComponent(
-                            QStringLiteral("LoggerLocalPath"),
-                            QStringLiteral(MODMAN_LOGGER_LOCAL_PATH),
-                            true);
-                filesModule->addDefaultPathComponent(
-                            QStringLiteral("CustomerDataLocalPath"),
-                            QStringLiteral(MODMAN_CUSTOMERDATA_PATH),
-                            true);
 
                 // exports entity
                 evHandler->addSubsystem(exportModule->getVeinEntity());
