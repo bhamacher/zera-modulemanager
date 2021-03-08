@@ -1,10 +1,7 @@
-#include "modulemanager.h"
-#include "jsonsessionloader.h"
-#include "modulemanagercontroller.h"
-#include "moduleeventhandler.h"
+#include <moduleeventhandler.h>
+
 #include "customerdatasystem.h"
-#include "priorityarbitrationsystem.h"
-#include "licensesystem.h"
+
 
 #include <QCoreApplication>
 
@@ -35,45 +32,14 @@
 #include <QJsonArray>
 
 #include <QRegExp>
+#include <QUrl>
 
 
 #include <veinmanager.h>
+#include <modulemanager.h>
+#include <licensesystem.h>
 
-namespace ZeraModulemanager
-{
-QJsonDocument getDefaultConfig()
-{
-    QJsonDocument retVal;
-    QFile configFile(MODMAN_CONFIG_FILE);
-    if(configFile.exists() && configFile.open(QFile::ReadOnly))
-    {
-        retVal = QJsonDocument::fromJson(configFile.readAll());
-    }
-    return retVal;
-}
-const QString getDevNameFromUBoot()
-{
-    QString strDeviceName;
-    // Check for kernel cmdline param which u-boot should set
-    QFile procFileCmdLine(QLatin1String("/proc/cmdline"));
-    if(procFileCmdLine.open(QIODevice::ReadOnly))
-    {
-        QString cmdLine = procFileCmdLine.readAll();
-        procFileCmdLine.close();
-        // Extract 'zera_device=<device_name>'
-        QRegExp regExp(QLatin1String("\\bzera_device=[^ ]*"));
-        if(regExp.indexIn(cmdLine) != -1)
-        {
-            strDeviceName = regExp.cap(0);
-            // The following should go in regex above but...
-            strDeviceName.replace(QLatin1String("zera_device="), QLatin1String(""));
-            strDeviceName.replace(QLatin1String("\n"), QLatin1String(""));
-            qInfo() << "ZERA Device from kernel cmdline: " << strDeviceName;
-        }
-    }
-    return strDeviceName;
-}
-}
+
 /**
  * @brief main
  * @todo remove  VeinLogger::QmlLogger::setContentSetPaths, when handling is moved to vl_databaselogger.
@@ -81,35 +47,6 @@ const QString getDevNameFromUBoot()
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
-
-    const QJsonDocument defaultConfig = ZeraModulemanager::getDefaultConfig();
-    if(defaultConfig.isEmpty() || defaultConfig.isObject() == false)
-    {
-        qCritical() << "Error loading config file from path:" << MODMAN_CONFIG_FILE;
-        return -ENOENT;
-    }
-    const QString deviceNameUBoot = ZeraModulemanager::getDevNameFromUBoot();
-    const QString deviceName = !deviceNameUBoot.isEmpty() ? deviceNameUBoot : defaultConfig.object().value("deviceName").toString();
-    if(deviceName.isEmpty())
-    {
-        qCritical() << "No device name found in kernel cmdline or default config!";
-        return -ENODEV;
-    }
-    qInfo() << "Loading session data for " << deviceName;
-    const bool customerdataSystemEnabled = defaultConfig.object().value(deviceName).toObject().value("customerdataSystemEnabled").toBool(false);
-    const QVariant tmpAvailList = defaultConfig.object().value(deviceName).toObject().value("availableSessions").toArray().toVariantList();
-    const QStringList availableSessionList = tmpAvailList.toStringList();
-    if(availableSessionList.isEmpty())
-    {
-        qCritical() << "No sessions found for device" << deviceName;
-        return -ENODEV;
-    }
-    const QString defaultSessionFile = defaultConfig.object().value(deviceName).toObject().value("defaultSession").toString();
-    if(defaultSessionFile.isEmpty())
-    {
-        qCritical() << "No default session found for device" << deviceName;
-        return -ENODEV;
-    }
 
     QStringList loggingFilters = QStringList() << QString("%1.debug=false").arg(VEIN_EVENT().categoryName()) <<
                                                   QString("%1.debug=false").arg(VEIN_NET_VERBOSE().categoryName()) <<
@@ -128,28 +65,28 @@ int main(int argc, char *argv[])
 
     ModuleEventHandler *evHandler = new ModuleEventHandler(&a);
 
-#ifdef DEVICE_ARBITRATION
-    //priority based arbitration
-    PriorityArbitrationSystem *arbitrationSystem = new PriorityArbitrationSystem(&a);
-    evHandler->setArbitrationSystem(arbitrationSystem);
-#endif
+    ZeraModules::ModuleManager* modManager = new ZeraModules::ModuleManager(QString(),MODMAN_CONFIG_FILE,MODMAN_SESSION_PATH,MODMAN_MODULE_PATH);
+    modManager->setEventHandler(evHandler);
+
 
     // setup vein modules
     VeinManager *mmController = new VeinManager(&a);
+
     VeinScript::ScriptSystem *scriptSystem = new VeinScript::ScriptSystem(&a);
+
     VeinLogger::DatabaseLogger *dataLoggerSystem = new VeinLogger::DatabaseLogger(new VeinLogger::DataSource(static_cast<VeinStorage::VeinHash*>(mmController->getStorageSystem())),sqliteFactory); //takes ownership of DataSource
     dataLoggerSystem->setContentSetPath(QString(MODMAN_CONTENTSET_PATH).append("ZeraContext.json"),QString(MODMAN_CONTENTSET_PATH).append("CustomerContext.json"));
+
     CustomerDataSystem *customerDataSystem = nullptr;
-    LicenseSystem *licenseSystem = new LicenseSystem({QUrl("file:///home/operator/license-keys")}, &a);
+
     vfExport::vf_export *exportModule=new vfExport::vf_export();
+
     vfFiles::vf_files *filesModule = new vfFiles::vf_files();
 
-    // set zera and customer contentSet path. Defined in CMakeLists.txt.
+    LicenseSystem* licSys = new LicenseSystem({QUrl("file:///home/operator/license-keys/")},QUrl("file:///opt/zera/conf/serialnumber"));
+    modManager->setLicenseSystem(licSys);
 
-    ZeraModules::ModuleManager *modMan = new ZeraModules::ModuleManager(availableSessionList, &a);
-    JsonSessionLoader *sessionLoader = new JsonSessionLoader(&a);
-
-
+/*
     auto errorReportFunction = [dataLoggerSystem](const QString &t_error){
         QJsonObject jsonErrorObj;
 
@@ -169,34 +106,25 @@ int main(int argc, char *argv[])
         emit dataLoggerSystem->sigSendEvent(new VeinEvent::CommandEvent(VeinEvent::CommandEvent::EventSubtype::TRANSACTION, cData));
     };
     QObject::connect(dataLoggerSystem, &VeinLogger::DatabaseLogger::sigDatabaseError, errorReportFunction);
-
+*/
 
     QList<VeinEvent::EventSystem*> subSystems;
     //do not reorder
     subSystems.append(mmController);
     subSystems.append(scriptSystem);
-    subSystems.append(licenseSystem);
-
-
+    subSystems.append(modManager->entity());
     evHandler->setSubsystems(subSystems);
+    modManager->loadLicensedModule("CustomerData", customerDataSystem);
+    modManager->loadLicensedModule("_LoggingSystem", exportModule->getVeinEntity());
+    modManager->loadLicensedModule("_LoggingSystem", dataLoggerSystem);
+
 
     //conditional systems
-    bool customerDataSystemInitialized = false;
-    if(customerdataSystemEnabled)
-    {
-        QObject::connect(licenseSystem, &LicenseSystem::sigSerialNumberInitialized, [&]() {
-            if(licenseSystem->isSystemLicensed(CustomerDataSystem::s_entityName) && !customerDataSystemInitialized)
-            {
-                customerDataSystemInitialized = true;
-                customerDataSystem = new CustomerDataSystem(&a);
-                QObject::connect(customerDataSystem, &CustomerDataSystem::sigCustomerDataError, errorReportFunction);
-                qDebug() << "CustomerDataSystem is enabled";
-                evHandler->addSubsystem(customerDataSystem);
+
+        QObject::connect(customerDataSystem, &CustomerDataSystem::sigAttached, [&]() {
                 customerDataSystem->initializeEntity();
-            }
         });
-    }
-    bool dataLoggerSystemInitialized = false;
+
 
     QObject::connect(filesModule->getVeinEntity(),&VeinEvent::EventSystem::sigAttached,[=](){
         filesModule->initOnce();
@@ -219,43 +147,6 @@ int main(int argc, char *argv[])
                     true);
     });
 
-
-
-    QObject::connect(licenseSystem, &LicenseSystem::sigSerialNumberInitialized, [&](){
-        if(licenseSystem->isSystemLicensed(dataLoggerSystem->entityName()))
-        {
-            if(!dataLoggerSystemInitialized)
-            {
-                dataLoggerSystemInitialized = true;
-                qDebug() << "DataLoggerSystem is enabled";
-                evHandler->addSubsystem(dataLoggerSystem);
-
-                // the following code is not exactly depending on license system
-                // but here event system is up and running
-
-                // files entity
-                evHandler->addSubsystem(filesModule->getVeinEntity());
-
-                // exports entity
-                evHandler->addSubsystem(exportModule->getVeinEntity());
-                exportModule->initOnce();
-
-                // subscribe those entitities our magic logger QML script
-                // requires (see modMan->loadScripts above)
-            }
-        }
-    });
-
-    modMan->setLicenseSystem(licenseSystem);
-    modMan->setEventHandler(evHandler);
-
-    QObject::connect(sessionLoader, &JsonSessionLoader::sigLoadModule, modMan, &ZeraModules::ModuleManager::startModule);
-    QObject::connect(modMan, &ZeraModules::ModuleManager::sigSessionSwitched, sessionLoader, &JsonSessionLoader::loadSession);
-    QObject::connect(modMan, &ZeraModules::ModuleManager::sigSessionSwitched, [&dataLoggerSystem]() {
-        //disable logging to prevent data logging between session switching
-        dataLoggerSystem->setLoggingEnabled(false);
-    });
-
     bool modulesFound;
 
     qRegisterMetaTypeStreamOperators<QList<int> >("QList<int>");
@@ -266,9 +157,6 @@ int main(int argc, char *argv[])
     qRegisterMetaTypeStreamOperators<QList<QVariantMap> >("QList<QVariantMap>");
 
 
-
-    modulesFound = modMan->loadModules();
-
     if(!modulesFound)
     {
         qCritical() << "[Zera-Module-Manager] No modules found";
@@ -276,8 +164,6 @@ int main(int argc, char *argv[])
     }
     else
     {
-        modMan->changeSessionFile(defaultSessionFile);
-        mmController->initOnce();
         mmController->startServer(12000);
     }
 

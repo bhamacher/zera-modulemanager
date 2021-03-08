@@ -39,6 +39,7 @@ find_Package(MeasurementModuleInterface REQUIRED)
 find_Package(zeraproxy REQUIRED)
 find_Package(VfCpp REQUIRED)
 find_package(VfVeinmanager REQUIRED)
+find_package(VfSession REQUIRED)
 
 option(MM_NO_CONFIG_INSTALL "Do not install configuration/session files - for debugging on PC" OFF)
 
@@ -123,6 +124,7 @@ target_link_libraries(zera-modulemanager
     ZeraClasses::MeasurementModuleInterface
     ZeraClasses::zeraproxy
     VeinMeta::VfVeinmanager
+    VeinMeta::VfSession
 )	
 
 
