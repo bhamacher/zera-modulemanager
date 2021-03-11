@@ -29,10 +29,7 @@ find_package(VfStorageHash REQUIRED)
 find_package(VfTcp REQUIRED)
 find_package(VfNet2 REQUIRED)
 find_package(VfHelpers REQUIRED)
-#find_package(VfQml REQUIRED)
-find_package(VfScript REQUIRED)
 find_package(VfLogger REQUIRED)
-find_package(VfCryptoBridge REQUIRED)
 find_package(VfExport REQUIRED)
 find_package(VfFiles REQUIRED)
 find_Package(MeasurementModuleInterface REQUIRED)
@@ -115,13 +112,10 @@ target_link_libraries(zera-modulemanager
     VeinMeta::VfTcp
     VeinMeta::VfNet2
     VeinMeta::VfHelpers
-    VeinMeta::VfQml
-    VeinMeta::VfScript
     VeinMeta::VfLogger
     VeinMeta::VfCpp
     VeinMeta::VfExport
     VeinMeta::VfFiles
-    VeinMeta::VfCryptoBridge
     ZeraClasses::MeasurementModuleInterface
     ZeraClasses::zeraproxy
     VeinMeta::VfVeinmanager
