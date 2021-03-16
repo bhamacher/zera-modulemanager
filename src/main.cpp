@@ -27,13 +27,57 @@
 #include <modulemanager.h>
 #include <licensesystem.h>
 #include <customerdatasystem.h>
+#include <QCommandLineParser>
+
+
+QString getDevNameFromUBoot()
+{
+    QString strDeviceName;
+    // Check for kernel cmdline param which u-boot should set
+    QFile procFileCmdLine(QLatin1String("/proc/cmdline"));
+    if(procFileCmdLine.open(QIODevice::ReadOnly))
+    {
+        QString cmdLine = procFileCmdLine.readAll();
+        procFileCmdLine.close();
+        // Extract 'zera_device=<device_name>'
+        QRegExp regExp(QLatin1String("\\bzera_device=[^ ]*"));
+        if(regExp.indexIn(cmdLine) != -1)
+        {
+            strDeviceName = regExp.cap(0);
+            // The following should go in regex above but...
+            strDeviceName.replace(QLatin1String("zera_device="), QLatin1String(""));
+            strDeviceName.replace(QLatin1String("\n"), QLatin1String(""));
+            qInfo() << "ZERA Device from kernel cmdline: " << strDeviceName;
+        }
+    }
+    return strDeviceName;
+}
+
 
 /**
  * @brief main
  */
 int main(int argc, char *argv[])
 {
+
+
+    QString deviceName;
+
+
     QCoreApplication a(argc, argv);
+
+    const QCommandLineOption devName("d", "device name", "devName");
+    QCommandLineParser parser;
+    parser.addOption(devName);
+    parser.process(a);
+
+    if(parser.isSet(devName)){
+        deviceName=parser.value(devName);
+    }else{
+        deviceName=getDevNameFromUBoot();
+    }
+
+
 
     QStringList loggingFilters = QStringList() << QString("%1.debug=false").arg(VEIN_EVENT().categoryName()) <<
                                                   QString("%1.debug=false").arg(VEIN_NET_VERBOSE().categoryName()) <<
@@ -53,7 +97,7 @@ int main(int argc, char *argv[])
     // setup vein modules
     VeinManager *mmController = new VeinManager(&a);
 
-    ZeraModules::ModuleManager* modManager = new ZeraModules::ModuleManager(QString(),MODMAN_CONFIG_FILE,MODMAN_SESSION_PATH,MODMAN_MODULE_PATH);
+    ZeraModules::ModuleManager* modManager = new ZeraModules::ModuleManager(deviceName,MODMAN_CONFIG_FILE,MODMAN_SESSION_PATH,MODMAN_MODULE_PATH);
     modManager->setEventHandler(evHandler);
     modManager->setStorage(mmController->getStorageSystem());
 
