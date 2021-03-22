@@ -113,14 +113,6 @@ int main(int argc, char *argv[])
     LicenseSystem* licSys = new LicenseSystem({QUrl("file:///home/operator/license-keys/")},QUrl("file:///opt/zera/conf/serialnumber"));
     modManager->setLicenseSystem(licSys);
 
-    QList<VeinEvent::EventSystem*> subSystems;
-    subSystems.append(mmController);
-    subSystems.append(modManager->entity());
-    subSystems.append(filesModule->getVeinEntity());
-    evHandler->setSubsystems(subSystems);
-    modManager->loadLicensedModule("CustomerData", customerDataSystem->entity());
-    modManager->loadLicensedModule("_LoggingSystem", exportModule->getVeinEntity());
-    modManager->loadLicensedModule("_LoggingSystem", dataLoggerSystem);
 
 
     //conditional systems
@@ -144,6 +136,15 @@ int main(int argc, char *argv[])
                     true);
     });
 
+
+    QList<VeinEvent::EventSystem*> subSystems;
+    subSystems.append(mmController);
+    subSystems.append(modManager->entity());
+    subSystems.append(filesModule->getVeinEntity());
+    evHandler->setSubsystems(subSystems);
+    modManager->loadLicensedModule("CustomerData", customerDataSystem->entity());
+    modManager->loadLicensedModule("_LoggingSystem", exportModule->getVeinEntity());
+    modManager->loadLicensedModule("_LoggingSystem", dataLoggerSystem);
 
     qRegisterMetaTypeStreamOperators<QList<int> >("QList<int>");
     qRegisterMetaTypeStreamOperators<QSet<int> >("QSet<int>");
